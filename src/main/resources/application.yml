@@ -1,0 +1,36 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /taetaeofficial.com
+  tomcat:
+    uri-encoding: UTF-8
+  error:
+    include-exception: true
+    include-stacktrace: never
+    whitelabel.enabled: true
+    path: /error/serverError
+
+spring:
+  profiles:
+    include:
+      -dev
+
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+  # jsp viewResolver 설정.
+  mvc:
+    view:
+      prefix: /WEB-INF/views/jsp/
+      suffix: .jsp
+
+  # logging 설정.
+  logging.level:
+    org.hibernate.SQL: debug
+    com:
+      atoz_develop:
+        mybatissample:
+          repository: TRACE
