@@ -14,6 +14,6 @@ public class SignInSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
         // 추후에 로그인 이후 이동 페이지로 변경 필요.
-        response.sendRedirect("/index");
+        response.sendRedirect(request.getContextPath() + "/index");
     }
 }

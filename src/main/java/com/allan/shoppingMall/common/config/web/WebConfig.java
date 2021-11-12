@@ -11,17 +11,17 @@ public class WebConfig implements WebMvcConfigurer {
 
     private static final String[] CLASSPATH_RESOURCE_LOCATIONS = {"classpath:/static/", "classpath:/public/",
             "classpath:/", "classpath:/resources/", "classpath:/META-INF/resources/", "classpath:/META-INF/resources/webjars/",
-            "classpath:/resources/static"};
+            "classpath:/resources/static", "classpath:/resources/common/"};
 
     @Override public void addViewControllers(ViewControllerRegistry registry) {
-        // /에 해당하는 url mapping을 /common/test로 forward한다.
+        // /에 해당하는 url mapping을 /index로 forward한다.
         registry.addViewController( "/" ).setViewName( "forward:/index" );
         // 우선순위를 가장 높게 잡는다.
         registry.setOrder(Ordered.HIGHEST_PRECEDENCE); }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/**").addResourceLocations(CLASSPATH_RESOURCE_LOCATIONS);
+        registry.addResourceHandler("/resources/**").addResourceLocations(CLASSPATH_RESOURCE_LOCATIONS);
     }
 
 }
