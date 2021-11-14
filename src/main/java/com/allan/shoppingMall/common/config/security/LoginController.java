@@ -8,14 +8,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/auth")
 public class LoginController {
 
-    @RequestMapping("/signInForm")
+    @RequestMapping("/loginForm")
     public String signIn(Model model){
         model.addAttribute("loginForm", new LoginForm());
-        return "auth/signIn";
+        return "auth/loginForm";
     }
 
-    @RequestMapping("/signInError")
+    @RequestMapping("/loginError")
     public String signInError(){
-        return "auth/signInError";
+        return "auth/loginError";
     }
 }

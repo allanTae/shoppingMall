@@ -16,14 +16,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
-                .antMatchers("/resources/**", "/auth/**")
+                .antMatchers("/resources/**", "/auth/**", "/member/signupForm")
                     .permitAll()
                 .anyRequest()
                     .authenticated()
             .and()
                 .formLogin()
-                    .loginPage("/auth/signInForm")
-                    .loginProcessingUrl("/auth/signIn")
+                    .loginPage("/auth/loginForm")
+                    .loginProcessingUrl("/auth/login")
                     .usernameParameter("userId")
                     .passwordParameter("userPwd")
                     .failureHandler(new SignInFailHandler())
@@ -33,7 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .disable()
             .logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout"))
-                .logoutSuccessUrl("/auth/signInForm");
+                .logoutSuccessUrl("/auth/loginForm");
     }
 
     @Bean

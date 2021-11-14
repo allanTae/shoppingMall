@@ -12,8 +12,8 @@ server:
 
 spring:
   profiles:
-    include:
-      -dev
+    active: devDB
+
 
   http:
     encoding:
@@ -34,3 +34,24 @@ spring:
       atoz_develop:
         mybatissample:
           repository: TRACE
+
+  # jpa 설정.
+  jpa:
+    hibernate:
+#      ddl-auto: create
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+---
+# dev 용 설정.
+spring:
+  config.activate.on-profile: devDB
+
+  # database 설정.
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/TaetaeMall
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver

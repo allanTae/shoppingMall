@@ -30,7 +30,7 @@
     body{
         width
     }
-    .sign-in_more-action .more-action_text_sign-in:after {
+    .sign-in_more-action .more-action_text_sign-up:after {
         position: relative;
         right: 60px;
         display: inline-block;
@@ -39,7 +39,7 @@
         background-color: #858a8d;
         content: " ";
     }
-    .sign-in_more-action .more-action_text_sign-in {
+    .sign-in_more-action .more-action_text_sign-up {
         margin-left: 8px;
     }
     .social-sign-in_hr {
@@ -84,7 +84,7 @@
     if(errorMessage){
         alert(errorMessage);
     }
-    $(document).on('click', '.sign-in', function(e){
+    $(document).on('click', '.sign-up', function(e){
         location.href ="${pageContext.request.contextPath}/member/signupForm";
         e.preventDefault();
     });
@@ -108,8 +108,8 @@
 </script>
     <div>
         <!-- login form {s} -->
-        <form:form class="form-signin" name="form" id="form" role="form"
-                   modelAttribute="loginForm" method="post" action="${pageContext.request.contextPath}/auth/signIn">
+        <form:form class="form-login" name="form" id="form" role="form"
+                   modelAttribute="loginForm" method="post" action="${pageContext.request.contextPath}/auth/login">
             <div class="text-center mb-4">
                 <h1 class="h3 mb-3 font-weight-normal">TaeTae.Official</h1>
             </div>
@@ -137,7 +137,7 @@
             <span clsss="more-action_text_find-password more-action_text " id="find-pwd" data-toggle="modal" data-target="#myModal" style="font-size:11pt;">
                비밀번호 찾기
             </span>
-            <span class="more-action_text_sign-in sign-in more-action_text" style="font-size:11pt;">
+            <span class="more-action_text_sign-up sign-up more-action_text" style="font-size:11pt;">
                회원가입
             </span>
         </p>
