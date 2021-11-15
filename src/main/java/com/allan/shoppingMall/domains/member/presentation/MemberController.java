@@ -28,7 +28,7 @@ public class MemberController {
     @GetMapping("/member/signupForm")
     public String signUpForm(Model model){
         model.addAttribute("memberForm", new MemberForm());
-        return "/member/signupForm";
+        return "member/signupForm";
     }
 
     @PostMapping("/member")

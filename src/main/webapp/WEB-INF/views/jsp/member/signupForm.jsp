@@ -2,25 +2,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
-<!-- jQuery -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
-</script>
-
-<!-- Bootstrap CSS -->
-<link rel="stylesheet"
-	  href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
-	  integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
-	  crossorigin="anonymous">
-
-<!-- common CSS -->
-<link rel="stylesheet" href="<c:url value='/resources/common/css/common.css'/>" >
-
-<!-- Ajax jquery -->
-<script src="http://code.jquery.com/jquery-latest.min.js"></script>
-
-<!-- SWAL -->
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-
 <style>
 	body{padding : 0px}
 	#tile_header { width:100%; }

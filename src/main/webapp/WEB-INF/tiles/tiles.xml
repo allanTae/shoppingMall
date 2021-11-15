@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+    <!-- auth -->
+    <definition name="auth-layout" template="/WEB-INF/tiles/layouts/auth/login_layout.jsp">
+        <put-attribute name="tile_common" value="/WEB-INF/tiles/layouts/common/common.jsp" />
+    </definition>
+    <definition name="auth/*" extends="auth-layout">
+        <put-attribute name="tile_body" value="/WEB-INF/views/jsp/auth/loginForm.jsp" />
+        <put-attribute name="tile_modal_find-pwd" value="/WEB-INF/views/jsp/auth/modal_find-pwd.jsp" />
+    </definition>
+
+    <!-- member -->
+    <definition name="member-layout" template="/WEB-INF/tiles/layouts/base_layout.jsp">
+        <put-attribute name="tile_header" value="/WEB-INF/tiles/layouts/common/header.jsp" />
+        <put-attribute name="tile_common" value="/WEB-INF/tiles/layouts/common/common.jsp" />
+    </definition>
+    <definition name="member/*" extends="member-layout">
+        <put-attribute name="tile_body" value="/WEB-INF/views/jsp/member/{1}.jsp" />
+    </definition>
+
+</tiles-definitions>
