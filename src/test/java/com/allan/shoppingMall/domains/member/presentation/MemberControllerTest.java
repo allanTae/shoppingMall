@@ -23,7 +23,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest
+@WebMvcTest(
+        controllers = MemberController.class
+)
 @WithMockUser
 @AutoConfigureMockMvc
 public class MemberControllerTest {
@@ -44,7 +46,7 @@ public class MemberControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("memberForm"))
                 .andExpect(model().attributeExists("genders"))
-                .andExpect(view().name("/member/signupForm"));
+                .andExpect(view().name("member/signupForm"));
     }
 
     @Test

@@ -5,7 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MemberDTO {
-
+public class MemberRequest {
     private String authId;
 }

@@ -2,6 +2,10 @@ server:
   port: 8080
   servlet:
     context-path: /taetaeofficial.com
+    # api response utf-8 인코딩.
+    encoding:
+      charset: UTF-8
+      force: true
   tomcat:
     uri-encoding: UTF-8
   error:
@@ -29,7 +33,11 @@ spring:
 
   # logging 설정.
   logging.level:
-    org.hibernate.SQL: debug
+    org.hibernate:
+      SQL: debug
+      type:
+        descriptor:
+          sql: trace
     com:
       atoz_develop:
         mybatissample:

@@ -11,15 +11,12 @@
 <!--우편번호 검색 API-->
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
-    // 날자 정보 form 에 설정
+    // form 날자 설정 이벤트.
     $(document).ready(function () {
         setDateBox();
     });
-    // 스프링 시큐리티, ajax 처리를 위한 csrf 토큰 정보와 토큰을 서버에 전달하기 위한 헤더 이름.
-    var token = '${_csrf.token}';
-    var headerName = '${_csrf.headerName}';
-    var idCheck = false; // 중복 아이디 체크 여부 default value = false
-    // 회원가입 버튼 이벤트
+
+    // 회원가입 이벤트.
 	$(document).on('click', '#btnSignup', function(e){
 	    // 나이 계산
 	    var dt = new Date();
@@ -30,57 +27,65 @@
 		}
 		var age = today_year - parseInt($('#year').val());
 		$('#age').val(age);
-		console.log("age: "  + $('#age').val());
 		$("#form").submit();
 	});
-    // 취소 버튼 이벤트
+
+    // 취소 버튼 이벤트.
 	$(document).on('click', '#btnCancle', function(e){
 		e.preventDefault();
-
 		location.href="${pageContext.request.contextPath}/board/getBoardList";
 	});
-	// 중복 아이디 검사 버튼 이벤트
+
+	// 중복 아이디 검사 버튼 이벤트.
 	$(document).on('click', '#btnIdCheck', function(e){
 		e.preventDefault();
-		var authId = $('#authId').val();
-        var paramData = {"authId": authId};
-		var headers = {"Content-Type" : "application/x-www-form-urlencoded; charset=UTF-8;"
-				, "X-HTTP-Method-Override" : "POST"};
-		$.ajax({
-			url: "${pageContext.request.contextPath}/member/checkId"
-			, headers : headers
-			, data : paramData
-			, type : 'POST'
-			, dataType : 'text'
-            , beforeSend: function(xhr){
-                   xhr.setRequestHeader(headerName, token);
-            }
-			, success: function(result){
-				var htmls = '';
-				var checkId = JSON.parse(result);
-				if(checkId.status === "in not use"){
-	                htmls = htmls + '<div style="color: green; font-size: 10pt">' + checkId.message + '</div>';
-	                idCheck = true;
-				}else{
-					htmls = htmls + '<div style="color: red; font-size: 10pt">' + checkId.message + '</div>';
-				}
 
-				$("#checkId").html(htmls);
-			}
-			, error:function(request,status,error){
-                console.log(request);
-                if(request.status === 400 && request.responseText.indexOf("inputInvalidException")){
-                    alert("아이디는 영대소문자, 숫자로 10자~16자까지만 입력이 가능합니다.");
+		// 아이디 유효성 검사가 통과한 경우,
+		// 아이디 중복검사를 수행.
+        var reg = /^[a-zA-Z0-9]{10,16}$/g;
+        var authId = $.trim($('#authId').val());
+        var validationCheck = RegTest(authId, reg);
+
+		if(validationCheck !== false && $('#checkId').val() === "" ){
+		    var authId = $('#authId').val();
+            var paramData = JSON.stringify({"authId": authId});
+            var headers = {"Content-Type" : "application/json; charset=UTF-8;"
+                    , "X-HTTP-Method-Override" : "POST"};
+            $.ajax({
+                url: "${pageContext.request.contextPath}/member/checkId"
+                , headers : headers
+                , data : paramData
+                , type : 'POST'
+                , dataType : 'text'
+                , success: function(result){
+                    var htmls = '';
+                    var response = JSON.parse(result);
+                    if(response.status === "in_not_use"){
+                        htmls = htmls + '<div style="color: green; font-size: 10pt">' + response.message + '</div>';
+                    }else{
+                        htmls = htmls + '<div style="color: red; font-size: 10pt">' + response.message + '</div>';
+                    }
+                    $("#checkId").html(htmls);
                 }
-            }
-		});
+                , error:function(request,status,error){
+                    if(request.status === 400 && request.responseText.indexOf("inputInvalidException")){
+                        alert("아이디는 영대소문자, 숫자로 10자~16자까지만 입력이 가능합니다.");
+                    }
+                }
+            });
+		}else{
+		    var htmls = '<div style="color: red; font-size: 10pt">아이디는 영대소문자, 숫자 10~16자리만 허용됩니다.</div>';
+		    $("#checkId").html(htmls);
+		}
 	});
-    // 유효성 체크 메소드
+
+    // 유효성 체크 함수.
     // return true => 유효성 검사 통과
     // return false => 유효성 검사 실패
     function RegTest(text, reg) {
         return reg.test(text);
     }
+
     // 아이디 유효성 체크 이벤트
     $(document).on('input', '#authId', function(e){
         // 영소문자, 숫자만 허용하는 10~16자리 문자열
@@ -90,10 +95,13 @@
         var html = '';
         if(result === false){
             html += '<div style="color: red; font-size: 10pt">아이디는 영대소문자, 숫자 10~16자리만 허용됩니다.</div>';
+        }else{
+            html += "";
         }
         $("#checkId").html(html);
     });
-    // 폼내 사용자 입력 값의 양쪽 공백 제거
+
+    // 폼내 사용자 입력 값 공백 제거 함수.
     function textTrim(){
         var inputTexts = $("#form input[type=text]");
         for(let i=0; i<inputTexts.length; i++){
@@ -108,20 +116,24 @@
      * @return boolean
      */
     function checkValidation(e){
-        if(!idCheck){
+        // 공백 제거
+        textTrim();
+
+        // 아이디 유효성 검사.
+        var regAuthId = /^[a-zA-Z0-9]{10,16}$/g;
+        if(!RegTest($('#authId').val(), regAuthId)){
             alert("아이디 중복체크를 확인 해 주세요.");
             return false;
         }
-        // 공백 제거
-        textTrim();
-        // 이름 유효성 검사 정규식
+
+        // 이름 유효성 검사.
         var regName = /^[가-힣]{2,16}$/;
         if(!RegTest($("#name").val(), regName)){
             alert("이름은 한글로 2자~16자이 사이로 입력하셔야 합니다.");
             e.preventDefault();
             return false;
         }
-        // 비밀번호 유효성 검사 정규식
+        // 비밀번호 유효성 검사.
         // 조건1) 영문자, 숫자, 특수문자가 모두 들어가야 한다.
         // 조건2) 공백문자 들어가서는 안된다.
         var regPwd = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*()\-_=+~₩|\\:;"',.<>/?]{10,16}$/;
@@ -181,7 +193,7 @@
                         extraRoadAddr = ' (' + extraRoadAddr + ')';
                     }
                     // 우편번호와 주소 정보를 해당 필드에 넣는다.
-                    document.getElementById('postcode').value = data.zonecode;
+                    document.getElementById('postCode').value = data.zonecode;
                     document.getElementById('roadAddress').value = roadAddr;
                     document.getElementById('jibunAddress').value = data.jibunAddress;
                     // 참고항목 문자열이 있을 경우 해당 필드에 넣는다.

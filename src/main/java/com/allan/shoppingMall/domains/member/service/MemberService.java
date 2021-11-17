@@ -5,18 +5,24 @@ import com.allan.shoppingMall.common.value.Address;
 import com.allan.shoppingMall.domains.member.domain.Gender;
 import com.allan.shoppingMall.domains.member.domain.Member;
 import com.allan.shoppingMall.domains.member.domain.MemberRepository;
+import com.allan.shoppingMall.domains.member.domain.MemberRole;
 import com.allan.shoppingMall.domains.member.domain.model.MemberForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MemberService {
 
     private final MemberRepository memberRepository;
 
+    @Transactional
     public Long join(MemberForm form){
+
         Member member = Member.builder()
+                .role(MemberRole.ACTIVATED_USER)
                 .name(form.getName())
                 .age(form.getAge())
                 .authId(form.getAuthId())
@@ -41,7 +47,7 @@ public class MemberService {
     }
 
     private boolean validateAuthId(String authId){
-        boolean present = memberRepository.findByAuthId(authId).isPresent();
+        boolean present = memberRepository.findByAuthIdLike(authId).isPresent();
         if(!present){
             return true;
         }else{

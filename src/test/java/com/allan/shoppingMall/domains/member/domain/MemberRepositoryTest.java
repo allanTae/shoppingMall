@@ -33,7 +33,7 @@ public class MemberRepositoryTest {
         entityManager.persist(TEST_MEMBER);
 
         //when
-        boolean present = memberRepository.findByAuthId(TEST_MEMBER.getAuthId()).isPresent();
+        boolean present = memberRepository.findByAuthIdLike(TEST_MEMBER.getAuthId()).isPresent();
 
         //then
         assertTrue(present);

@@ -47,6 +47,6 @@ public class MemberServiceTest {
 
         //then
         verify(memberRepository, atLeastOnce()).save(any());
-        verify(memberRepository, atLeastOnce()).findByAuthId(any());
+        verify(memberRepository, atLeastOnce()).findByAuthIdLike(any());
     }
 }
