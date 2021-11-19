@@ -32,12 +32,13 @@ spring:
       suffix: .jsp
 
   # logging 설정.
-  logging.level:
-    org.hibernate:
-      SQL: debug
-      type:
-        descriptor:
-          sql: trace
+  logging:
+    level:
+      org:
+        hibernate:
+          type:
+            desriptor:
+              sql: trace
     com:
       atoz_develop:
         mybatissample:

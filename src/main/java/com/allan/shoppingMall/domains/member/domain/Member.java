@@ -53,7 +53,8 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = false, name = "phone")
     private String phone;
 
-    @Column(nullable = false, name="date_of_birth", columnDefinition = "varchar(10) comment '생년월일'")
+    // 생년월일
+    @Column(nullable = false, name="date_of_birth")
     private String dateOfBirth;
 
     @Column(nullable = false)

@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
@@ -16,7 +17,6 @@ public class LoginIdAuditorAware implements AuditorAware<String> {
     @Override
     public Optional<String> getCurrentAuditor() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
         // 인증이 되지 않은 회원이거나 알 수 없는 회원인 경우
         if(null == authentication || !authentication.isAuthenticated() || authentication.getPrincipal().equals("anonymousUser")){
             log.error("JpaAuditing's auditorAware error!!!!");
