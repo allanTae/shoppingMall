@@ -2,6 +2,7 @@ package com.allan.shoppingMall.domains.item.domain.clothes;
 
 import com.allan.shoppingMall.common.domain.BaseEntity;
 import com.allan.shoppingMall.domains.item.domain.Item;
+import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -13,7 +14,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Table(name = "clothesDetails")
-public class ClothesDetails extends BaseEntity {
+public class ClothesDetail extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long clothesDetailId;
@@ -25,4 +26,18 @@ public class ClothesDetails extends BaseEntity {
     // 의상 세부 내용.
     @Column(name = "detail_desc")
     private String detailDesc;
+
+    @Builder
+    public ClothesDetail(String detailDesc) {
+        this.detailDesc = detailDesc;
+    }
+
+    /**
+     * 양방향 매핑을 위한 연관 관계 편의 메소드.
+     * Item Entity 측에서 ClothesFabric 추가하도록 비즈니스 로직을 처리함.
+     * @param
+     */
+    public void changeItem(Item item){
+        this.item = item;
+    }
 }
