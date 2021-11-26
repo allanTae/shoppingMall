@@ -25,4 +25,12 @@
         <put-attribute name="tile_body" value="/WEB-INF/views/jsp/catalog/{1}.jsp" />
     </definition>
 
+    <!-- index -->
+    <definition name="index-layout" template="/WEB-INF/tiles/layouts/index_layout.jsp">
+        <put-attribute name="tile_common" value="/WEB-INF/tiles/layouts/common/common.jsp" />
+    </definition>
+    <definition name="index" extends="index-layout">
+        <put-attribute name="tile_body" value="/WEB-INF/views/jsp/index.jsp" />
+    </definition>
+
 </tiles-definitions>

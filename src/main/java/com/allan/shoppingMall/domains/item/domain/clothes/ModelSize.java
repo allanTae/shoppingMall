@@ -37,6 +37,7 @@ public class ModelSize extends BaseEntity {
     @Column(name = "model_height")
     private Double modelHeight;
 
+    // 몸부게 사이즈.
     @Column(name = "model_weight")
     private Double  modelWeight;
 

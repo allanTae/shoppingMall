@@ -14,10 +14,13 @@ server:
     whitelabel.enabled: true
     path: /error/serverError
 
+# 운영시 false 처리 할 것.
+decorator.datasource.p6spy.enable-logging: true
+decorator.datasource.p6spy.multiline: true
+
 spring:
   profiles:
     active: devDB
-
 
   http:
     encoding:
@@ -34,24 +37,35 @@ spring:
   # logging 설정.
   logging:
     level:
-      org:
-        hibernate:
-          type:
-            desriptor:
-              sql: trace
-    com:
-      atoz_develop:
-        mybatissample:
-          repository: TRACE
+      org.hibernate.SQL: DEBUG
+
+
+#  logging:
+#    level:
+#      org:
+#        hibernate:
+#          type:
+#            desriptor:
+#              sql: trace
+#    com:
+#      atoz_develop:
+#        mybatissample:
+#          repository: TRACE
 
   # jpa 설정.
   jpa:
+    show-sql: false
     hibernate:
 #      ddl-auto: create
     properties:
       hibernate:
-        show_sql: true
         format_sql: true
+
+  # 업로도 file 용량 설정.
+  servlet:
+    multipart:
+      maxFileSize: 10MB
+      maxRequestSize: 20MB
 
 ---
 # dev 용 설정.

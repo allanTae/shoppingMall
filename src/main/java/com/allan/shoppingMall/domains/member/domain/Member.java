@@ -76,9 +76,9 @@ public class Member extends BaseTimeEntity {
         this.milege = 100l;
         this.createdBy = "system";
         this.updatedBy = "system";
-        // TaeTae 애플리케이션 서비스에서 초기 가입시, 닉네임 설정은 이름으로 설정.
+        // TaeTae 애플리케이션 서비스에서 초기 가입시, 닉네임 설정은 아이디로 설정.
         if(role.getJoinType().getType().equals(JoinType.NORMAL.getType())){
-            this.nickName = name;
+            this.nickName = this.authId;
         }else{
             // 서비스 가입아 아닌 Oauth2 가입시 닉네임 설정.
         }

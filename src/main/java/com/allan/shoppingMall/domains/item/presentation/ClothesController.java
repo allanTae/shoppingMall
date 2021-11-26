@@ -5,6 +5,7 @@ import com.allan.shoppingMall.domains.item.service.ClothesService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -25,14 +26,5 @@ public class ClothesController {
     public String clothesForm(@ModelAttribute("clothesForm") ClothesForm clothesForm){
         return "clothes/clothesForm";
     }
-
-    // 나중에 삭제요망.
-    @PostMapping("/api/save")
-    public ClothesForm apiSaveClothes(@RequestBody ClothesForm clothesRequest){
-        clothesService.saveClothes(clothesRequest);
-        return clothesRequest;
-    }
-
-
 
 }

@@ -2,7 +2,7 @@ package com.allan.shoppingMall.domains.item.domain;
 
 import com.allan.shoppingMall.common.config.jpa.auditing.JpaAuditingConfig;
 import com.allan.shoppingMall.common.config.jpa.auditing.LoginIdAuditorAware;
-import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
+import com.allan.shoppingMall.domains.item.domain.clothes.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -11,6 +11,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -49,12 +52,142 @@ public class ItemsRepositoryTest {
 
     }
 
+    @Test
+    public void 의류_리스트_반환_테스트() throws Exception {
+        //given
+        Clothes TEST_CLOTHES1 = createClothes();
+        TEST_CLOTHES1.changeClothesFabrics(createClothesFabrics("testMaterial1", "testMaterial1"));
+        TEST_CLOTHES1.changeClothesDetails(createClothesDetails("testDetailDesc1"));
+        TEST_CLOTHES1.changeClothesSizes(createClothesSizes(SizeLabel.S, 10.0, 20.0, 10.0, 30.0, 40.0, 20.0, 10.0));
+        TEST_CLOTHES1.changeModelSizes(createModelSizes(10.0, 20.0, 30.0, 40.0, 21.0));
+        TEST_CLOTHES1.changeItemImages(createItemImages("testOriginalItemImageName1", "testItemImagePath1", ImageType.PREVIEW, 10l));
+
+        Clothes TEST_CLOTHES2 = createClothes();
+        TEST_CLOTHES2.changeClothesFabrics(createClothesFabrics("testMaterial2", "testMaterial2"));
+        TEST_CLOTHES2.changeClothesDetails(createClothesDetails("testDetailDesc2"));
+        TEST_CLOTHES2.changeClothesSizes(createClothesSizes(SizeLabel.S, 10.0, 20.0, 10.0, 30.0, 40.0, 20.0, 10.0));
+        TEST_CLOTHES2.changeModelSizes(createModelSizes(10.0, 20.0, 30.0, 40.0, 21.0));
+        TEST_CLOTHES2.changeItemImages(createItemImages("testOriginalItemImageName2", "testItemImagePath2", ImageType.PREVIEW, 10l));
+        TEST_CLOTHES2.changeItemImages(createItemImages("testOriginalItemImageName3", "testItemImagePath3", ImageType.PRODUCT, 10l));
+
+        testEntityManager.persist(TEST_CLOTHES1);
+        testEntityManager.persist(TEST_CLOTHES2);
+
+        //when
+        List<Clothes> clothesList = itemRepository.getClothesList();
+
+        System.out.println("==============cloethesList=================");
+        for(int i=0; i<clothesList.size(); i++){
+            System.out.println("clothesList[" + i + "]: name" + clothesList.get(i).getName());
+            for(int j=0; j<clothesList.get(i).getItemImages().size(); j++){
+                System.out.println(j + "번째 imageName: " + clothesList.get(i).getItemImages().get(j).getOriginalItemImageName());
+                System.out.println(j + "번째 imageType: " + clothesList.get(i).getItemImages().get(j).getImageType());
+            }
+            System.out.println("");
+        }
+        System.out.println("============================================");
+
+        //then
+        assertThat(clothesList.size(), is(2)); // Clothes 엔티티 갯수 확인.
+        assertThat(clothesList.get(0).getItemImages().size(), is(2)); // 리스트의 첫번째 Clothes의 Image 갯수 확인.
+        assertThat(clothesList.get(0).getItemImages().get(0).getOriginalItemImageName(), is(TEST_CLOTHES1.getItemImages().get(0).getOriginalItemImageName()));
+        assertThat(clothesList.get(0).getItemImages().get(1).getOriginalItemImageName(), is(TEST_CLOTHES1.getItemImages().get(1).getOriginalItemImageName()));
+
+        assertThat(clothesList.get(1).getItemImages().size(), is(4)); // 리스트의 첫번째 Clothes의 Image 갯수 확인.
+        assertThat(clothesList.get(1).getItemImages().get(0).getOriginalItemImageName(), is(TEST_CLOTHES2.getItemImages().get(0).getOriginalItemImageName()));
+        assertThat(clothesList.get(1).getItemImages().get(1).getOriginalItemImageName(), is(TEST_CLOTHES2.getItemImages().get(1).getOriginalItemImageName()));
+
+
+    }
+
     private Clothes createClothes() {
-        return Clothes.builder()
+        Clothes clothes = Clothes.builder()
                 .name("testName")
                 .price(1000l)
                 .stockQuantity(200l)
                 .engName("testEngName")
                 .build();
+        return clothes;
+    }
+
+    private List<ClothesFabric> createClothesFabrics(String materialPart, String materialDesc){
+        return List.of(
+                ClothesFabric.builder()
+                    .materialPart(materialPart)
+                    .materialDesc(materialDesc)
+                    .build(),
+                ClothesFabric.builder()
+                    .materialPart(materialPart)
+                    .materialDesc(materialDesc)
+                    .build()
+        );
+    }
+
+    private List<ClothesDetail> createClothesDetails(String detailDesc){
+        return List.of(
+                ClothesDetail.builder()
+                    .detailDesc(detailDesc)
+                    .build(),
+                ClothesDetail.builder()
+                    .detailDesc(detailDesc)
+                    .build()
+        );
+    }
+
+    private List<ClothesSize> createClothesSizes(SizeLabel sizeLabel, Double backLength, Double bottomWidth, Double chestWidth,
+                                                 Double heapWidth, Double shoulderWidth, Double waistWidth, Double sleeveLength){
+        return List.of(
+                ClothesSize.builder()
+                    .sizeLabel(sizeLabel)
+                    .backLength(backLength)
+                    .bottomWidth(bottomWidth)
+                    .chestWidth(chestWidth)
+                    .heapWidth(heapWidth)
+                    .shoulderWidth(shoulderWidth)
+                    .waistWidth(waistWidth)
+                    .sleeveLength(sleeveLength)
+                    .build(),
+                ClothesSize.builder()
+                        .sizeLabel(sizeLabel)
+                        .backLength(backLength)
+                        .bottomWidth(bottomWidth)
+                        .chestWidth(chestWidth)
+                        .heapWidth(heapWidth)
+                        .shoulderWidth(shoulderWidth)
+                        .waistWidth(waistWidth)
+                        .sleeveLength(sleeveLength)
+                        .build()
+
+                );
+    }
+
+    private List<ModelSize> createModelSizes(Double modelShoulderSize, Double modelHeap, Double modelWaist, Double modelHeight, Double modelWeight){
+        return List.of(
+                ModelSize.builder()
+                    .modelShoulderSize(modelShoulderSize)
+                    .modelHeap(modelHeap)
+                    .modelWaist(modelWaist)
+                    .modelHeight(modelHeight)
+                    .modelWeight(modelWeight)
+                    .build()
+        );
+    }
+
+    private List<ItemImage> createItemImages(String originalItemImageName, String itemImagePath, ImageType imageType, Long imageSize){
+        return List.of(
+                ItemImage.builder()
+                    .originalItemImageName(originalItemImageName)
+                    .imageSize(imageSize)
+                    .itemImagePath(itemImagePath)
+                    .imageType(imageType)
+                    .build(),
+
+                ItemImage.builder()
+                        .originalItemImageName(originalItemImageName)
+                        .imageSize(imageSize)
+                        .itemImagePath(itemImagePath)
+                        .imageType(imageType)
+                        .build()
+        );
     }
 }

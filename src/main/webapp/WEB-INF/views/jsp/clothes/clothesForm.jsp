@@ -9,6 +9,7 @@
 </style>
 
 <script>
+    // talbleBox 추가를 위한 인덱스.
     var materialTableIndex = 2;
     var detailTableIndex = 2;
     var sizeTableIndex = 2;
@@ -81,10 +82,11 @@
 </script>
 <article>
 	<div class="container col-md-8" role="main">
+	    <!--form card-->
 		<div class="card">
 			<div class="card-header">상품 등록</div>
 			<div class="card-body">
-				<form:form name="form" id="form" class="form-signup" role="form" modelAttribute="clothesForm" method="post" action="${pageContext.request.contextPath}/clothes/save">
+				<form:form name="form" id="form" class="form-signup" role="form" modelAttribute="clothesForm" method="post" action="${pageContext.request.contextPath}/clothes/save" enctype="multipart/form-data">
 					<div class="form-group row">
 						<label for="name" class="col-md-2 col-form-label text-md-right">상품명</label>
 						<div class="col-md-4">
@@ -145,6 +147,7 @@
                           </tbody>
                         </table>
                     </div>
+                    <!-- end material table>
 
                     <!-- detailTable -->
                     <div class="form-group row">
@@ -165,6 +168,7 @@
                           </tbody>
                         </table>
                     </div>
+                    <!-- end detail table -->
 
                     <!-- sizeTable -->
                     <div class="form-group row">
@@ -199,6 +203,7 @@
                           </tbody>
                         </table>
                     </div>
+                    <!-- end size table -->
 
                     <!-- modelSizeTable -->
                     <div class="form-group row">
@@ -227,13 +232,34 @@
                           </tbody>
                         </table>
                     </div>
+                    <!-- end model size table-->
+
+                    <!-- image file -->
+                    <!-- 소개용 이미지 -->
+                    <div class="form-group row">
+                        <label class="col-md-2">프로필 사진</label>
+                        <div class="col-md-4">
+                            <input type="file" name="profileImageFiles" multiple="multiple" />
+                        </div>
+                    </div>
+                    <!-- 상세설명용 이미지 -->
+                    <div class="form-group row">
+                        <label class="col-md-2">상세 사진</label>
+                        <div class="col-md-4">
+                            <input type="file" name="detailImageFiles" multiple="multiple" />
+                        </div>
+                    </div>
+                    <!-- end image files -->
 
 				</form:form>
 			</div>
 		</div>
+		<!-- end form card -->
+
 		<div style="margin-top:10px">
 			<button type="button" class="btn btn-sm btn-primary" id="btnEnroll">상품등록</button>
 			<button type="button" class="btn btn-sm btn-primary" id="btnCancle">취소</button>
 		</div>
 	</div>
+
 </article>

@@ -35,7 +35,7 @@ public class ClothesDetail extends BaseEntity {
     /**
      * 양방향 매핑을 위한 연관 관계 편의 메소드.
      * Item Entity 측에서 ClothesFabric 추가하도록 비즈니스 로직을 처리함.
-     * @param
+     * @param item
      */
     public void changeItem(Item item){
         this.item = item;

@@ -32,3 +32,6 @@ out/
 /dist/
 /nbdist/
 /.nb-gradle/
+
+### 사진 파일경로 ###
+images/item/**/**

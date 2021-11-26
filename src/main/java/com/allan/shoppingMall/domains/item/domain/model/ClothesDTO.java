@@ -14,6 +14,8 @@ import java.util.List;
 @Setter
 public class ClothesDTO {
 
+    private Long clothesId;
+
     private String name;
 
     private Long price;
@@ -22,7 +24,7 @@ public class ClothesDTO {
 
     private String engName;
 
-    private List<ItemImage> itemImages = new ArrayList<>();
+    private List<String> profileClothesImages = new ArrayList<>();
 
     private List<ModelSize> modelSizes = new ArrayList<>();
 
@@ -34,4 +36,14 @@ public class ClothesDTO {
 
     // 의류에 기타 정보를 담을 필드.
     private String etc;
+
+    /**
+     * itemRepository의 getClothesList() 를 통해 DTO List 를 반환 할 때 사용.
+     */
+    public ClothesDTO(Long clothesId, String name, Long price, List<String> profileClothesImages) {
+        this.clothesId = clothesId;
+        this.name = name;
+        this.price = price;
+        this.profileClothesImages = profileClothesImages;
+    }
 }

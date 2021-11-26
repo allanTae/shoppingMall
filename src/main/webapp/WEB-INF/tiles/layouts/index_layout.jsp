@@ -9,6 +9,7 @@
 
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+</script>
 
 <!-- Bootstrap CSS -->
 <link rel="stylesheet"
@@ -25,9 +26,6 @@
 
 </head>
 <body class="text-center">
-    <div id="tile_header">
-        <tiles:insertAttribute name="tile_header" />
-    </div>
     <div id="tile_common">
         <tiles:insertAttribute name="tile_common" />
     </div>
