@@ -15,12 +15,15 @@ public enum ErrorCode {
     INVALID_TYPE_VALUE(400, "C005", " Invalid Type Value"),
     HANDLE_ACCESS_DENIED(403, "C006", "Access is Denied"),
 
-
     // Member
     MEMBER_AUTH_ID_DUPLICATION(400, "M001", "회원 아이디가 중복되었습니다."),
     MEMBER_ID_NOT_FOUND(500, "SC001", "입력하신 아이디가 존재하지 않습니다."),
     MEMBER_INPUT_NULL_VALUE(400, "M003", "회원 정보로 null 값은 입력 하실 수 없습니다."),
 
+    // Order
+
+    // Item
+    ITEM_STOCK_QUANTITY_EXCEEDED(400, "I001", "상품의 재고량이 부족합니다."),
 
     // Database
     INTEGRITY_VIOLATION(400, "D001", "Data's Itegrity is violation"),

@@ -1,6 +1,8 @@
 package com.allan.shoppingMall.domains.item.domain;
 
 import com.allan.shoppingMall.common.domain.BaseEntity;
+import com.allan.shoppingMall.common.exception.ErrorCode;
+import com.allan.shoppingMall.common.exception.OrderFailException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,5 +63,16 @@ public class Item extends BaseEntity {
             this.itemColors.add(color);
             color.changeItem(this);
         }
+    }
+
+    public void subtractStockQuantity(Long orderQuantity){
+        if(this.stockQuantity < orderQuantity)
+            throw new OrderFailException(ErrorCode.ITEM_STOCK_QUANTITY_EXCEEDED.getMessage(), ErrorCode.ITEM_STOCK_QUANTITY_EXCEEDED);
+
+        this.stockQuantity -= orderQuantity;
+    }
+
+    public void addStockQuantity(Long orderQuantity){
+        this.stockQuantity += orderQuantity;
     }
 }

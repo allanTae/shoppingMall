@@ -1,5 +1,6 @@
 package com.allan.shoppingMall.domains.item.domain;
 
+import com.allan.shoppingMall.common.domain.BaseEntity;
 import com.allan.shoppingMall.domains.item.domain.Item;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -12,7 +13,7 @@ import javax.persistence.*;
 @Table(name = "item_color")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ItemColor {
+public class ItemColor extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long itemColorId;
