@@ -18,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Clothes extends Item {
 
-    @Column(name = "eng_name")
+    @Column(name = "eng_name", nullable = false)
     private String engName;
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)

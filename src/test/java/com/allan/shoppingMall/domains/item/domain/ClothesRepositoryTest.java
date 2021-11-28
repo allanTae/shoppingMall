@@ -1,7 +1,6 @@
 package com.allan.shoppingMall.domains.item.domain;
 
 import com.allan.shoppingMall.common.config.jpa.auditing.JpaAuditingConfig;
-import com.allan.shoppingMall.common.config.jpa.auditing.LoginIdAuditorAware;
 import com.allan.shoppingMall.domains.item.domain.clothes.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 
@@ -21,17 +19,18 @@ import static org.hamcrest.Matchers.is;
 @DataJpaTest(
         includeFilters = @ComponentScan.Filter(
                 type = FilterType.ASSIGNABLE_TYPE,
-                classes = {JpaAuditingConfig.class, LoginIdAuditorAware.class}
+                classes = JpaAuditingConfig.class
         )
 )
 @WithMockUser
-public class ItemsRepositoryTest {
+public class ClothesRepositoryTest {
 
     @Autowired
-    ItemRepository itemRepository;
+    ClothesRepository clothesRepository;
 
     @Autowired
     TestEntityManager testEntityManager;
+
 
     @Test
     public void 의류엔티티_생성_테스트() throws Exception {
@@ -40,8 +39,8 @@ public class ItemsRepositoryTest {
         Clothes TEST_CLOTHES = createClothes();
 
         //when
-        itemRepository.save(TEST_CLOTHES);
-        Clothes findClothes = (Clothes) itemRepository.findById(TEST_CLOTHES.getItemId()).orElseThrow(() -> new DataAccessException("Clothes Entity is not exist") {
+        clothesRepository.save(TEST_CLOTHES);
+        Clothes findClothes = (Clothes) clothesRepository.findById(TEST_CLOTHES.getItemId()).orElseThrow(() -> new DataAccessException("Clothes Entity is not exist") {
         });
 
         //then
@@ -74,18 +73,7 @@ public class ItemsRepositoryTest {
         testEntityManager.persist(TEST_CLOTHES2);
 
         //when
-        List<Clothes> clothesList = itemRepository.getClothesList();
-
-        System.out.println("==============cloethesList=================");
-        for(int i=0; i<clothesList.size(); i++){
-            System.out.println("clothesList[" + i + "]: name" + clothesList.get(i).getName());
-            for(int j=0; j<clothesList.get(i).getItemImages().size(); j++){
-                System.out.println(j + "번째 imageName: " + clothesList.get(i).getItemImages().get(j).getOriginalItemImageName());
-                System.out.println(j + "번째 imageType: " + clothesList.get(i).getItemImages().get(j).getImageType());
-            }
-            System.out.println("");
-        }
-        System.out.println("============================================");
+        List<Clothes> clothesList = clothesRepository.getClothesList();
 
         //then
         assertThat(clothesList.size(), is(2)); // Clothes 엔티티 갯수 확인.
@@ -98,6 +86,37 @@ public class ItemsRepositoryTest {
         assertThat(clothesList.get(1).getItemImages().get(1).getOriginalItemImageName(), is(TEST_CLOTHES2.getItemImages().get(1).getOriginalItemImageName()));
 
 
+    }
+
+    @Test
+    public void 의상_엔티티_단일_조회_테스트() throws Exception {
+        //given
+        Clothes TEST_CLOTHES = createClothes();
+        TEST_CLOTHES.changeClothesFabrics(createClothesFabrics("materialPart", "materialDesc"));
+        TEST_CLOTHES.changeClothesDetails(createClothesDetails("detailDesc"));
+        TEST_CLOTHES.changeClothesDetails(createClothesDetails("detailDesc2"));
+        TEST_CLOTHES.changeClothesSizes(createClothesSizes(SizeLabel.S, 30.0,40.0, 50.0, 60.0, 70.0, 80.0, 90.0));
+        TEST_CLOTHES.changeModelSizes(createModelSizes(100.0, 110.0, 120.0, 130.0, 140.0));
+        TEST_CLOTHES.changeItemImages(createItemImages("imageName", "imagePath", ImageType.PREVIEW, 10l));
+        TEST_CLOTHES.changeItemImages(createItemImages("imageName2", "imagePath2", ImageType.PRODUCT, 20l));
+
+        testEntityManager.persist(TEST_CLOTHES);
+
+        //when
+        Clothes findClothes = clothesRepository.getClothes(TEST_CLOTHES.getItemId()).get();
+
+        //then
+        assertThat(findClothes.getName(), is(TEST_CLOTHES.getName()));
+        assertThat(findClothes.getPrice(), is(TEST_CLOTHES.getPrice()));
+        assertThat(findClothes.getClothesFabrics().size(), is(2));
+        assertThat(findClothes.getClothesDetails().size(), is(4));
+        assertThat(findClothes.getClothesSizes().size(), is(2));
+        assertThat(findClothes.getModelSizes().size(), is(1));
+        assertThat(findClothes.getItemImages().size(), is(4));
+        assertThat(findClothes.getClothesDetails().get(2).getDetailDesc(), is(TEST_CLOTHES.getClothesDetails().get(2).getDetailDesc()));
+        assertThat(findClothes.getClothesFabrics().get(1).getMaterialPart(), is(TEST_CLOTHES.getClothesFabrics().get(1).getMaterialPart()));
+        assertThat(findClothes.getModelSizes().get(0).getModelHeap(), is(TEST_CLOTHES.getModelSizes().get(0).getModelHeap()));
+        assertThat(findClothes.getItemImages().get(3).getImageType().getWhereToUse(), is(TEST_CLOTHES.getItemImages().get(3).getImageType().getWhereToUse()));
     }
 
     private Clothes createClothes() {
@@ -113,24 +132,24 @@ public class ItemsRepositoryTest {
     private List<ClothesFabric> createClothesFabrics(String materialPart, String materialDesc){
         return List.of(
                 ClothesFabric.builder()
-                    .materialPart(materialPart)
-                    .materialDesc(materialDesc)
-                    .build(),
+                        .materialPart(materialPart)
+                        .materialDesc(materialDesc)
+                        .build(),
                 ClothesFabric.builder()
-                    .materialPart(materialPart)
-                    .materialDesc(materialDesc)
-                    .build()
+                        .materialPart(materialPart)
+                        .materialDesc(materialDesc)
+                        .build()
         );
     }
 
     private List<ClothesDetail> createClothesDetails(String detailDesc){
         return List.of(
                 ClothesDetail.builder()
-                    .detailDesc(detailDesc)
-                    .build(),
+                        .detailDesc(detailDesc)
+                        .build(),
                 ClothesDetail.builder()
-                    .detailDesc(detailDesc)
-                    .build()
+                        .detailDesc(detailDesc)
+                        .build()
         );
     }
 
@@ -138,15 +157,15 @@ public class ItemsRepositoryTest {
                                                  Double heapWidth, Double shoulderWidth, Double waistWidth, Double sleeveLength){
         return List.of(
                 ClothesSize.builder()
-                    .sizeLabel(sizeLabel)
-                    .backLength(backLength)
-                    .bottomWidth(bottomWidth)
-                    .chestWidth(chestWidth)
-                    .heapWidth(heapWidth)
-                    .shoulderWidth(shoulderWidth)
-                    .waistWidth(waistWidth)
-                    .sleeveLength(sleeveLength)
-                    .build(),
+                        .sizeLabel(sizeLabel)
+                        .backLength(backLength)
+                        .bottomWidth(bottomWidth)
+                        .chestWidth(chestWidth)
+                        .heapWidth(heapWidth)
+                        .shoulderWidth(shoulderWidth)
+                        .waistWidth(waistWidth)
+                        .sleeveLength(sleeveLength)
+                        .build(),
                 ClothesSize.builder()
                         .sizeLabel(sizeLabel)
                         .backLength(backLength)
@@ -158,29 +177,29 @@ public class ItemsRepositoryTest {
                         .sleeveLength(sleeveLength)
                         .build()
 
-                );
+        );
     }
 
     private List<ModelSize> createModelSizes(Double modelShoulderSize, Double modelHeap, Double modelWaist, Double modelHeight, Double modelWeight){
         return List.of(
                 ModelSize.builder()
-                    .modelShoulderSize(modelShoulderSize)
-                    .modelHeap(modelHeap)
-                    .modelWaist(modelWaist)
-                    .modelHeight(modelHeight)
-                    .modelWeight(modelWeight)
-                    .build()
+                        .modelShoulderSize(modelShoulderSize)
+                        .modelHeap(modelHeap)
+                        .modelWaist(modelWaist)
+                        .modelHeight(modelHeight)
+                        .modelWeight(modelWeight)
+                        .build()
         );
     }
 
     private List<ItemImage> createItemImages(String originalItemImageName, String itemImagePath, ImageType imageType, Long imageSize){
         return List.of(
                 ItemImage.builder()
-                    .originalItemImageName(originalItemImageName)
-                    .imageSize(imageSize)
-                    .itemImagePath(itemImagePath)
-                    .imageType(imageType)
-                    .build(),
+                        .originalItemImageName(originalItemImageName)
+                        .imageSize(imageSize)
+                        .itemImagePath(itemImagePath)
+                        .imageType(imageType)
+                        .build(),
 
                 ItemImage.builder()
                         .originalItemImageName(originalItemImageName)

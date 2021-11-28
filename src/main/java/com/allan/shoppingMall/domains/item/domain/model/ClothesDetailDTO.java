@@ -1,16 +1,21 @@
 package com.allan.shoppingMall.domains.item.domain.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
+/**
+ * front <-> server 데이터 전달 object
+ */
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class ClothesDetailsDTO {
+public class ClothesDetailDTO {
     private String detailDesc; // 원단 디테일 설명.
+
+    @Builder
+    public ClothesDetailDTO(String detailDesc) {
+        this.detailDesc = detailDesc;
+    }
 
     @Override
     public String toString(){

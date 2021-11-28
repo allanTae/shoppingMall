@@ -1,5 +1,9 @@
 package com.allan.shoppingMall.domains.item.presentation;
 
+import com.allan.shoppingMall.domains.item.domain.clothes.ClothesFabric;
+import com.allan.shoppingMall.domains.item.domain.model.ClothesDTO;
+import com.allan.shoppingMall.domains.item.domain.model.ClothesDetailDTO;
+import com.allan.shoppingMall.domains.item.domain.model.ClothesFabricDTO;
 import com.allan.shoppingMall.domains.item.domain.model.ClothesForm;
 import com.allan.shoppingMall.domains.item.service.ClothesService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +23,8 @@ public class ClothesController {
     @PostMapping("/save")
     public String saveClothes(@ModelAttribute("clothesForm") ClothesForm clothesForm){
         clothesService.saveClothes(clothesForm);
-        return "catalog/main";
+
+        return "redirect:/index";
     }
 
     @GetMapping("/clothesForm")
@@ -27,4 +32,11 @@ public class ClothesController {
         return "clothes/clothesForm";
     }
 
+    @GetMapping("/{clothesId}")
+    public String getClothes(@PathVariable("clothesId") Long clothesId, Model model){
+        ClothesDTO clothes = clothesService.getClothes(clothesId);
+        model.addAttribute("clothesInfo", clothes);
+
+        return "clothes/clothesDetail";
+    }
 }

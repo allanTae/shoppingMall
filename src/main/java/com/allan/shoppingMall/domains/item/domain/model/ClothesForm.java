@@ -1,6 +1,5 @@
 package com.allan.shoppingMall.domains.item.domain.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,12 +20,13 @@ public class ClothesForm {
     private Long price;
     private Long stockQuantity;
 
-    private List<ClothesFabricsDTO> clothesFabrics = new ArrayList<>();
-    private List<ClothesDetailsDTO> clothesDetails = new ArrayList<>();
-    private List<ClothesSizesDTO> clothesSizes = new ArrayList<>();
+    private List<ClothesFabricDTO> clothesFabrics = new ArrayList<>();
+    private List<ClothesDetailDTO> clothesDetails = new ArrayList<>();
+    private List<ClothesSizeDTO> clothesSizes = new ArrayList<>();
     private List<ModelSizeDTO> modelSizes = new ArrayList<>();
     private List<MultipartFile> profileImageFiles = new ArrayList<>();
     private List<MultipartFile> detailImageFiles = new ArrayList<>();
+    private List<ItemColorDTO> clothesColors = new ArrayList<>();
 
     @Override
     public String toString(){

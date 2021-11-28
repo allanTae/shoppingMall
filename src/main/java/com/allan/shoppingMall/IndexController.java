@@ -6,6 +6,7 @@ import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
 import com.allan.shoppingMall.domains.item.service.ClothesService;
 import com.allan.shoppingMall.domains.member.domain.Member;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class IndexController {
 
     private final ClothesService clothesService;
@@ -21,8 +23,11 @@ public class IndexController {
 
     @RequestMapping("/index")
     public String getIndex(Model model, Authentication authentication){
-        model.addAttribute("ClothesSummaryList", clothesService.getClothes());
-        getUserInfo(authentication, model);
+        model.addAttribute("ClothesSummaryList", clothesService.getClothesSummary());
+        if(authentication != null){
+            getUserInfo(authentication, model);
+        }
+
         return "/index";
     }
 

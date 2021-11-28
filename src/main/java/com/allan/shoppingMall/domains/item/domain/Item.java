@@ -28,6 +28,9 @@ public class Item extends BaseEntity {
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemImage> itemImages = new ArrayList<>();
 
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ItemColor> itemColors = new ArrayList<>();
+
     @Column(nullable = false, name = "stock_quantity")
     private Long stockQuantity;
 
@@ -43,10 +46,20 @@ public class Item extends BaseEntity {
      * @param itemImages
      */
     public void changeItemImages(List<ItemImage> itemImages){
-        log.info("Item Entity's changeItemImages() call");
         for(ItemImage itemImage : itemImages){
             this.itemImages.add(itemImage);
             itemImage.changeItem(this);
+        }
+    }
+
+    /**
+     * 양방향 매핑을 위한 연관 관계 편의 메소드.
+     * @param itemColors
+     */
+    public void changeItemColors(List<ItemColor> itemColors){
+        for(ItemColor color : itemColors){
+            this.itemColors.add(color);
+            color.changeItem(this);
         }
     }
 }

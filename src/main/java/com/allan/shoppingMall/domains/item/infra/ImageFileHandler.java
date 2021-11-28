@@ -26,10 +26,10 @@ import java.util.List;
 @Slf4j
 public class ImageFileHandler {
 
-    // 반환 할 ItemImage Entity list.
-    List<ItemImage> itemImages = new ArrayList<>();
-
     public List<ItemImage> parseImageInfo(List<MultipartFile> multipartFiles, ImageType imageType) throws IOException {
+
+        // 반환 할 ItemImage Entity list.
+        List<ItemImage> itemImages = new ArrayList<>();
 
         // 전달 된 파일 리스트가 비어 있는 경우.
         if(!CollectionUtils.isEmpty(multipartFiles)){
@@ -58,7 +58,7 @@ public class ImageFileHandler {
 
             for(MultipartFile multipartFile : multipartFiles){
                 String fileExtension =""; // 파일 확장자명.
-                String contentType = multipartFile.getContentType();
+                String contentType = multipartFile.getContentType(); // MEME TYPE.
 
                 // 확장자명이 존재하지 않는 경우.
                 if(ObjectUtils.isEmpty(contentType)){

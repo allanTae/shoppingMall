@@ -26,9 +26,6 @@
 
 </head>
 <body class="text-center">
-    <div id="tile_common">
-        <tiles:insertAttribute name="tile_common" />
-    </div>
 	<div id="tile_body">
 		<tiles:insertAttribute name="tile_body" />
 	</div>

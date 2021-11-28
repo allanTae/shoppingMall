@@ -1,15 +1,15 @@
 package com.allan.shoppingMall.domains.item.domain.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
+/**
+ * front <-> server 데이터 전달 object
+ */
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class ClothesSizesDTO {
+public class ClothesSizeDTO {
 
     // 의류 사이즈.
     private String sizeLabel;
@@ -34,6 +34,18 @@ public class ClothesSizesDTO {
 
     // 밑단 둘레 사이즈.
     private Double bottomWidth;
+
+    @Builder
+    public ClothesSizeDTO(String sizeLabel, Double backLength, Double chestWidth, Double shoulderWidth, Double sleeveLength, Double waistWidth, Double heapWidth, Double bottomWidth) {
+        this.sizeLabel = sizeLabel;
+        this.backLength = backLength;
+        this.chestWidth = chestWidth;
+        this.shoulderWidth = shoulderWidth;
+        this.sleeveLength = sleeveLength;
+        this.waistWidth = waistWidth;
+        this.heapWidth = heapWidth;
+        this.bottomWidth = bottomWidth;
+    }
 
     @Override
     public String toString() {

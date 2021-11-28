@@ -1,4 +1,4 @@
-package com.allan.shoppingMall.domains.item.domain.clothes;
+package com.allan.shoppingMall.domains.item.domain.model;
 
 import com.allan.shoppingMall.domains.item.domain.ImageType;
 import com.allan.shoppingMall.domains.item.domain.ItemImage;

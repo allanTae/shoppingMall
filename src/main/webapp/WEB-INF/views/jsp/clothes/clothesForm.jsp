@@ -14,6 +14,7 @@
     var detailTableIndex = 2;
     var sizeTableIndex = 2;
     var modelSizeTableIndex = 2;
+    var colorTableIndex = 2;
 
     // 회원가입 이벤트.
     $(document).on('click', '#btnEnroll', function(e){
@@ -24,52 +25,67 @@
     $(document).on('click', "#btnMaterialAdd", function(e){
         e.preventDefault();
         var htmls ='<tr>';
-        htmls += '<th scope="row">' + materialTableIndex++ + '</th>';
-        htmls += '<td><input type="email" class="form-control" id="materialPart" placeholder="원단 부위"></td>';
-        htmls += '<td colspan="2"><input type="email" class="form-control" id="materialDesc" placeholder="원단 설명"></td>';
+        htmls += '<th scope="row">' + materialTableIndex + '</th>';
+        htmls += '<td><input type="text" class="form-control" name="clothesFabrics[' + (materialTableIndex-1)  + '].materialPart' + '" placeholder="원단 부위"></td>';
+        htmls += '<td colspan="2"><input type="text" class="form-control" name="clothesFabrics[' + (materialTableIndex-1)  + '].materialDesc' +'" placeholder="원단 설명"></td>';
         htmls += '</tr>';
         $("#materialTable:last-child").append(htmls);
+        materialTableIndex++;
     });
 
     // 디테일 테이블 추가 버튼.
     $(document).on('click', "#btnDetailAdd", function(e){
         e.preventDefault();
         var htmls ='<tr>';
-        htmls += '<th scope="row">' + detailTableIndex++ + '</th>';
-        htmls += '<td><input type="email" class="form-control" id="materialPart" placeholder="세부설명을 입력 해 주세요."></td>';
+        htmls += '<th scope="row">' + detailTableIndex + '</th>';
+        htmls += '<td><input type="text" class="form-control" name="clothesDetails[' + (detailTableIndex-1) + '].detailDesc' +'" placeholder="세부설명을 입력 해 주세요."></td>';
         htmls += '</tr>';
         $("#detailTable:last-child").append(htmls);
+        detailTableIndex++;
     });
 
     // 사이즈 테이블 추가 버튼.
     $(document).on('click', "#btnSizeAdd", function(e){
         e.preventDefault();
         var htmls ='<tr>';
-        htmls += '<th scope="row">' + sizeTableIndex++ + '</th>';
-        htmls += '<td><input type="text" class="form-control" id="sizeLabel" placeholder="사이즈"></td>';
-        htmls += '<td><input type="text" class="form-control" id="backLength" placeholder="총장"></td>';
-        htmls += '<td><input type="text" class="form-control" id="chestWidth" placeholder="가슴둘레"></td>';
-        htmls += '<td><input type="text" class="form-control" id="shoulderWidth" placeholder="어깨넓이"></td>';
-        htmls += '<td><input type="text" class="form-control" id="sleeveLength" placeholder="소매길이"></td>';
-        htmls += '<td><input type="text" class="form-control" id="waistWidth" placeholder="허리둘레"></td>';
-        htmls += '<td><input type="text" class="form-control" id="heapWidth" placeholder="엉덩이"></td>';
-        htmls += '<td><input type="text" class="form-control" id="bottomWidth" placeholder="밑단둘레"></td>';
+        htmls += '<th scope="row">' + sizeTableIndex + '</th>';
+        htmls += '<td><input type="text" class="form-control" name="clothesSizes[' + (sizeTableIndex-1) + '].sizeLabel' + '" placeholder="사이즈"></td>';
+        htmls += '<td><input type="text" class="form-control" name="clothesSizes['+ (sizeTableIndex-1) + '].backLength' + '" placeholder="총장"></td>';
+        htmls += '<td><input type="text" class="form-control" name="clothesSizes[' + (sizeTableIndex-1) + '].chestWidth' + '" placeholder="가슴둘레"></td>';
+        htmls += '<td><input type="text" class="form-control" name="clothesSizes[' + (sizeTableIndex-1) + '].shoulderWidth' + '" placeholder="어깨넓이"></td>';
+        htmls += '<td><input type="text" class="form-control" name="clothesSizes[' + (sizeTableIndex-1) + '].sleeveLength' + '" placeholder="소매길이"></td>';
+        htmls += '<td><input type="text" class="form-control" name="clothesSizes[' + (sizeTableIndex-1) + '].waistWidth' + '" placeholder="허리둘레"></td>';
+        htmls += '<td><input type="text" class="form-control" name="clothesSizes[' + (sizeTableIndex-1) + '].heapWidth' + '" placeholder="엉덩이"></td>';
+        htmls += '<td><input type="text" class="form-control" name="clothesSizes[' + (sizeTableIndex-1) + '].bottomWidth' + '" placeholder="밑단둘레"></td>';
         htmls += '</tr>';
         $("#sizeTable:last-child").append(htmls);
+        sizeTableIndex++;
     });
 
     // 모델 사이즈 테이블 추가 버튼.
     $(document).on('click', "#btnModelSizeAdd", function(e){
         e.preventDefault();
         var htmls ='<tr>';
-        htmls += '<th scope="row">' + modelSizeTableIndex++ + '</th>';
-        htmls += '<td><input type="text" class="form-control" id="modelShoulderSize" placeholder="모델 어깨"></td>';
-        htmls += '<td><input type="text" class="form-control" id="modelWaist" placeholder="모델 허리"></td>';
-        htmls += '<td><input type="text" class="form-control" id="modelHeap" placeholder="모델 엉덩이"></td>';
-        htmls += '<td><input type="text" class="form-control" id="modelHeight" placeholder="모델 키"></td>';
-        htmls += '<td><input type="text" class="form-control" id="modelWeight" placeholder="모델 몸무게"></td>';
+        htmls += '<th scope="row">' + modelSizeTableIndex + '</th>';
+        htmls += '<td><input type="text" class="form-control" name="modelSizes[' + (modelSizeTableIndex-1) + '].modelShoulderSize' + '" placeholder="모델 어깨"></td>';
+        htmls += '<td><input type="text" class="form-control" name="modelSizes[' + (modelSizeTableIndex-1) + '].modelWaist' + '" placeholder="모델 허리"></td>';
+        htmls += '<td><input type="text" class="form-control" name="modelSizes[' + (modelSizeTableIndex-1) + '].modelHeap' + '" placeholder="모델 엉덩이"></td>';
+        htmls += '<td><input type="text" class="form-control" name="modelSizes[' + (modelSizeTableIndex-1) + '].modelHeight' + '" placeholder="모델 키"></td>';
+        htmls += '<td><input type="text" class="form-control" name="modelSizes[' + (modelSizeTableIndex-1) + '].modelWeight' + '" placeholder="모델 몸무게"></td>';
         htmls += '</tr>';
         $("#modelSizeTable:last-child").append(htmls);
+        modelSizeTableIndex++
+    });
+
+    // 색상 테이블 추가 버튼.
+    $(document).on('click', "#btnColorAdd", function(e){
+        e.preventDefault();
+        var htmls ='<tr>';
+        htmls += '<th scope="row">' + colorTableIndex + '</th>';
+        htmls += '<td><input type="text" class="form-control" name="clothesColors[' + (colorTableIndex-1) + '].color' +'" placeholder="색상을 입력 해 주세요."></td>';
+        htmls += '</tr>';
+        $("#colorTable:last-child").append(htmls);
+        colorTableIndex++;
     });
 
     // 취소 버튼 이벤트.
@@ -223,16 +239,37 @@
                           <tbody>
                             <tr>
                               <th scope="row">1</th>
-                              <td><input type="text" class="form-control" name="modelSize[0].modelShoulderSize" placeholder="모델 어깨"></td>
-                              <td><input type="text" class="form-control" name="modelSize[0].modelWaist" placeholder="모델 허리"></td>
-                              <td><input type="text" class="form-control" name="modelSize[0].modelHeap" placeholder="모델 엉덩이"></td>
-                              <td><input type="text" class="form-control" name="modelSize[0].modelHeight" placeholder="모델 키"></td>
-                              <td><input type="text" class="form-control" name="modelSize[0].modelWeight" placeholder="모델 몸무게"></td>
+                              <td><input type="text" class="form-control" name="modelSizes[0].modelShoulderSize" placeholder="모델 어깨"></td>
+                              <td><input type="text" class="form-control" name="modelSizes[0].modelWaist" placeholder="모델 허리"></td>
+                              <td><input type="text" class="form-control" name="modelSizes[0].modelHeap" placeholder="모델 엉덩이"></td>
+                              <td><input type="text" class="form-control" name="modelSizes[0].modelHeight" placeholder="모델 키"></td>
+                              <td><input type="text" class="form-control" name="modelSizes[0].modelWeight" placeholder="모델 몸무게"></td>
                             </tr>
                           </tbody>
                         </table>
                     </div>
                     <!-- end model size table-->
+
+                    <!-- colorTable -->
+                    <div class="form-group row">
+                        <label class="col-md-2">Color</label>
+                        <table class="table col-md-10" id="colorTable">
+                          <thead>
+                            <tr >
+                              <th scope="col" class="align-middle">#</th>
+                              <th scope="col" class="align-middle">색상</th>
+                              <th scope="col" class="align-middle"><button type="button" class="btn btn-prmary" id="btnColorAdd">+</button></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <th scope="row">1</th>
+                              <td><input type="text" class="form-control" name="clothesColors[0].color" placeholder="색상을 입력 해 주세요."></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                    </div>
+                    <!-- end color table -->
 
                     <!-- image file -->
                     <!-- 소개용 이미지 -->

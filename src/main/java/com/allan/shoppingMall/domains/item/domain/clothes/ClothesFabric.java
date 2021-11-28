@@ -2,8 +2,10 @@ package com.allan.shoppingMall.domains.item.domain.clothes;
 
 import com.allan.shoppingMall.common.domain.BaseEntity;
 import com.allan.shoppingMall.domains.item.domain.Item;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -14,6 +16,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Table(name = "clothesFabrics")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ClothesFabric extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

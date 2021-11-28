@@ -56,10 +56,11 @@ spring:
   jpa:
     show-sql: false
     hibernate:
-#      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
+        default_batch_fetch_size: 1000 # batch_size
 
   # 업로도 file 용량 설정.
   servlet:

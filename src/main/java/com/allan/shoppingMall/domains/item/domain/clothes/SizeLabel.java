@@ -7,12 +7,13 @@ import lombok.Getter;
 @Getter
 public enum SizeLabel {
 
-    S(1, "small size"),
-    M(2, "medium size"),
-    L(3, "large size");
+    S(1, "small size", "S"),
+    M(2, "medium size", "M"),
+    L(3, "large size", "L");
 
     private int id;
     private String desc;
+    private String key;
 
     public static SizeLabel valueOf(int id){
         switch(id){
