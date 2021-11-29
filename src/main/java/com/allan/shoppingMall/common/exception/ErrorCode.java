@@ -21,6 +21,7 @@ public enum ErrorCode {
     MEMBER_INPUT_NULL_VALUE(400, "M003", "회원 정보로 null 값은 입력 하실 수 없습니다."),
 
     // Order
+    ORDER_CANCEL_NOT_ALLOWED(400, "OR001", "주문 취소 가능한 상태가 아닙니다."),
 
     // Item
     ITEM_STOCK_QUANTITY_EXCEEDED(400, "I001", "상품의 재고량이 부족합니다."),

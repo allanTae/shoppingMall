@@ -37,7 +37,7 @@ public class MemberService {
                 .email(form.getEmail())
                 .gender(Gender.valueOf(Integer.parseInt(form.getGender())))
                 .dateOfBirth(form.getDateOfBirth())
-                .phoneNumber(form.getPhone())
+                .phone(form.getPhone())
                 .build();
 
         if(validateAuthId(member.getAuthId())){

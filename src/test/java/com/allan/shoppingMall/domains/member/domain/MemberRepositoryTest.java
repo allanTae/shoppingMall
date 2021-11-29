@@ -54,7 +54,7 @@ public class MemberRepositoryTest {
                 .email("testEmail")
                 .dateOfBirth("19990212")
                 .gender(Gender.MAN)
-                .phoneNumber("000-1234-1234")
+                .phone("000-1234-1234")
                 .authId("testAuthId")
                 .pwd("testPwd")
                 .build();

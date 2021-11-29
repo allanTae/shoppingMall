@@ -1,11 +1,12 @@
 package com.allan.shoppingMall.domains.order.domain;
 
-import com.allan.shoppingMall.common.exception.OrderFailException;
+import com.allan.shoppingMall.common.exception.order.OrderFailException;
 import com.allan.shoppingMall.domains.item.domain.Item;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -20,6 +21,7 @@ import java.util.Objects;
 @Table(name = "order_items")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Slf4j
 public class OrderItem {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,11 +41,10 @@ public class OrderItem {
     @JoinColumn(name = "item_id")
     private Item item;
 
-    @Builder
-    public OrderItem(Long orderQuantity, Long orderItemAmount, Item item) {
+    public OrderItem(Long orderQuantity, Item item) {
         this.orderQuantity = orderQuantity;
-        this.orderItemAmount = orderItemAmount;
         this.item = setItem(item);
+        calculateAmount();
     }
 
     private Item setItem(Item item) throws OrderFailException {
@@ -59,7 +60,8 @@ public class OrderItem {
     }
 
     /**
-     * 상품의 재고량을 수정하는 메소드.
+     * 주문 취소에 따
+     * 상품의 재고량을 수정하는 메소라드.
      */
     public void cancelOrderItem(){
         this.item.addStockQuantity(this.orderQuantity);
@@ -73,20 +75,36 @@ public class OrderItem {
         this.order = order;
     }
 
+
     @Override
     public int hashCode() {
-        return Objects.hashCode(orderItemId);
+        return Objects.hashCode(this.item.getItemId());
     }
 
+    /**
+     * 주문시, 동일한 주문상품 도메인이 들어가는 것을 방지하기 위한 비교함수.
+     * 하나의 주문의 주문상품 도메인에는 동일한 상품이 들어가지 않는다.
+     * 그렇기에 비교값으로 상품도메인의 고유 아이디로 비교를 한다.
+     * (주문 도메인을 통해 주문상품 도메인이 만들어지고,주문 도메인 persist 시점에 주문상품 도메인이
+     * 같이 persist 되기 때문에 주문상품 도메인의 고유 아이디로 비교하지 않는다.)
+     * @param obj
+     * @return boolean
+     */
     @Override
     public boolean equals(Object obj) {
+        log.info("orderItems equals() call!!!");
+        if(obj == null){
+            log.error("OrderItem equals()'s parameter is null");
+            return false;
+        }
         if(this == obj)
             return true;
-
         if(!(obj instanceof OrderItem))
             return false;
 
-        return this.orderItemId == ((OrderItem) obj).orderItemId;
+        log.info("this.orderItemId: " + this.orderItemId);
+        log.info("obj orderItemId:" + ((OrderItem) obj).getOrderItemId());
+        return this.item.getItemId() == ((OrderItem) obj).getItem().getItemId();
     }
 
 }

@@ -94,7 +94,7 @@ public class RestMemberControllerTest {
                 .pwd("test_pwd")
                 .address(new Address("jibun_addr", "road_addr", "postCode", "detail_addr", "extra_addr"))
                 .nickName("test_nickname")
-                .phoneNumber("000-0000-0000")
+                .phone("000-0000-0000")
                 .gender(Gender.MAN)
                 .email("test_email")
                 .role(MemberRole.ACTIVATED_USER)

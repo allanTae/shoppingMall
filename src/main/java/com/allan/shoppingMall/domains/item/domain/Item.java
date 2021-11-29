@@ -2,7 +2,7 @@ package com.allan.shoppingMall.domains.item.domain;
 
 import com.allan.shoppingMall.common.domain.BaseEntity;
 import com.allan.shoppingMall.common.exception.ErrorCode;
-import com.allan.shoppingMall.common.exception.OrderFailException;
+import com.allan.shoppingMall.common.exception.order.OrderFailException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

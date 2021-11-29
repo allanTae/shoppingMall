@@ -108,7 +108,7 @@ public class Member extends BaseTimeEntity {
     }
 
     @Builder
-    public Member(Long memberId, int age, String authId, String pwd, Address address, Gender gender, String email, String phoneNumber, String dateOfBirth, Long milege, String name, String nickName, MemberRole role) {
+    public Member(Long memberId, int age, String authId, String pwd, Address address, Gender gender, String email, String phone, String dateOfBirth, Long milege, String name, String nickName, MemberRole role) {
         this.memberId = memberId;
         this.age = age;
         this.authId = authId;
@@ -116,7 +116,7 @@ public class Member extends BaseTimeEntity {
         this.address = address;
         this.gender = gender;
         this.email = email;
-        this.phone = phoneNumber;
+        this.phone = phone;
         this.dateOfBirth = dateOfBirth;
         this.milege = milege;
         this.name = name;

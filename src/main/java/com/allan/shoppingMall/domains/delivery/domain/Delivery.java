@@ -1,8 +1,11 @@
 package com.allan.shoppingMall.domains.delivery.domain;
 
 import com.allan.shoppingMall.common.domain.BaseEntity;
+import com.allan.shoppingMall.common.exception.ErrorCode;
+import com.allan.shoppingMall.common.exception.order.OrderCancelFailException;
 import com.allan.shoppingMall.common.value.Address;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,4 +26,20 @@ public class Delivery extends BaseEntity {
     @Embedded
     private Address address;
 
+    @Builder
+    public Delivery(DeliveryStatus deliveryStatus, Address address) {
+        this.deliveryStatus = deliveryStatus;
+        this.address = address;
+    }
+
+    /**
+     * 배송 취소 메소드.
+     */
+    public void cancelDelivery(){
+        if(deliveryStatus == DeliveryStatus.DELIVERY_READY)
+            this.deliveryStatus = DeliveryStatus.DELIVERY_CANCEL;
+        else{
+            throw new OrderCancelFailException(ErrorCode.ORDER_CANCEL_NOT_ALLOWED.getMessage(), ErrorCode.ORDER_CANCEL_NOT_ALLOWED);
+        }
+    }
 }
