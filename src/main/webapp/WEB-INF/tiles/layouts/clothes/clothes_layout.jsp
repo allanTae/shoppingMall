@@ -21,6 +21,8 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="${pageContext.request.contextPath}/resources/common/css/index/indexStyle.css" rel="stylesheet" />
+    <!-- Clothes CSS-->
+    <link href="${pageContext.request.contextPath}/resources/common/css/clothes/clothesStyle.css" rel="stylesheet" />
 
     <!-- Bootstrap core JS-->
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
@@ -28,6 +30,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
     <!-- Core theme JS-->
     <script src="${pageContext.request.contextPath}/resources/common/js/index/indexScript.js"></script>
+
 
 </head>
 <body class="text-center" id="page-top">

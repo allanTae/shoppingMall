@@ -12,24 +12,31 @@
 
     <!-- base -->
     <definition name="base-layout" template="/WEB-INF/tiles/layouts/base_layout.jsp">
-        <put-attribute name="tile_header" value="/WEB-INF/tiles/layouts/common/header.jsp" />
-        <put-attribute name="tile_common" value="/WEB-INF/tiles/layouts/common/common.jsp" />
-    </definition>
-    <definition name="member/*" extends="base-layout">
-        <put-attribute name="tile_body" value="/WEB-INF/views/jsp/member/{1}.jsp" />
-    </definition>
-    <definition name="clothes/*" extends="base-layout">
-        <put-attribute name="tile_body" value="/WEB-INF/views/jsp/clothes/{1}.jsp" />
-    </definition>
-    <definition name="catalog/*" extends="base-layout">
-        <put-attribute name="tile_body" value="/WEB-INF/views/jsp/catalog/{1}.jsp" />
+        <put-attribute name="tile_nav" value="/WEB-INF/tiles/layouts/common/nav.jsp" />
     </definition>
 
     <!-- index -->
     <definition name="index-layout" template="/WEB-INF/tiles/layouts/index_layout.jsp">
+        <put-attribute name="tile_nav" value="/WEB-INF/tiles/layouts/common/nav.jsp" />
     </definition>
-    <definition name="index" extends="index-layout">
+    <definition name="/index" extends="index-layout">
         <put-attribute name="tile_body" value="/WEB-INF/views/jsp/index.jsp" />
+    </definition>
+
+    <!-- clothes -->
+    <definition name="clothes-layout" template="/WEB-INF/tiles/layouts/clothes/clothes_layout.jsp">
+        <put-attribute name="tile_nav" value="/WEB-INF/tiles/layouts/common/nav.jsp" />
+    </definition>
+    <definition name="clothes/*" extends="clothes-layout">
+        <put-attribute name="tile_body" value="/WEB-INF/views/jsp/clothes/{1}.jsp" />
+    </definition>
+
+    <!-- member -->
+    <definition name="member-layout" template="/WEB-INF/tiles/layouts/member/member_layout.jsp">
+        <put-attribute name="tile_common" value="/WEB-INF/tiles/layouts/common/common.jsp" />
+    </definition>
+    <definition name="member/*" extends="member-layout">
+        <put-attribute name="tile_body" value="/WEB-INF/views/jsp/member/{1}.jsp" />
     </definition>
 
 </tiles-definitions>

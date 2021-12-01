@@ -1,0 +1,12 @@
+.itemContainer{
+    margin-top: 100px;
+}
+
+.clothesCardContainer{
+    margin-top: 100px;
+}
+
+.selectedRequireOptionBlockWrap {
+    background-color: rgba(79,79,79,0.03);
+    display:none;
+}

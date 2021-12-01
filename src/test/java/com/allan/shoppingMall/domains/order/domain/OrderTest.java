@@ -16,7 +16,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 
@@ -34,9 +33,9 @@ public class OrderTest {
     TestEntityManager testEntityManager;
 
     @Test
-    public void 주문_취소_테스트() throws Exception {
+    public void 고객이_주문_취소_테스트() throws Exception {
         //given
-        Order TEST_ORDER = createOrder();
+        Order TEST_ORDER = createOrderByMember();
         testEntityManager.persist(TEST_ORDER);
 
         //when
@@ -59,7 +58,7 @@ public class OrderTest {
         testEntityManager.persist(TEST_ITEM);
         testEntityManager.persist(TEST_ORDERER);
 
-        Order TEST_ORDER = createOrder(TEST_ORDERER);
+        Order TEST_ORDER = createOrderByMember(TEST_ORDERER);
         TEST_ORDER.changeOrderItems(createdOrderItems(TEST_ITEM));
         testEntityManager.persist(TEST_ORDER);
 
@@ -106,9 +105,9 @@ public class OrderTest {
         return clothes;
     }
 
-    private Order createOrder() {
+    private Order createOrderByMember() {
         return Order.builder()
-                .orderStatus(OrderStatus.ORDER_COMPLETE)
+                .orderStatus(OrderStatus.ORDER_READY)
                 .orderer(createMember())
                 .delivery(Delivery.builder()
                         .address(new Address("", "", "", "", ""))
@@ -117,7 +116,7 @@ public class OrderTest {
                 .build();
     }
 
-    private Order createOrder(Member orderer) {
+    private Order createOrderByMember(Member orderer) {
         return Order.builder()
                 .orderStatus(OrderStatus.ORDER_COMPLETE)
                 .orderer(orderer)

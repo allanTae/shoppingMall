@@ -45,10 +45,14 @@ public class ClothesDTO {
     // 의류에 기타 정보를 담을 필드.
     private String etc;
 
+    // 의상 상세 페이지에서 사용.
+    private int clothesSizesCnt;
+    private int clothesColorsCnt;
+
     @Builder
     public ClothesDTO(Long clothesId, String clothesName, Long price, Long stockQuantity, String engName, List<ItemImage> itemImages, List<ModelSizeDTO> modelSizes,
                       List<ClothesFabricDTO> clothesFabrics, List<ClothesDetailDTO> clothesDetails, List<ClothesSizeDTO> clothesSizes, String etc,
-                      List<ItemColorDTO> colors) {
+                      List<ItemColorDTO> colors, int clothesSizesCnt, int clothesColorsCnt) {
         this.clothesId = clothesId;
         this.clothesName = clothesName;
         this.price = price;
@@ -61,6 +65,8 @@ public class ClothesDTO {
         this.etc = etc;
         setImgaes(itemImages);
         this.colors = colors;
+        this.clothesSizesCnt = clothesSizesCnt;
+        this.clothesColorsCnt = clothesColorsCnt;
     }
 
     /**

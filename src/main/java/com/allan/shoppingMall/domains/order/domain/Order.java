@@ -71,11 +71,11 @@ public class Order extends BaseEntity {
     }
 
     /**
-     * 주문 취소 메소드.
+     * 고객이 주문 취소 할때 사용하는 메소드.
      */
     public void cancelOrder(){
         // 주문상태 점검.
-        if(this.orderStatus == OrderStatus.ORDER_COMPLETE){
+        if(this.orderStatus == OrderStatus.ORDER_READY){
             this.orderStatus = OrderStatus.ORDER_CANCEL;
             this.delivery.cancelDelivery();
             for(OrderItem orderItem : this.orderItems){
