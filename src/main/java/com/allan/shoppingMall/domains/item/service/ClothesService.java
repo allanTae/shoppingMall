@@ -198,8 +198,6 @@ public class ClothesService {
                                     .modelSizes(modelSizeDTOS)
                                     .itemImages(findClothes.getItemImages())
                                     .colors(colorDTOS)
-                                    .clothesSizesCnt(sizeDTOS.size())
-                                    .clothesColorsCnt(colorDTOS.size())
                                     .build();
 
         return clothesDTO;

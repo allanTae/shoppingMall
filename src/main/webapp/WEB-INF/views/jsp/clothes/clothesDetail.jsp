@@ -121,6 +121,7 @@
                         </div>
                     </div>
                 </div>
+                <!-- end of goodsSummary -->
                 <div class="chooseOption">
                     <p class="m-0"><br /></p>
                     <p class="text-start m-0">필수옵션*</p>
@@ -137,36 +138,11 @@
                         <option class="" value="${index.count}">${clothesColor.color}</option>
                       </c:forEach>
                     </select>
-                    <div class="row">
-                      <div class="col">
-                        <div class="collapse multi-collapse" id="multiCollapseExample1">
-                          <div class="card card-body">
-                            Some placeholder content for the first collapse component of this multi-collapse example. This panel is hidden by default but revealed when the user activates the relevant trigger.
-                          </div>
-                        </div>
-                      </div>
                 </div>
                 <p class="m-0"><br /></p>
-                <div class="selectedRequireOptionBlockWrap" id="selectedClothesArea">
-                    <div class="selectedRequireOptionBlock p-4">
-                        <div class="sizeOptionBlock row align-center">
-                            <span class="sizeArea col-md-3 align-text-top">M</span>
-                            <div class="col-md-7" role="paragraph">
-                            </div>
-                            <button class="btn btn-outline-dark col-md-1">X</button>
-                        </div>
-                        <hr />
-                        <div class="colorOptionBlock row">
-                            <div class="btn-group col-md-3">
-                              <button class="btn btn-outline-dark border-end-0 col-md-1">-</button>
-                              <input type="text" value="1" class="col-md-4 text-center border-1" style="border-color: #212529";/>
-                              <button class="btn btn-outline-dark border-start-0 col-md-1">+</button>
-                            </div>
-                            <div class="col-md-5" role="paragraph">
-                            </div>
-                            <span class="col-md-4 text-end align-center"><fmt:formatNumber type="number" maxFractionDigits="3" value="${clothesInfo.price}" />원</span>
-                        </div>
-                    </div>
+                <div class="selectedRequireOptionBlockWrap" id="selectedClothesArea"></div>
+                <div class="totalAmountWrap">
+                    <div id="totalAmount"></div>
                 </div>
                 <p class="m-0"><br /></p>
                 <div class="buyBtns">
@@ -219,6 +195,7 @@
     </div>
 
     <script>
+      // 최소 주문량 체크 method.
       function validateOrderCount() {
         let orderCount = parseInt(document.getElementById("orderCountInput").value);
 
@@ -229,12 +206,97 @@
         return true;
       }
 
+      // 셀렉트 된 상품의 수량 증가 버튼 이벤트.
+      $(document).on("click", "#btnAddQuantity", function(){
+        var beforeSelectedItemOrderCount = Number($(this).prev().val());
+        var afterSelectedItemOrderCount = beforeSelectedItemOrderCount + 1;
+        $(this).parent().next().next().text(addComma(afterSelectedItemOrderCount*defaultAmount) + "원");
+       // console.log("val: " + $(this).parent().next().next().val());
+
+        // 총가격 수정.
+        addTotalAmount(1);
+        totalAmountForm();
+        $(this).prev().val(afterSelectedItemOrderCount);
+      });
+
+      // 셀렉트 된 상품의 수량 감소 버튼 이벤트.
+      $(document).on("click", "#btnSubQuantity", function(){
+        var beforeSelectedItemOrderCount = Number($(this).next().val());
+        var afterSelectedItemOrderCount = beforeSelectedItemOrderCount - 1;
+        if(beforeSelectedItemOrderCount === 1){
+          alert("최소 1개이상은 주문해야 합니다.");
+          return;
+        }
+        $(this).parent().next().next().text(addComma(afterSelectedItemOrderCount*defaultAmount) + "원");
+      //  console.log("val: " + $(this).parent().next().next().text());
+
+        // 총가격 수정.
+        subTotalAmount(1);
+        totalAmountForm();
+        $(this).next().val(afterSelectedItemOrderCount);
+      });
+
+      // 셀렉트 된 상품의 주문량 클릭 이벤트.
+      $(document).on("change","#selectedItemOrderQuantity",function(){
+        var orderQuantity = Number($(this).val());
+        if(orderQuantity === 0){
+            alert("최소 1개이상은 주문해야 합니다.");
+            return;
+        }
+        if(tempSelectedItemQuantity < orderQuantity){
+            addTotalAmount(orderQuantity-tempSelectedItemQuantity);
+            totalAmountForm();
+        }else if(tempSelectedItemQuantity > orderQuantity){
+            subTotalAmount(tempSelectedItemQuantity-orderQuantity);
+            totalAmountForm();
+        }
+        $(this).blur(); // enter시 blur.
+      });
+
+      // 셀렉트 된 상품의 주문량 포커스 이벤트.
+      // 주문량 값이 change 되기 전 주문량을 임시저장 합니다.(임시 저장된 값은 change event 가 발생하면, 변경 된 값을 총 주문량과 총 주문가격에 반영하기 위해 사용합니다.)
+      $(document).on("focus", "#selectedItemOrderQuantity",function(){
+        var selectedItemOrderQuantity = Number($(this).val());
+
+        // 셀렉트 된 상품의 주문량이 0인 경우는 주문이 되지 않도록 하기 위해서
+        // 0인 경우에 주문량은 임시저장하지 않는다.
+        if(selectedItemOrderQuantity !== 0 )
+            tempSelectedItemQuantity = Number($(this).val());
+      });
+
+      // 사용자가 선택(셀렉트)한 상품 필수 옵션을 저장하기 위한 배열.
+      // 셀렉트 한 상품을 등록하기 위함(동일한 상품 추가 하지 않기 위함).
+      var arrSelectedItem = [];
+
+      // select 된 상품의 삭제 기능을 수행합니다.
+      // select 된 상품 제거, 셀렉트 된 모든 상품의 총 가격 계산등의 기능이 $(this) 를 이용하여 접근하기 때문에
+      // addSelectedItem() 에서 출력하는 tag 내용에 순서가 바뀌게 된다면, 에러가 발생 할 수 있으니, 주의 해야 합니다.
+      // 셀렉트 상품 삭제 event.
+      $(document).on("click", "#btnSelectedItemClose", function(event){
+          var selectedOptionInfo = $(this).next().text(); // selectedSize + selectedColor 정보를 담고있는 span tag.
+          var isArray = jQuery.inArray(selectedOptionInfo, arrSelectedItem);
+          if(isArray !== -1){
+            // 필수옵션 배열에서 필수옵션 값 제거.
+            arrSelectedItem.splice(isArray, 1);
+          }
+          // selectItem form 제거.
+          var selectedItem = $(this).parent().parent().remove();
+
+          // totalAmount 차감 및 totalAmountform 수정.
+          var seletedItemCount =  $(this).parent().next().next().children().children().next().val(); // 셀렉트한 상품의 수량 정보 input 태그 value.
+          subTotalAmount(seletedItemCount);
+          totalAmountForm();
+      });
+
+      // 상품 필수 옵션 체크 변수.
       var orderColorCheck = false;
       var orderSizeCheck = false;
 
+      // 의상 사이즈 select form event.
       $("#clothesSizeSelect").on("change", function(event){
-        var selectedVal = Number($(this).val());
-        if(isNaN(selectedVal) === true){
+        var selectedSize = Number($(this).val());
+        // select option 값이 숫자가 아니라면,
+        if(isNaN(selectedSize) === true){
             orderSizeCheck = false;
         }else{
             orderSizeCheck = true;
@@ -242,9 +304,10 @@
         }
       });
 
+      // 의상 색상 select form event.
       $("#clothesColorSelect").on("change", function(event){
-        var selectedVal = Number($(this).val());
-        if(isNaN(selectedVal) === true){
+        var selectedColor = $(this).val();
+        if(isNaN(selectedColor) === true){
            orderColorCheck = false;
         }else{
             orderColorCheck = true;
@@ -252,17 +315,99 @@
         }
       });
 
+      // 주문 필수 옵션 체크 및 필수옵션값 초기화 method.
       function checkSelectOptions(){
         if(orderSizeCheck === true && orderColorCheck === true){
-            console.log("check is true");
+
+            // selected text.
+            var selectedSize = $("select[id=clothesSizeSelect] option:selected").text();
+            var selectedColor = $("select[id=clothesColorSelect] option:selected").text();
+
+            var selectedOptionInfo = selectedSize + selectedColor;
+            // 셀렉트한 상품이 배열에 등록되지 않은 경우에만,
+            if(jQuery.inArray(selectedOptionInfo, arrSelectedItem) === -1){
+                // 셀렉트한 상품 배열에 등록.
+                arrSelectedItem.push(selectedOptionInfo);
+
+                // selected form 추가.
+                addSelectedItem(selectedSize, selectedColor, selectedOptionInfo);
+
+                // totalAmount form 추가.
+                addTotalAmount(1);
+                totalAmountForm();
+            }else{
+                alert("이미 등록 된 상품입니다.");
+            }
+
+            // 필수 옵션값 및 select tag option 초기화.
             $("#clothesSizeSelect option:eq(0)").prop("selected", true);
             $("#clothesColorSelect option:eq(0)").prop("selected", true);
-            var con = document.getElementById("selectedClothesArea");
-                if(con.style.display == ''){
-                    con.style.display = 'block';
-                    console.log("block!!!");
-                }
+            orderColorCheck = false;
+            orderSizeCheck = false;
         }
+      }
+
+      // 셀렉트한 상품 tag 생성 method.
+      // htmls 태그 내용이 수정 된다면, btnSelectedItemClose 에 click 이벤트를 처리하는 곳도 수정 해 주어야 합니다.
+      function addSelectedItem(selectedSize,selectedColor,selectedOptionInfo){
+        var htmls = "";
+        htmls += '<div class="selectedRequireOptionBlock p-4 mb-1">';
+        htmls += '  <div class="sizeOptionBlock row align-center">';
+        htmls += '    <span class="sizeArea col-md-3 align-text-top">' + selectedSize + '(color: ' + selectedColor + ')</span>';
+        htmls += '    <div class="col-md-7" role="paragraph"></div>';
+        htmls += '    <button id="btnSelectedItemClose" class="btn btn-outline-dark col-md-1" >X</button>';
+        htmls += '    <span id="selectedOptionInfo" style="display=none;">' + selectedOptionInfo +'</span>'; // 셀렉트한 상품을 삭제할 때 사용하기 위한 정보.
+        htmls += '  </div>';
+        htmls += '  <hr />';
+        htmls += '  <div class="colorOptionBlock row">';
+        htmls += '    <div class="btn-group col-md-3">';
+        htmls += '      <button class="btn btn-outline-dark border-end-0 col-md-1" id="btnSubQuantity">-</button>';
+        htmls += '      <input type="text" value="1" class="col-md-4 text-center border-1" id="selectedItemOrderQuantity" style="border-color: #212529";/>';
+        htmls += '      <button class="btn btn-outline-dark border-start-0 col-md-1" id="btnAddQuantity">+</button>';
+        htmls += '    </div>';
+        htmls += '    <div class="col-md-5" role="paragraph"></div>';
+        htmls += '    <span class="col-md-4 text-end align-center"><fmt:formatNumber type="number" maxFractionDigits="3" value="${clothesInfo.price}" />원</span>';
+        htmls += '  </div>';
+        htmls += '</div>';
+        $("#selectedClothesArea").append(htmls);
+      }
+
+      var defaultAmount = ${clothesInfo.price};
+      var totalAmount = 0;
+      var totalCount = 0;
+      var tempSelectedItemQuantity = 0;
+
+      // 결제 금액 추가 메소드.
+      function addTotalAmount(addQuantity){
+        totalAmount = totalAmount + (defaultAmount * addQuantity);
+        totalCount = totalCount + addQuantity;
+      }
+
+      // 결제 금액 차감 메소드.
+      function subTotalAmount(substractQuantity){
+        totalAmount = totalAmount - (defaultAmount * substractQuantity);
+        totalCount = totalCount - substractQuantity;
+      }
+
+      // 총 금액 tag 생성 메소드.
+      function totalAmountForm(){
+        var totalAmountComma = addComma(totalAmount);
+        var htmls="";
+        htmls += '<div id="totalAmount">';
+        htmls += '  <hr />';
+        htmls += '  <div class="row">';
+        htmls += '    <div class="col-md-6 text-start">총 상품 금액(<span></span>' + totalCount +'개)</div>';
+        htmls += '    <div class="col-md-6 text-end">' + totalAmountComma + '원</div>';
+        htmls += '  </div>';
+        htmls += '</div>';
+
+        $("#totalAmount").html(htmls);
+      }
+
+      //천단위 콤마 펑션
+      function addComma(value){
+          commaValue = String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+          return commaValue;
       }
 
     </script>
