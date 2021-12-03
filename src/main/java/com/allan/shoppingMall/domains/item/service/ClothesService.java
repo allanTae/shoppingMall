@@ -98,18 +98,12 @@ public class ClothesService {
         }
 
         // 색상 정보.
-        List<ItemColor> itemColors = form.getClothesColors()
-                .stream()
-                .map(itemColor -> {
-                    return ItemColor.builder().color(itemColor.getColor()).build();
-                })
-                .collect(Collectors.toList());
-
         Clothes clothes = Clothes.builder()
                 .name(form.getName())
                 .price(form.getPrice())
                 .engName(form.getEngName())
                 .stockQuantity(form.getStockQuantity())
+                .color(Color.valueOf(form.getClothesColor()))
                 .build();
 
         clothes.changeClothesFabrics(fabrics);
@@ -118,7 +112,6 @@ public class ClothesService {
         clothes.changeModelSizes(modelSizes);
         clothes.changeItemImages(profileItemImages);
         clothes.changeItemImages(detailItemImages);
-        clothes.changeItemColors(itemColors);
 
         clothesRepository.save(clothes);
         return clothes.getItemId();
@@ -179,14 +172,6 @@ public class ClothesService {
                             .build();
                 }).collect(Collectors.toList());
 
-        List<ItemColorDTO> colorDTOS = findClothes.getItemColors()
-                .stream()
-                .map(itemColor -> {
-                    return ItemColorDTO.builder()
-                            .color(itemColor.getColor())
-                            .build();
-                }).collect(Collectors.toList());
-
         ClothesDTO clothesDTO = ClothesDTO.builder()
                                     .clothesName(findClothes.getName())
                                     .engName(findClothes.getEngName())
@@ -197,7 +182,7 @@ public class ClothesService {
                                     .clothesSizes(sizeDTOS)
                                     .modelSizes(modelSizeDTOS)
                                     .itemImages(findClothes.getItemImages())
-                                    .colors(colorDTOS)
+                                    .color(findClothes.getColor().getDesc())
                                     .build();
 
         return clothesDTO;

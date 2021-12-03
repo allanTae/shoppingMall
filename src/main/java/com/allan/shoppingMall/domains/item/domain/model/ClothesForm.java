@@ -19,6 +19,7 @@ public class ClothesForm {
     private String engName;
     private Long price;
     private Long stockQuantity;
+    private int clothesColor;
 
     private List<ClothesFabricDTO> clothesFabrics = new ArrayList<>();
     private List<ClothesDetailDTO> clothesDetails = new ArrayList<>();
@@ -26,7 +27,6 @@ public class ClothesForm {
     private List<ModelSizeDTO> modelSizes = new ArrayList<>();
     private List<MultipartFile> profileImageFiles = new ArrayList<>();
     private List<MultipartFile> detailImageFiles = new ArrayList<>();
-    private List<ItemColorDTO> clothesColors = new ArrayList<>();
 
     @Override
     public String toString(){

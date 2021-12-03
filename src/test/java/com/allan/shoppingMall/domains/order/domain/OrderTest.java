@@ -4,6 +4,7 @@ import com.allan.shoppingMall.common.config.jpa.auditing.JpaAuditingConfig;
 import com.allan.shoppingMall.common.value.Address;
 import com.allan.shoppingMall.domains.delivery.domain.Delivery;
 import com.allan.shoppingMall.domains.delivery.domain.DeliveryStatus;
+import com.allan.shoppingMall.domains.item.domain.Color;
 import com.allan.shoppingMall.domains.item.domain.Item;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
 import com.allan.shoppingMall.domains.member.domain.Gender;
@@ -100,6 +101,7 @@ public class OrderTest {
                 .price(100l)
                 .stockQuantity(20l)
                 .engName("testEngname")
+                .color(Color.RED)
                 .build();
 
         return clothes;

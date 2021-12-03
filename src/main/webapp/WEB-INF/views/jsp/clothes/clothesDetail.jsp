@@ -132,12 +132,6 @@
                       </c:forEach>
                     </select>
                     <p class="m-0"><br /></p>
-                    <select class="form-select" id="clothesColorSelect" aria-label="Default select example">
-                      <option selected>색상을 선택 해 주세요.(필수)</option>
-                      <c:forEach var="clothesColor" items="${clothesInfo.colors}" varStatus="index" >
-                        <option class="" value="${index.count}">${clothesColor.color}</option>
-                      </c:forEach>
-                    </select>
                 </div>
                 <p class="m-0"><br /></p>
                 <div class="selectedRequireOptionBlockWrap" id="selectedClothesArea"></div>
@@ -243,6 +237,7 @@
             alert("최소 1개이상은 주문해야 합니다.");
             return;
         }
+        $(this).parent().next().next().text(addComma(orderQuantity*defaultAmount) + "원");
         if(tempSelectedItemQuantity < orderQuantity){
             addTotalAmount(orderQuantity-tempSelectedItemQuantity);
             totalAmountForm();
@@ -289,7 +284,6 @@
       });
 
       // 상품 필수 옵션 체크 변수.
-      var orderColorCheck = false;
       var orderSizeCheck = false;
 
       // 의상 사이즈 select form event.
@@ -304,26 +298,15 @@
         }
       });
 
-      // 의상 색상 select form event.
-      $("#clothesColorSelect").on("change", function(event){
-        var selectedColor = $(this).val();
-        if(isNaN(selectedColor) === true){
-           orderColorCheck = false;
-        }else{
-            orderColorCheck = true;
-            checkSelectOptions();
-        }
-      });
-
       // 주문 필수 옵션 체크 및 필수옵션값 초기화 method.
       function checkSelectOptions(){
-        if(orderSizeCheck === true && orderColorCheck === true){
+        if(orderSizeCheck === true){
 
             // selected text.
             var selectedSize = $("select[id=clothesSizeSelect] option:selected").text();
-            var selectedColor = $("select[id=clothesColorSelect] option:selected").text();
+            var selectedColor = "${clothesInfo.color}";
 
-            var selectedOptionInfo = selectedSize + selectedColor;
+            var selectedOptionInfo = selectedSize;
             // 셀렉트한 상품이 배열에 등록되지 않은 경우에만,
             if(jQuery.inArray(selectedOptionInfo, arrSelectedItem) === -1){
                 // 셀렉트한 상품 배열에 등록.
@@ -342,7 +325,6 @@
             // 필수 옵션값 및 select tag option 초기화.
             $("#clothesSizeSelect option:eq(0)").prop("selected", true);
             $("#clothesColorSelect option:eq(0)").prop("selected", true);
-            orderColorCheck = false;
             orderSizeCheck = false;
         }
       }

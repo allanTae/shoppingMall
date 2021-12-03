@@ -40,7 +40,7 @@ public class ClothesDTO {
 
     private List<ClothesSizeDTO> clothesSizes = new ArrayList<>();
 
-    private List<ItemColorDTO> colors = new ArrayList<>();
+    private String color;
 
     // 의류에 기타 정보를 담을 필드.
     private String etc;
@@ -48,7 +48,7 @@ public class ClothesDTO {
     @Builder
     public ClothesDTO(Long clothesId, String clothesName, Long price, Long stockQuantity, String engName, List<ItemImage> itemImages, List<ModelSizeDTO> modelSizes,
                       List<ClothesFabricDTO> clothesFabrics, List<ClothesDetailDTO> clothesDetails, List<ClothesSizeDTO> clothesSizes, String etc,
-                      List<ItemColorDTO> colors) {
+                      String color) {
         this.clothesId = clothesId;
         this.clothesName = clothesName;
         this.price = price;
@@ -60,7 +60,7 @@ public class ClothesDTO {
         this.clothesSizes = clothesSizes;
         this.etc = etc;
         setImgaes(itemImages);
-        this.colors = colors;
+        this.color = color;
     }
 
     /**

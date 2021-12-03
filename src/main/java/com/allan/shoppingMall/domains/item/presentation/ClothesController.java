@@ -1,6 +1,7 @@
 package com.allan.shoppingMall.domains.item.presentation;
 
 import com.allan.shoppingMall.domains.item.domain.clothes.ClothesFabric;
+import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
 import com.allan.shoppingMall.domains.item.domain.model.ClothesDTO;
 import com.allan.shoppingMall.domains.item.domain.model.ClothesDetailDTO;
 import com.allan.shoppingMall.domains.item.domain.model.ClothesFabricDTO;
@@ -11,6 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/clothes")
@@ -28,7 +32,9 @@ public class ClothesController {
     }
 
     @GetMapping("/clothesForm")
-    public String clothesForm(@ModelAttribute("clothesForm") ClothesForm clothesForm){
+    public String clothesForm(@ModelAttribute("clothesForm") ClothesForm clothesForm, Model model){
+        List<SizeLabel> sizeLabelList = new ArrayList<>();
+
         return "clothes/clothesForm";
     }
 

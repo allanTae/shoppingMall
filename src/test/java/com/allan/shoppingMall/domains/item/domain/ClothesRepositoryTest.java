@@ -125,6 +125,7 @@ public class ClothesRepositoryTest {
                 .price(1000l)
                 .stockQuantity(200l)
                 .engName("testEngName")
+                .color(Color.RED)
                 .build();
         return clothes;
     }

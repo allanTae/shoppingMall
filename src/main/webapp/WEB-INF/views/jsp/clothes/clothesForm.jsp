@@ -47,9 +47,17 @@
     // 사이즈 테이블 추가 버튼.
     $(document).on('click', "#btnSizeAdd", function(e){
         e.preventDefault();
+        var clothesSizePath = 'clothesSizes[' + (sizeTableIndex-1) + '].sizeLabel';
         var htmls ='<tr>';
         htmls += '<th scope="row">' + sizeTableIndex + '</th>';
-        htmls += '<td><input type="text" class="form-control" name="clothesSizes[' + (sizeTableIndex-1) + '].sizeLabel' + '" placeholder="사이즈"></td>';
+        htmls += '<td class="col-md-2">';
+        htmls += '  <select class="form-select" name="clothesSizes[' + (sizeTableIndex-1) + '].sizeLabel">';
+        htmls += '    <option selected>사이즈</option>';
+        htmls += '    <option value="1">S</option>';
+        htmls += '    <option value="2">M</option>';
+        htmls += '    <option value="3">L</option>';
+        htmls += '  </select>';
+        htmls += '</td>';
         htmls += '<td><input type="text" class="form-control" name="clothesSizes['+ (sizeTableIndex-1) + '].backLength' + '" placeholder="총장"></td>';
         htmls += '<td><input type="text" class="form-control" name="clothesSizes[' + (sizeTableIndex-1) + '].chestWidth' + '" placeholder="가슴둘레"></td>';
         htmls += '<td><input type="text" class="form-control" name="clothesSizes[' + (sizeTableIndex-1) + '].shoulderWidth' + '" placeholder="어깨넓이"></td>';
@@ -77,17 +85,6 @@
         modelSizeTableIndex++
     });
 
-    // 색상 테이블 추가 버튼.
-    $(document).on('click', "#btnColorAdd", function(e){
-        e.preventDefault();
-        var htmls ='<tr>';
-        htmls += '<th scope="row">' + colorTableIndex + '</th>';
-        htmls += '<td><input type="text" class="form-control" name="clothesColors[' + (colorTableIndex-1) + '].color' +'" placeholder="색상을 입력 해 주세요."></td>';
-        htmls += '</tr>';
-        $("#colorTable:last-child").append(htmls);
-        colorTableIndex++;
-    });
-
     // 취소 버튼 이벤트.
 	$(document).on('click', '#btnCancle', function(e){
 		e.preventDefault();
@@ -97,7 +94,7 @@
 
 </script>
 <article>
-	<div class="container clothesCardContainer col-md-8" role="main">
+	<div class="container clothesCardContainer col-md-10" role="main">
 	    <!--form card-->
 		<div class="card">
 			<div class="card-header">상품 등록</div>
@@ -131,6 +128,21 @@
                         <label for="stockQuantity" class="col-md-2 col-form-label text-md-right">재고수량</label>
                         <div class="col-md-4">
                             <form:input path="stockQuantity" id="stockQuantity" class="form-control" placeholder="상품 재고 수량" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <label for="price" class="col-md-2 col-form-label text-md-right">색상</label>
+                        <div class="col-md-4">
+                            <select class="form-select" name="clothesColor">
+                                <option selected>색상을 선택 해 주세요.</option>
+                                <option value="1">빨간색</option>
+                                <option value="2">파란색</option>
+                                <option value="3">노란색</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
                         </div>
                     </div>
 
@@ -207,8 +219,15 @@
                               </thead>
                               <tbody class="border-0">
                                 <tr>
-                                  <th scope="row">1</th>
-                                  <td><input type="text" class="form-control" name="clothesSizes[0].sizeLabel" placeholder="사이즈"></td>
+                                  <th scope="row ">1</th>
+                                  <td class="col-md-2">
+                                    <select class="form-select" name="clothesSizes[0].sizeLabel">
+                                        <option selected>사이즈</option>
+                                        <option value="1">S</option>
+                                        <option value="2">M</option>
+                                        <option value="3">L</option>
+                                    </select>
+                                  </td>
                                   <td><input type="text" class="form-control" name="clothesSizes[0].backLength" placeholder="총장"></td>
                                   <td><input type="text" class="form-control" name="clothesSizes[0].chestWidth" placeholder="가슴둘레"></td>
                                   <td><input type="text" class="form-control" name="clothesSizes[0].shoulderWidth" placeholder="어깨넓이"></td>
@@ -250,27 +269,6 @@
                             </table>
                         </div>
                         <!-- end model size table-->
-
-                        <!-- colorTable -->
-                        <div class="form-group row">
-                            <p class="col-md-2 text-start m-0">Color</p>
-                            <table class="table col-md-10" id="colorTable" style="border: 1px solid black;">
-                              <thead>
-                                <tr >
-                                  <th scope="col" class="align-middle">#</th>
-                                  <th scope="col" class="align-middle">색상</th>
-                                  <th scope="col" class="align-middle"><button type="button" class="btn btn-prmary" id="btnColorAdd">+</button></th>
-                                </tr>
-                              </thead>
-                              <tbody class="border-0">
-                                <tr>
-                                  <th scope="row">1</th>
-                                  <td><input type="text" class="form-control" name="clothesColors[0].color" placeholder="색상을 입력 해 주세요."></td>
-                                </tr>
-                              </tbody>
-                            </table>
-                        </div>
-                        <!-- end color table -->
 
                         <!-- image file -->
                         <!-- 소개용 이미지 -->

@@ -83,6 +83,7 @@ public class ClothesServiceTest {
                 .engName("testEngName")
                 .price(1000l)
                 .stockQuantity(1100l)
+                .color(Color.RED)
                 .build();
 
         TEST_CLOTHES.changeClothesFabrics(List.of(ClothesFabric.builder().materialPart("testMaterial").build()));
@@ -90,7 +91,6 @@ public class ClothesServiceTest {
         TEST_CLOTHES.changeClothesSizes(List.of(ClothesSize.builder().shoulderWidth(10.5).sizeLabel(SizeLabel.S).build()));
         TEST_CLOTHES.changeModelSizes(List.of(ModelSize.builder().modelWeight(10.5).build()));
         TEST_CLOTHES.changeItemImages(List.of(ItemImage.builder().imageType(ImageType.PREVIEW).build()));
-        TEST_CLOTHES.changeItemColors(List.of(ItemColor.builder().color("빨강").build()));
 
         given(clothesRepository.findById(any()))
                 .willReturn(Optional.of(TEST_CLOTHES));
@@ -109,7 +109,6 @@ public class ClothesServiceTest {
         assertThat(clothes.getModelSizes().size(), is(1));
         assertThat(clothes.getPreviewImages().size(), is(1));
         assertThat(clothes.getDetailImages().size(), is(0));
-        assertThat(clothes.getColors().size(), is(1));
     }
 
     private List<Clothes> createClothesList() {
@@ -162,6 +161,7 @@ public class ClothesServiceTest {
         clothesRequest.setModelSizes(List.of(
                 new ModelSizeDTO(10.0, 20.0, 30.0, 40.0, 50.0)
         ));
+        clothesRequest.setClothesColor(1);
         return clothesRequest;
     }
 }
