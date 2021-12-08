@@ -57,14 +57,14 @@ public class ClothesRepositoryTest {
         Clothes TEST_CLOTHES1 = createClothes();
         TEST_CLOTHES1.changeClothesFabrics(createClothesFabrics("testMaterial1", "testMaterial1"));
         TEST_CLOTHES1.changeClothesDetails(createClothesDetails("testDetailDesc1"));
-        TEST_CLOTHES1.changeClothesSizes(createClothesSizes(SizeLabel.S, 10.0, 20.0, 10.0, 30.0, 40.0, 20.0, 10.0));
+        TEST_CLOTHES1.changeClothesSizes(createClothesSizes(SizeLabel.S, 10.0, 20.0, 10.0, 30.0, 40.0, 20.0, 10.0, 10l));
         TEST_CLOTHES1.changeModelSizes(createModelSizes(10.0, 20.0, 30.0, 40.0, 21.0));
         TEST_CLOTHES1.changeItemImages(createItemImages("testOriginalItemImageName1", "testItemImagePath1", ImageType.PREVIEW, 10l));
 
         Clothes TEST_CLOTHES2 = createClothes();
         TEST_CLOTHES2.changeClothesFabrics(createClothesFabrics("testMaterial2", "testMaterial2"));
         TEST_CLOTHES2.changeClothesDetails(createClothesDetails("testDetailDesc2"));
-        TEST_CLOTHES2.changeClothesSizes(createClothesSizes(SizeLabel.S, 10.0, 20.0, 10.0, 30.0, 40.0, 20.0, 10.0));
+        TEST_CLOTHES2.changeClothesSizes(createClothesSizes(SizeLabel.S, 10.0, 20.0, 10.0, 30.0, 40.0, 20.0, 10.0, 10l));
         TEST_CLOTHES2.changeModelSizes(createModelSizes(10.0, 20.0, 30.0, 40.0, 21.0));
         TEST_CLOTHES2.changeItemImages(createItemImages("testOriginalItemImageName2", "testItemImagePath2", ImageType.PREVIEW, 10l));
         TEST_CLOTHES2.changeItemImages(createItemImages("testOriginalItemImageName3", "testItemImagePath3", ImageType.PRODUCT, 10l));
@@ -95,7 +95,7 @@ public class ClothesRepositoryTest {
         TEST_CLOTHES.changeClothesFabrics(createClothesFabrics("materialPart", "materialDesc"));
         TEST_CLOTHES.changeClothesDetails(createClothesDetails("detailDesc"));
         TEST_CLOTHES.changeClothesDetails(createClothesDetails("detailDesc2"));
-        TEST_CLOTHES.changeClothesSizes(createClothesSizes(SizeLabel.S, 30.0,40.0, 50.0, 60.0, 70.0, 80.0, 90.0));
+        TEST_CLOTHES.changeClothesSizes(createClothesSizes(SizeLabel.S, 30.0,40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 10l));
         TEST_CLOTHES.changeModelSizes(createModelSizes(100.0, 110.0, 120.0, 130.0, 140.0));
         TEST_CLOTHES.changeItemImages(createItemImages("imageName", "imagePath", ImageType.PREVIEW, 10l));
         TEST_CLOTHES.changeItemImages(createItemImages("imageName2", "imagePath2", ImageType.PRODUCT, 20l));
@@ -123,7 +123,6 @@ public class ClothesRepositoryTest {
         Clothes clothes = Clothes.builder()
                 .name("testName")
                 .price(1000l)
-                .stockQuantity(200l)
                 .engName("testEngName")
                 .color(Color.RED)
                 .build();
@@ -155,7 +154,7 @@ public class ClothesRepositoryTest {
     }
 
     private List<ClothesSize> createClothesSizes(SizeLabel sizeLabel, Double backLength, Double bottomWidth, Double chestWidth,
-                                                 Double heapWidth, Double shoulderWidth, Double waistWidth, Double sleeveLength){
+                                                 Double heapWidth, Double shoulderWidth, Double waistWidth, Double sleeveLength, Long quantity){
         return List.of(
                 ClothesSize.builder()
                         .sizeLabel(sizeLabel)
@@ -166,6 +165,7 @@ public class ClothesRepositoryTest {
                         .shoulderWidth(shoulderWidth)
                         .waistWidth(waistWidth)
                         .sleeveLength(sleeveLength)
+                        .stockQuantity(quantity)
                         .build(),
                 ClothesSize.builder()
                         .sizeLabel(sizeLabel)
@@ -176,6 +176,7 @@ public class ClothesRepositoryTest {
                         .shoulderWidth(shoulderWidth)
                         .waistWidth(waistWidth)
                         .sleeveLength(sleeveLength)
+                        .stockQuantity(quantity)
                         .build()
 
         );

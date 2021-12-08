@@ -65,6 +65,7 @@
         htmls += '<td><input type="text" class="form-control" name="clothesSizes[' + (sizeTableIndex-1) + '].waistWidth' + '" placeholder="허리둘레"></td>';
         htmls += '<td><input type="text" class="form-control" name="clothesSizes[' + (sizeTableIndex-1) + '].heapWidth' + '" placeholder="엉덩이"></td>';
         htmls += '<td><input type="text" class="form-control" name="clothesSizes[' + (sizeTableIndex-1) + '].bottomWidth' + '" placeholder="밑단둘레"></td>';
+        htmls += '<td><input type="text" class="form-control" name="clothesSizes[' + (sizeTableIndex-1) + '].stockQuantity' + '" placeholder="수량"></td>';
         htmls += '</tr>';
         $("#sizeTable:last-child").append(htmls);
         sizeTableIndex++;
@@ -125,13 +126,6 @@
                             <form:input path="price" id="price" class="form-control" placeholder="상품 가격" />
                         </div>
 
-                        <label for="stockQuantity" class="col-md-2 col-form-label text-md-right">재고수량</label>
-                        <div class="col-md-4">
-                            <form:input path="stockQuantity" id="stockQuantity" class="form-control" placeholder="상품 재고 수량" />
-                        </div>
-                    </div>
-
-                    <div class="row">
                         <label for="price" class="col-md-2 col-form-label text-md-right">색상</label>
                         <div class="col-md-4">
                             <select class="form-select" name="clothesColor">
@@ -140,9 +134,6 @@
                                 <option value="2">파란색</option>
                                 <option value="3">노란색</option>
                             </select>
-                        </div>
-
-                        <div class="col-md-4">
                         </div>
                     </div>
 
@@ -214,6 +205,7 @@
                                   <th scope="col" class="align-middle">허리둘레</th>
                                   <th scope="col" class="align-middle">엉덩이</th>
                                   <th scope="col" class="align-middle">밑단둘레</th>
+                                  <th scope="col" class="align-middle">수량</th>
                                   <th scope="col" class="align-middle"><button type="button" class="btn btn-prmary" id="btnSizeAdd">+</button></th>
                                 </tr>
                               </thead>
@@ -235,6 +227,7 @@
                                   <td><input type="text" class="form-control" name="clothesSizes[0].waistWidth" placeholder="허리둘레"></td>
                                   <td><input type="text" class="form-control" name="clothesSizes[0].heapWidth" placeholder="엉덩이"></td>
                                   <td><input type="text" class="form-control" name="clothesSizes[0].bottomWidth" placeholder="밑단둘레"></td>
+                                  <td><input type="text" class="form-control" name="clothesSizes[0].stockQuantity" placeholder="수량"></td>
                                 </tr>
                               </tbody>
                             </table>

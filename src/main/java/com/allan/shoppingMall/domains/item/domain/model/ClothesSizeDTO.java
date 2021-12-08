@@ -35,8 +35,11 @@ public class ClothesSizeDTO {
     // 밑단 둘레 사이즈.
     private Double bottomWidth;
 
+    // 사이즈별 재고량.
+    private Long stockQuantity;
+
     @Builder
-    public ClothesSizeDTO(String sizeLabel, Double backLength, Double chestWidth, Double shoulderWidth, Double sleeveLength, Double waistWidth, Double heapWidth, Double bottomWidth) {
+    public ClothesSizeDTO(String sizeLabel, Double backLength, Double chestWidth, Double shoulderWidth, Double sleeveLength, Double waistWidth, Double heapWidth, Double bottomWidth, Long quantity) {
         this.sizeLabel = sizeLabel;
         this.backLength = backLength;
         this.chestWidth = chestWidth;
@@ -45,12 +48,13 @@ public class ClothesSizeDTO {
         this.waistWidth = waistWidth;
         this.heapWidth = heapWidth;
         this.bottomWidth = bottomWidth;
+        this.stockQuantity = quantity;
     }
 
     @Override
     public String toString() {
         return "ClothesSized [clothesSize=" + this.sizeLabel + ", backLength=" + this.backLength + ", chestWidth=" + this.chestWidth +
                 ", shoulderWidth=" + this.shoulderWidth + ", sleeveLength=" + this.sleeveLength + ", waistWidth=" + this.waistWidth +
-                ", heapWidth=" + this.heapWidth + ", bottomWidth=" + this.bottomWidth + "]";
+                ", heapWidth=" + this.heapWidth + ", bottomWidth=" + this.bottomWidth + ", sizeQuantity=" + this.stockQuantity + "]";
     }
 }

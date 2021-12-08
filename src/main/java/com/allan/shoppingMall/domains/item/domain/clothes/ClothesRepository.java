@@ -1,4 +1,4 @@
-package com.allan.shoppingMall.domains.item.domain;
+package com.allan.shoppingMall.domains.item.domain.clothes;
 
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
 import org.springframework.data.jpa.repository.JpaRepository;

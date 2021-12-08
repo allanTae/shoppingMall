@@ -1,7 +1,9 @@
 package com.allan.shoppingMall.domains.order.domain;
 
+import com.allan.shoppingMall.common.domain.BaseEntity;
 import com.allan.shoppingMall.common.exception.order.OrderFailException;
 import com.allan.shoppingMall.domains.item.domain.Item;
+import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,7 +24,7 @@ import java.util.Objects;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Slf4j
-public class OrderItem {
+public class OrderItem extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderItemId;
@@ -41,12 +43,16 @@ public class OrderItem {
     @JoinColumn(name = "item_id")
     private Item item;
 
+    @Builder
     public OrderItem(Long orderQuantity, Item item) {
         this.orderQuantity = orderQuantity;
         this.item = setItem(item);
         calculateAmount();
     }
 
+    /**
+     * 주문시, orderQunaitty 만큼 상품의 재고량을 줄이기 위한 메소드.
+     */
     private Item setItem(Item item) throws OrderFailException {
         item.subtractStockQuantity(this.orderQuantity);
         return item;
@@ -60,8 +66,8 @@ public class OrderItem {
     }
 
     /**
-     * 주문 취소에 따
-     * 상품의 재고량을 수정하는 메소라드.
+     * 주문 취소에 따른
+     * 상품의 재고량을 수정하는 메소드.
      */
     public void cancelOrderItem(){
         this.item.addStockQuantity(this.orderQuantity);
@@ -92,7 +98,7 @@ public class OrderItem {
      */
     @Override
     public boolean equals(Object obj) {
-        log.info("orderItems equals() call!!!");
+        log.info("OrderItems equals() call!!!");
         if(obj == null){
             log.error("OrderItem equals()'s parameter is null");
             return false;

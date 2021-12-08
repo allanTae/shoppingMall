@@ -48,7 +48,7 @@ public class ClothesServiceTest {
                 .willReturn(TEST_ITEM_IMAGE);
 
         //when
-        clothesService.saveClothes(TEST_CLOTHES_REQUEST);
+        Long clothesId = clothesService.saveClothes(TEST_CLOTHES_REQUEST);
 
         //then
         verify(clothesRepository, atLeastOnce()).save(any());
@@ -82,13 +82,12 @@ public class ClothesServiceTest {
                 .name("testName")
                 .engName("testEngName")
                 .price(1000l)
-                .stockQuantity(1100l)
                 .color(Color.RED)
                 .build();
 
         TEST_CLOTHES.changeClothesFabrics(List.of(ClothesFabric.builder().materialPart("testMaterial").build()));
         TEST_CLOTHES.changeClothesDetails(List.of(ClothesDetail.builder().detailDesc("testDetail").build()));
-        TEST_CLOTHES.changeClothesSizes(List.of(ClothesSize.builder().shoulderWidth(10.5).sizeLabel(SizeLabel.S).build()));
+        TEST_CLOTHES.changeClothesSizes(List.of(ClothesSize.builder().shoulderWidth(10.5).sizeLabel(SizeLabel.S).stockQuantity(3l).build()));
         TEST_CLOTHES.changeModelSizes(List.of(ModelSize.builder().modelWeight(10.5).build()));
         TEST_CLOTHES.changeItemImages(List.of(ItemImage.builder().imageType(ImageType.PREVIEW).build()));
 
@@ -156,7 +155,8 @@ public class ClothesServiceTest {
                 new ClothesDetailDTO("clothesDetailDesc")
         ));
         clothesRequest.setClothesSizes(List.of(
-                new ClothesSizeDTO("1", 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0)
+                new ClothesSizeDTO("1", 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 10l),
+                new ClothesSizeDTO("1", 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 20l)
         ));
         clothesRequest.setModelSizes(List.of(
                 new ModelSizeDTO(10.0, 20.0, 30.0, 40.0, 50.0)

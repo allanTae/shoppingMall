@@ -15,6 +15,14 @@
         <put-attribute name="tile_nav" value="/WEB-INF/tiles/layouts/common/nav.jsp" />
     </definition>
 
+    <!-- order -->
+    <definition name="order-layout" template="/WEB-INF/tiles/layouts/order/order_layout.jsp">
+        <put-attribute name="tile_nav" value="/WEB-INF/tiles/layouts/common/nav.jsp" />
+    </definition>
+    <definition name="order/*" extends="order-layout">
+        <put-attribute name="tile_body" value="/WEB-INF/views/jsp/order/{1}.jsp" />
+    </definition>
+
     <!-- index -->
     <definition name="index-layout" template="/WEB-INF/tiles/layouts/index_layout.jsp">
         <put-attribute name="tile_nav" value="/WEB-INF/tiles/layouts/common/nav.jsp" />

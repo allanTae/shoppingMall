@@ -66,6 +66,7 @@ public class ClothesService {
                             .sleeveLength(clothesSizesDTO.getSleeveLength())
                             .sizeLabel(SizeLabel.valueOf(Integer.valueOf(clothesSizesDTO.getSizeLabel())))
                             .waistWidth(clothesSizesDTO.getWaistWidth())
+                            .stockQuantity(clothesSizesDTO.getStockQuantity())
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -102,7 +103,6 @@ public class ClothesService {
                 .name(form.getName())
                 .price(form.getPrice())
                 .engName(form.getEngName())
-                .stockQuantity(form.getStockQuantity())
                 .color(Color.valueOf(form.getClothesColor()))
                 .build();
 

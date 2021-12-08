@@ -44,11 +44,15 @@ public class Order extends BaseEntity {
     @OneToMany(mappedBy = "order",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
+    @Embedded
+    private OrdererInfo ordererInfo;
+
     @Builder
-    public Order(Member orderer, OrderStatus orderStatus, Delivery delivery) {
+    public Order(Member orderer, OrderStatus orderStatus, Delivery delivery, OrdererInfo ordererInfo) {
         this.orderer = orderer;
         this.orderStatus = orderStatus;
         this.delivery = delivery;
+        this.ordererInfo = ordererInfo;
     }
 
     /**
@@ -72,6 +76,7 @@ public class Order extends BaseEntity {
 
     /**
      * 고객이 주문 취소 할때 사용하는 메소드.
+     * orderItem 의 구현체에 따라 다른 메소드를 호출하도록 처리.
      */
     public void cancelOrder(){
         // 주문상태 점검.
@@ -79,7 +84,13 @@ public class Order extends BaseEntity {
             this.orderStatus = OrderStatus.ORDER_CANCEL;
             this.delivery.cancelDelivery();
             for(OrderItem orderItem : this.orderItems){
-                orderItem.cancelOrderItem();
+                if( orderItem instanceof OrderClothes){
+                    OrderClothes orderClothes = (OrderClothes) orderItem;
+                    orderClothes.cancleOrderClothes();
+                }else{
+                    orderItem.cancelOrderItem();
+                }
+
             }
         }else{
             throw new OrderCancelFailException(ErrorCode.ORDER_CANCEL_NOT_ALLOWED.getMessage(), ErrorCode.ORDER_CANCEL_NOT_ALLOWED);

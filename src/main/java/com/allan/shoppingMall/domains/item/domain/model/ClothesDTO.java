@@ -24,8 +24,6 @@ public class ClothesDTO {
 
     private Long price;
 
-    private Long stockQuantity;
-
     private String engName;
 
     private List<Long> previewImages = new ArrayList<>();
@@ -46,13 +44,12 @@ public class ClothesDTO {
     private String etc;
 
     @Builder
-    public ClothesDTO(Long clothesId, String clothesName, Long price, Long stockQuantity, String engName, List<ItemImage> itemImages, List<ModelSizeDTO> modelSizes,
+    public ClothesDTO(Long clothesId, String clothesName, Long price, String engName, List<ItemImage> itemImages, List<ModelSizeDTO> modelSizes,
                       List<ClothesFabricDTO> clothesFabrics, List<ClothesDetailDTO> clothesDetails, List<ClothesSizeDTO> clothesSizes, String etc,
                       String color) {
         this.clothesId = clothesId;
         this.clothesName = clothesName;
         this.price = price;
-        this.stockQuantity = stockQuantity;
         this.engName = engName;
         this.modelSizes = modelSizes;
         this.clothesFabrics = clothesFabrics;

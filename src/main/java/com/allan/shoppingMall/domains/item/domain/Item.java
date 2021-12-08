@@ -3,6 +3,7 @@ package com.allan.shoppingMall.domains.item.domain;
 import com.allan.shoppingMall.common.domain.BaseEntity;
 import com.allan.shoppingMall.common.exception.ErrorCode;
 import com.allan.shoppingMall.common.exception.order.OrderFailException;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import java.util.List;
 @Entity
 @Getter
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "dtype")
 @Table(name = "items")
 @NoArgsConstructor
 @Slf4j
@@ -35,7 +37,7 @@ public class Item extends BaseEntity {
     private Color color;
 
     @Column(nullable = false, name = "stock_quantity")
-    private Long stockQuantity;
+    private Long stockQuantity = 0l;
 
     public Item(String name, Long price, Long stockQuantity, Color color) {
         this.name = name;
@@ -57,9 +59,12 @@ public class Item extends BaseEntity {
     }
 
     public void subtractStockQuantity(Long orderQuantity){
-        if(this.stockQuantity < orderQuantity)
-            throw new OrderFailException(ErrorCode.ITEM_STOCK_QUANTITY_EXCEEDED.getMessage(), ErrorCode.ITEM_STOCK_QUANTITY_EXCEEDED);
 
+        if(this.stockQuantity < orderQuantity) {
+            log.error("stockQuantity: " + this.stockQuantity);
+            log.error("orderQuantity: " + orderQuantity);
+            throw new OrderFailException(ErrorCode.ITEM_STOCK_QUANTITY_EXCEEDED.getMessage(), ErrorCode.ITEM_STOCK_QUANTITY_EXCEEDED);
+        }
         this.stockQuantity -= orderQuantity;
     }
 

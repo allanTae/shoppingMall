@@ -10,7 +10,7 @@ import javax.persistence.Embeddable;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Address {
 
-    @Column(name = "jibun_address", nullable = false)
+    @Column(name = "jibun_address")
     private String jibunAddress;
 
     @Column(name = "road_address", nullable = false)

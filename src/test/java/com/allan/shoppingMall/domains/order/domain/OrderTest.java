@@ -7,6 +7,7 @@ import com.allan.shoppingMall.domains.delivery.domain.DeliveryStatus;
 import com.allan.shoppingMall.domains.item.domain.Color;
 import com.allan.shoppingMall.domains.item.domain.Item;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
+import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSize;
 import com.allan.shoppingMall.domains.member.domain.Gender;
 import com.allan.shoppingMall.domains.member.domain.Member;
 import com.allan.shoppingMall.domains.member.domain.MemberRole;
@@ -55,16 +56,39 @@ public class OrderTest {
     public void 주문시_중복상품_추가_테스트() throws Exception {
         //given
         Member TEST_ORDERER = createMember();
-        Item TEST_ITEM = createClothes();
-        testEntityManager.persist(TEST_ITEM);
+        ClothesSize TEST_CLOTHES_SIZE = createClothesSize();
+        Clothes TEST_CLOTHES = createClothes(TEST_CLOTHES_SIZE);
+        testEntityManager.persist(TEST_CLOTHES);
         testEntityManager.persist(TEST_ORDERER);
 
         Order TEST_ORDER = createOrderByMember(TEST_ORDERER);
-        TEST_ORDER.changeOrderItems(createdOrderItems(TEST_ITEM));
+        TEST_ORDER.changeOrderItems(createdOrderItems(TEST_CLOTHES));
         testEntityManager.persist(TEST_ORDER);
 
         //when
-        TEST_ORDER.changeOrderItems(createdOrderItems(TEST_ITEM));
+        TEST_ORDER.changeOrderItems(createdOrderItems(TEST_CLOTHES));
+
+        //then
+        assertThat(TEST_ORDER.getOrderItems().size(), is(1));
+    }
+
+
+    @Test
+    public void 주문시_옷_상품_중복_추가_테스트() throws Exception {
+        //given
+        Member TEST_ORDERER = createMember();
+        ClothesSize TEST_CLOTHES_SIZE = createClothesSize();
+        Clothes TEST_CLOTHES = createClothes(TEST_CLOTHES_SIZE);
+
+        testEntityManager.persist(TEST_CLOTHES);
+        testEntityManager.persist(TEST_ORDERER);
+
+        Order TEST_ORDER = createOrderByMember(TEST_ORDERER);
+        TEST_ORDER.changeOrderItems(createdOrderClothes(TEST_CLOTHES, TEST_CLOTHES_SIZE));
+        testEntityManager.persist(TEST_ORDER);
+
+        //when
+        TEST_ORDER.changeOrderItems(createdOrderClothes(TEST_CLOTHES, TEST_CLOTHES_SIZE));
 
         //then
         assertThat(TEST_ORDER.getOrderItems().size(), is(1));
@@ -87,24 +111,40 @@ public class OrderTest {
                 .build();
     }
 
+    private List<OrderItem> createdOrderClothes(Clothes clothes, ClothesSize clothesSize){
+        return List.of(
+                new OrderClothes(10l, clothes, clothesSize)
+        );
+    }
+
     private List<OrderItem> createdOrderItems(Item item
     ){
         return List.of(
+                // 주문량 10개 아이템.
                 new OrderItem(10l, item)
         );
     }
 
 
-    private Clothes createClothes(){
+    private Clothes createClothes(ClothesSize clothesSize){
         Clothes clothes = Clothes.builder()
                 .name("testClothesName")
                 .price(100l)
-                .stockQuantity(20l)
                 .engName("testEngname")
                 .color(Color.RED)
                 .build();
 
+
+
+        clothes.changeClothesSizes(List.of(clothesSize));
+
         return clothes;
+    }
+
+    private ClothesSize createClothesSize(){
+        return ClothesSize.builder()
+                .stockQuantity(30l)
+                .build();
     }
 
     private Order createOrderByMember() {

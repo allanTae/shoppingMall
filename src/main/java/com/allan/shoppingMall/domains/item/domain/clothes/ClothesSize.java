@@ -1,11 +1,14 @@
 package com.allan.shoppingMall.domains.item.domain.clothes;
 
 import com.allan.shoppingMall.common.domain.BaseEntity;
+import com.allan.shoppingMall.common.exception.ErrorCode;
+import com.allan.shoppingMall.common.exception.order.OrderFailException;
 import com.allan.shoppingMall.domains.item.domain.Item;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 
@@ -16,6 +19,7 @@ import javax.persistence.*;
 @Getter
 @Table(name = "clothesSizes")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Slf4j
 public class ClothesSize extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,8 +62,12 @@ public class ClothesSize extends BaseEntity {
     @Column(name = "bottom_width")
     private Double bottomWidth;
 
+    // 사이즈 별 재고량.
+    @Column(name = "size_stock_quantiy")
+    private Long stockQuantity;
+
     @Builder
-    public ClothesSize(SizeLabel sizeLabel, Double backLength, Double chestWidth, Double shoulderWidth, Double sleeveLength, Double waistWidth, Double heapWidth, Double bottomWidth) {
+    public ClothesSize(SizeLabel sizeLabel, Double backLength, Double chestWidth, Double shoulderWidth, Double sleeveLength, Double waistWidth, Double heapWidth, Double bottomWidth, Long stockQuantity) {
         this.sizeLabel = sizeLabel;
         this.backLength = backLength;
         this.chestWidth = chestWidth;
@@ -68,6 +76,7 @@ public class ClothesSize extends BaseEntity {
         this.waistWidth = waistWidth;
         this.heapWidth = heapWidth;
         this.bottomWidth = bottomWidth;
+        this.stockQuantity = stockQuantity;
     }
 
     /**
@@ -77,5 +86,24 @@ public class ClothesSize extends BaseEntity {
      */
     public void changeItem(Item item){
         this.item = item;
+    }
+
+    /**
+     * 재고량 추가를 위한 메소드.
+     */
+    public void addStockQuantity(Long quantity){
+        this.stockQuantity += quantity;
+    }
+
+    /**
+     * 재고량 감소를 위한 메소드.
+     */
+    public void subStockQuantity(Long quantity){
+        if(this.stockQuantity < quantity) {
+            log.error("stockQuantity: " + this.stockQuantity);
+            log.error("quantity: " + quantity);
+            throw new OrderFailException(ErrorCode.ITEM_STOCK_QUANTITY_EXCEEDED.getMessage(), ErrorCode.ITEM_STOCK_QUANTITY_EXCEEDED);
+        }
+        this.stockQuantity -= quantity;
     }
 }

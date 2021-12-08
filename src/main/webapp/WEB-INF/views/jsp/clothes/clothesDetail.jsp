@@ -140,7 +140,7 @@
                 </div>
                 <p class="m-0"><br /></p>
                 <div class="buyBtns">
-                    <button type="button" class="btn btn-secondary btn-lg">구매하기</button>
+                    <button type="button" class="btn btn-secondary btn-lg" id="btnOrder">구매하기</button>
                     <button type="button" class="btn btn-secondary btn-lg">장바구니</button>
                 </div>
             </div>
@@ -204,8 +204,11 @@
       $(document).on("click", "#btnAddQuantity", function(){
         var beforeSelectedItemOrderCount = Number($(this).prev().val());
         var afterSelectedItemOrderCount = beforeSelectedItemOrderCount + 1;
-        $(this).parent().next().next().text(addComma(afterSelectedItemOrderCount*defaultAmount) + "원");
-       // console.log("val: " + $(this).parent().next().next().val());
+        $(this).parent().next().next().text(addComma(afterSelectedItemOrderCount*defaultAmount) + "원"); // 셀렉트 된 상품의 가격을 input 태그 값 변경.
+
+        // sizeLavel 에 해당하는 상품의 주문량 증가.
+        var selectedItemSizeLabe = $(this).next().text();
+        quantityMapBySize.set(selectedItemSizeLabe, quantityMapBySize.get(selectedItemSizeLabe) + 1);
 
         // 총가격 수정.
         addTotalAmount(1);
@@ -221,23 +224,30 @@
           alert("최소 1개이상은 주문해야 합니다.");
           return;
         }
-        $(this).parent().next().next().text(addComma(afterSelectedItemOrderCount*defaultAmount) + "원");
-      //  console.log("val: " + $(this).parent().next().next().text());
+        $(this).parent().next().next().text(addComma(afterSelectedItemOrderCount*defaultAmount) + "원"); // 셀렉트 된 상품의 가격 input 태그 값 변경.
+
+        // sizeLabel 에 해당하는 상품의 주문량 감소.
+        var selectedItemSizeLavel = $(this).next().next().next().text();
+        quantityMapBySize.set(selectedItemSizeLavel, quantityMapBySize.get(selectedItemSizeLavel) - 1);
 
         // 총가격 수정.
         subTotalAmount(1);
         totalAmountForm();
+
+        // 셀렉트 한 상품의 수량 text tag 변경.
         $(this).next().val(afterSelectedItemOrderCount);
       });
 
-      // 셀렉트 된 상품의 주문량 클릭 이벤트.
+      // 셀렉트 된 상품의 주문량 change 이벤트.
       $(document).on("change","#selectedItemOrderQuantity",function(){
         var orderQuantity = Number($(this).val());
         if(orderQuantity === 0){
             alert("최소 1개이상은 주문해야 합니다.");
             return;
         }
-        $(this).parent().next().next().text(addComma(orderQuantity*defaultAmount) + "원");
+        $(this).parent().next().next().text(addComma(orderQuantity*defaultAmount) + "원"); // 셀렉트 된 상품의 가격 input 태그 값 변경.
+
+        // 셀렉트 된 상품의 전체 금액 설정 및 전체금액 폼 수정.
         if(tempSelectedItemQuantity < orderQuantity){
             addTotalAmount(orderQuantity-tempSelectedItemQuantity);
             totalAmountForm();
@@ -245,6 +255,11 @@
             subTotalAmount(tempSelectedItemQuantity-orderQuantity);
             totalAmountForm();
         }
+
+        // 셀렉트
+        var selectedItemSizeLabel = $(this).next().next().text();
+        quantityMapBySize.set(selectedItemSizeLabel, orderQuantity);
+
         $(this).blur(); // enter시 blur.
       });
 
@@ -261,7 +276,7 @@
 
       // 사용자가 선택(셀렉트)한 상품 필수 옵션을 저장하기 위한 배열.
       // 셀렉트 한 상품을 등록하기 위함(동일한 상품 추가 하지 않기 위함).
-      var arrSelectedItem = [];
+      let quantityMapBySize = new Map(); // 셀렉트한 상품을 담기 위한 Map.
 
       // select 된 상품의 삭제 기능을 수행합니다.
       // select 된 상품 제거, 셀렉트 된 모든 상품의 총 가격 계산등의 기능이 $(this) 를 이용하여 접근하기 때문에
@@ -269,11 +284,12 @@
       // 셀렉트 상품 삭제 event.
       $(document).on("click", "#btnSelectedItemClose", function(event){
           var selectedOptionInfo = $(this).next().text(); // selectedSize + selectedColor 정보를 담고있는 span tag.
-          var isArray = jQuery.inArray(selectedOptionInfo, arrSelectedItem);
-          if(isArray !== -1){
-            // 필수옵션 배열에서 필수옵션 값 제거.
-            arrSelectedItem.splice(isArray, 1);
+
+          // 셀렉트 한 상품 정보를 담고 있는 맵에서 삭제.
+          if(quantityMapBySize.has(selectedOptionInfo) === true){
+            quantityMapBySize.delete(selectedOptionInfo);
           }
+
           // selectItem form 제거.
           var selectedItem = $(this).parent().parent().remove();
 
@@ -284,10 +300,11 @@
       });
 
       // 상품 필수 옵션 체크 변수.
-      var orderSizeCheck = false;
+      let orderSizeCheck = false;
 
       // 의상 사이즈 select form event.
       $("#clothesSizeSelect").on("change", function(event){
+        console.log("size change event!!");
         var selectedSize = Number($(this).val());
         // select option 값이 숫자가 아니라면,
         if(isNaN(selectedSize) === true){
@@ -308,9 +325,9 @@
 
             var selectedOptionInfo = selectedSize;
             // 셀렉트한 상품이 배열에 등록되지 않은 경우에만,
-            if(jQuery.inArray(selectedOptionInfo, arrSelectedItem) === -1){
-                // 셀렉트한 상품 배열에 등록.
-                arrSelectedItem.push(selectedOptionInfo);
+            if(quantityMapBySize.has(selectedOptionInfo) === false){
+                // 셀렉트한 상품 맵에 추가.
+                quantityMapBySize.set(selectedOptionInfo, 1);
 
                 // selected form 추가.
                 addSelectedItem(selectedSize, selectedColor, selectedOptionInfo);
@@ -338,7 +355,7 @@
         htmls += '    <span class="sizeArea col-md-3 align-text-top">' + selectedSize + '(color: ' + selectedColor + ')</span>';
         htmls += '    <div class="col-md-7" role="paragraph"></div>';
         htmls += '    <button id="btnSelectedItemClose" class="btn btn-outline-dark col-md-1" >X</button>';
-        htmls += '    <span id="selectedOptionInfo" style="display=none;">' + selectedOptionInfo +'</span>'; // 셀렉트한 상품을 삭제할 때 사용하기 위한 정보.
+        htmls += '    <span id="selectedOptionInfo">' + selectedOptionInfo +'</span>';
         htmls += '  </div>';
         htmls += '  <hr />';
         htmls += '  <div class="colorOptionBlock row">';
@@ -346,6 +363,7 @@
         htmls += '      <button class="btn btn-outline-dark border-end-0 col-md-1" id="btnSubQuantity">-</button>';
         htmls += '      <input type="text" value="1" class="col-md-4 text-center border-1" id="selectedItemOrderQuantity" style="border-color: #212529";/>';
         htmls += '      <button class="btn btn-outline-dark border-start-0 col-md-1" id="btnAddQuantity">+</button>';
+        htmls += '      <span id="selectedOptionInfo">' + selectedOptionInfo +'</span>';
         htmls += '    </div>';
         htmls += '    <div class="col-md-5" role="paragraph"></div>';
         htmls += '    <span class="col-md-4 text-end align-center"><fmt:formatNumber type="number" maxFractionDigits="3" value="${clothesInfo.price}" />원</span>';
@@ -354,21 +372,21 @@
         $("#selectedClothesArea").append(htmls);
       }
 
-      var defaultAmount = ${clothesInfo.price};
-      var totalAmount = 0;
-      var totalCount = 0;
-      var tempSelectedItemQuantity = 0;
+      let defaultAmount = ${clothesInfo.price};
+      let totalAmount = 0;
+      let totalOrderQuantity = 0;
+      let tempSelectedItemQuantity = 0;
 
       // 결제 금액 추가 메소드.
       function addTotalAmount(addQuantity){
         totalAmount = totalAmount + (defaultAmount * addQuantity);
-        totalCount = totalCount + addQuantity;
+        totalOrderQuantity = totalOrderQuantity + addQuantity;
       }
 
       // 결제 금액 차감 메소드.
       function subTotalAmount(substractQuantity){
         totalAmount = totalAmount - (defaultAmount * substractQuantity);
-        totalCount = totalCount - substractQuantity;
+        totalOrderQuantity = totalOrderQuantity - substractQuantity;
       }
 
       // 총 금액 tag 생성 메소드.
@@ -378,12 +396,59 @@
         htmls += '<div id="totalAmount">';
         htmls += '  <hr />';
         htmls += '  <div class="row">';
-        htmls += '    <div class="col-md-6 text-start">총 상품 금액(<span></span>' + totalCount +'개)</div>';
+        htmls += '    <div class="col-md-6 text-start">총 상품 금액(<span></span>' + totalOrderQuantity +'개)</div>';
         htmls += '    <div class="col-md-6 text-end">' + totalAmountComma + '원</div>';
         htmls += '  </div>';
         htmls += '</div>';
 
         $("#totalAmount").html(htmls);
+      }
+
+      // 셀렉트한 상품 정보 배열을 반환하는 method.
+      function getOrderQuantities(){
+         var arrQuantityObj = [];
+         for(var item of quantityMapBySize){
+            var quantityObj = {
+                size: item[0],
+                quantity: item[1],
+                price: item[1] * defaultAmount
+            }
+            arrQuantityObj.push(quantityObj);
+         }
+         return arrQuantityObj;
+      }
+
+      // 주문 버튼 event.
+      $(document).on("click", "#btnOrder", function(){
+        if(quantityMapBySize.size < 1){
+            alert("필수 옵션을 입력 해 주세요.");
+            return;
+        }else{
+            let form =$('<form action="${pageContext.request.contextPath}/order/orderForm" method="post">' +
+                getOrderForm() +
+                '</form>');
+            $("body").append(form);
+            form.submit();
+        }
+
+      });
+
+      function getOrderForm(){
+        var orderItems = getOrderQuantities();
+
+        var orderFormInfo = "";
+        orderFormInfo += '<input type="text" name="itemId" value="${clothesInfo.clothesId}" />';
+        orderFormInfo += '<input type="text" name="totalQuantity" value="' + totalOrderQuantity + '" />';
+        orderFormInfo += '<input type="text" name="totalAmount" value="' + totalAmount + '" />';
+        for(var i = 0; i<orderItems.length; i++){
+            orderFormInfo += '<input type="text" name="orderItems[' + i + '].itemName" value="${clothesInfo.clothesName}" />';
+            orderFormInfo += '<input type="text" name="orderItems[' + i + '].previewImg" value="${clothesInfo.previewImages[0]}" />';
+            orderFormInfo += '<input type="text" name="orderItems[' + i + '].size" value="' + orderItems[i].size + '" />';
+            orderFormInfo += '<input type="text" name="orderItems[' + i + '].quantity" value="' + orderItems[i].quantity + '" />';
+            orderFormInfo += '<input type="text" name="orderItems[' + i + '].price" value="' + orderItems[i].price + '" />';
+        }
+        console.log(orderFormInfo);
+        return orderFormInfo;
       }
 
       //천단위 콤마 펑션
