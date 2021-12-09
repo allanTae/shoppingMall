@@ -3,6 +3,7 @@ package com.allan.shoppingMall.domains.order.domain.model;
 import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -12,6 +13,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class OrderLineRequest {
 
     private Long itemId;
@@ -25,5 +27,14 @@ public class OrderLineRequest {
         this.itemId = itemId;
         this.orderQuantity = orderQuantity;
         this.size = size;
+    }
+
+    @Override
+    public String toString() {
+        return "OrderLineRequest{" +
+                "itemId=" + itemId +
+                ", orderQuantity=" + orderQuantity +
+                ", size=" + size +
+                '}';
     }
 }

@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/order")
@@ -35,6 +32,9 @@ public class OrderController {
 
     @PostMapping("/save")
     public String order(@ModelAttribute OrderRequest request, Authentication authentication){
+
+        log.info("request: " + request.toString());
+
         Member findMember = authenticationConverter.getMemberFromAuthentication(authentication);
 
         if(null == request.getOrdererName()){
@@ -47,8 +47,16 @@ public class OrderController {
             request.setOrdererEmail(findMember.getEmail());
         }
 
+        orderService.order(request, findMember);
+
+        return "redirect:/order/orderResult";
+    }
+
+    @GetMapping("/orderResult")
+    public String getOrderResult(){
         return "order/orderResult";
     }
+
 
     /**
      * 로그인한 계정의 정보를 전달하는 메소드.

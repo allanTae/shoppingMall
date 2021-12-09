@@ -16,5 +16,6 @@ public class SignInFailHandler implements AuthenticationFailureHandler {
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         log.error("signIn Faile: ");
         log.error("exception: " + exception);
+        response.sendRedirect("loginForm");
     }
 }

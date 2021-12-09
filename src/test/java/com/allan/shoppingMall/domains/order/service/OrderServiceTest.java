@@ -66,7 +66,6 @@ public class OrderServiceTest {
         Member TEST_MEMBER = Member.builder().build();
 
         OrderRequest TEST_ORDER_REQUEST = new OrderRequest();
-        TEST_ORDER_REQUEST.setItemId(1l);
         TEST_ORDER_REQUEST.setOrderItems(TEST_ORDER_ITEMS_SUMMARY);
         TEST_ORDER_REQUEST.setOrdererName("testOrdererName");
         TEST_ORDER_REQUEST.setOrdererPhone("0000000000");

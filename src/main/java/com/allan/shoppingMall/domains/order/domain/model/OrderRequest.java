@@ -8,7 +8,6 @@ import java.util.List;
 @Getter
 @Setter
 public class OrderRequest {
-    private Long itemId;
     private List<OrderLineRequest> orderItems;
 
     // 주문자 정보.
@@ -24,4 +23,19 @@ public class OrderRequest {
     private String detailAddress;
     private String deliveryMemo;
 
+    @Override
+    public String toString() {
+        return "OrderRequest{" +
+                "orderItems=" + orderItems.toString() +
+                ", ordererName='" + ordererName + '\'' +
+                ", ordererPhone='" + ordererPhone + '\'' +
+                ", ordererEmail='" + ordererEmail + '\'' +
+                ", recipient='" + recipient + '\'' +
+                ", recipientPhone='" + recipientPhone + '\'' +
+                ", postcode='" + postcode + '\'' +
+                ", address='" + address + '\'' +
+                ", detailAddress='" + detailAddress + '\'' +
+                ", deliveryMemo='" + deliveryMemo + '\'' +
+                '}';
+    }
 }

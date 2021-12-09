@@ -25,9 +25,8 @@
                                 <div class="col-md-3">
                                     <div class="card">
                                         <div class="card-img">
-                                            <img src="//via.placeholder.com/500x650/31f?text=1" class="img-fluid">
+                                            <img src="${pageContext.request.contextPath}/resources/common/img/index/carousel/sample1.jpeg" class="img-fluid" width="500" height="650"/>
                                         </div>
-                                        <div class="card-img-overlay">Slide 1</div>
                                     </div>
                                 </div>
                             </div>
@@ -35,9 +34,8 @@
                                 <div class="col-md-3">
                                     <div class="card">
                                         <div class="card-img">
-                                            <img src="//via.placeholder.com/500x650/e66?text=2" class="img-fluid">
+                                            <img src="${pageContext.request.contextPath}/resources/common/img/index/carousel/sample2.jpeg" width="500" height="650" class="img-fluid">
                                         </div>
-                                        <div class="card-img-overlay">Slide 2</div>
                                     </div>
                                 </div>
                             </div>
@@ -45,9 +43,8 @@
                                 <div class="col-md-3">
                                     <div class="card">
                                         <div class="card-img">
-                                            <img src="//via.placeholder.com/500x650/7d2?text=3" class="img-fluid">
+                                            <img src="${pageContext.request.contextPath}/resources/common/img/index/carousel/sample3.jpeg" width="500" height="650" class="img-fluid">
                                         </div>
-                                        <div class="card-img-overlay">Slide 3</div>
                                     </div>
                                 </div>
                             </div>
@@ -55,9 +52,8 @@
                                 <div class="col-md-3">
                                     <div class="card">
                                         <div class="card-img">
-                                            <img src="//via.placeholder.com/500x650?text=4" class="img-fluid">
+                                            <img src="${pageContext.request.contextPath}/resources/common/img/index/carousel/sample4.jpeg" width="500" height="650" class="img-fluid">
                                         </div>
-                                        <div class="card-img-overlay">Slide 4</div>
                                     </div>
                                 </div>
                             </div>
@@ -65,9 +61,8 @@
                                 <div class="col-md-3">
                                     <div class="card">
                                         <div class="card-img">
-                                            <img src="//via.placeholder.com/500x650/aba?text=5" class="img-fluid">
+                                            <img src="${pageContext.request.contextPath}/resources/common/img/index/carousel/sample5.jpeg" width="500" height="650" class="img-fluid">
                                         </div>
-                                        <div class="card-img-overlay">Slide 5</div>
                                     </div>
                                 </div>
                             </div>
@@ -75,9 +70,8 @@
                                 <div class="col-md-3">
                                     <div class="card">
                                         <div class="card-img">
-                                            <img src="//via.placeholder.com/500x650/fc0?text=6" class="img-fluid">
+                                            <img src="${pageContext.request.contextPath}/resources/common/img/index/carousel/sample6.jpeg" width="500" height="650" class="img-fluid">
                                         </div>
-                                        <div class="card-img-overlay">Slide 6</div>
                                     </div>
                                 </div>
                             </div>
@@ -85,9 +79,8 @@
                                 <div class="col-md-3">
                                     <div class="card">
                                         <div class="card-img">
-                                            <img src="//via.placeholder.com/500x650/bac0?text=7" class="img-fluid">
+                                            <img src="${pageContext.request.contextPath}/resources/common/img/index/carousel/sample7.jpeg" width="500" height="650" class="img-fluid">
                                         </div>
-                                        <div class="card-img-overlay">Slide 7</div>
                                     </div>
                                 </div>
                             </div>

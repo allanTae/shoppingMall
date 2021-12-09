@@ -20,7 +20,7 @@
                                 </div>
                                 <div class="col-md-8 item_info_wrap p-0">
                                     <div class="text-start"><span>${orderItem.itemName}</span></div>
-                                    <div class="text-start"><p>Size: ${orderItem.size}-${orderItem.quantity}개</p></div>
+                                    <div class="text-start"><p>Size: ${orderItem.size}-${orderItem.orderQuantity}개</p></div>
                                     <div class="text-start"><p><fmt:formatNumber type="number" maxFractionDigits="3" value="${orderItem.price}" />원</p></div>
                                 </div>
                             </div>
@@ -94,7 +94,7 @@
                         </div>
                     </div>
                     <div class="orderButtonWrap row col-md-12 m-0">
-                        <button class="btn btn-secondary">주문하기</button>
+                        <button class="btn btn-secondary" id="btnOrder">주문하기</button>
                     </div>
 				</div>
             </div>
@@ -145,7 +145,6 @@
                 }
 
                 // 우편번호와 주소 정보를 해당 필드에 넣는다.
-                console.log("data.zonecode: " + data.zonecode);
                 document.getElementById('postcode').value = data.zonecode;
 
                 document.getElementById("address").value = addr;
@@ -160,14 +159,12 @@
 
   //
   $(document).on("change", "#deliveryMemo", function(){
-    console.log("change event!!");
     if($(this).val() === "직접입력"){
-        console.log("true!!");
         var htmls = '<input type="text" placeholder="배송메모를 입력 해 주세요." class="form-control" id="customMemo" />';
         $('#customMemoWrap').append(htmls);
+    }else{
+        $('#customMemo').remove();
     }
-    console.log("val: " + $(this).val());
-    console.log("text: " + $(this).text());
   });
 
   // checkbox click event.
@@ -202,21 +199,52 @@
     $(".ordererInfoWrap").html(htmls);
   }
 
-  function getOrderInfo(){
+  function getOrderForm(){
 
+    var ordererName = $('#userInfo_name').val();
+    var ordererPhone = $('#userInfo_phone').val();
+    var ordererEmail = $('#userInfo_email').val();
+
+    var recipient = $('#recipientName').val();
+    var recipientPhone = $('#recipientPhone').val();
+    var postcode = $('#postcode').val();
+    var address = $('#address').val();
+    var detailAddress = $('#detailAddress').val();
+    var deliveryMemo;
+
+    if($('#customMemo').val()===undefined){
+        deliveryMemo = $('#deliveryMemo').val();
+    }else{
+        deliveryMemo = $('#customMemo').val();
+    }
+
+
+    var orderForm = '';
+    orderForm += '<input type="text" name="ordererName" value="' + ordererName + '" />';
+    orderForm += '<input type="text" name="ordererPhone" value="' + ordererPhone + '" />';
+    orderForm += '<input type="text" name="ordererEmail" value="' + ordererEmail + '" />';
+    orderForm += '<input type="text" name="recipient" value="' + recipient + '" />';
+    orderForm += '<input type="text" name="recipientPhone" value="' + recipientPhone + '" />';
+    orderForm += '<input type="text" name="postcode" value="' + postcode + '" />';
+    orderForm += '<input type="text" name="address" value="' + address + '" />';
+    orderForm += '<input type="text" name="detailAddress" value="' + detailAddress + '" />';
+    orderForm += '<input type="text" name="deliveryMemo" value="' + deliveryMemo + '" />';
+    <c:forEach var="orderItem" items="${orderInfo.orderItems}" varStatus="index">
+        orderForm += '<input type="text" name="orderItems[' + (${index.count} - 1) + '].itemId" value="' + ${orderItem.itemId} + '" />';
+        orderForm += '<input type="text" name="orderItems[' + (${index.count} - 1) + '].orderQuantity" value="' + ${orderItem.orderQuantity} + '" />';
+        orderForm += '<input type="text" name="orderItems[' + (${index.count} - 1) + '].size" value="' + "${orderItem.size}" + '" />';
+    </c:forEach>
+
+    console.log(orderForm);
+    return orderForm;
   }
 
   // 주문 버튼 event.
   $(document).on("click", "#btnOrder", function(){
-    if(quantityMapBySize.size < 1){
-        alert("필수 옵션을 입력 해 주세요.");
-        return;
-    }else{
-        let form =$('<form action="${pageContext.request.contextPath}/order/orderForm" method="post">' +
-            getOrderForm() +
-            '</form>');
-        $("body").append(form);
-        form.submit();
-    }
+       let form =$('<form action="${pageContext.request.contextPath}/order/save" method="post">' +
+           getOrderForm() +
+           '</form>');
+       $("body").append(form);
+       form.submit();
   });
 </script>

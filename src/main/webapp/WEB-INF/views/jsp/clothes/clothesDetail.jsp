@@ -437,14 +437,14 @@
         var orderItems = getOrderQuantities();
 
         var orderFormInfo = "";
-        orderFormInfo += '<input type="text" name="itemId" value="${clothesInfo.clothesId}" />';
         orderFormInfo += '<input type="text" name="totalQuantity" value="' + totalOrderQuantity + '" />';
         orderFormInfo += '<input type="text" name="totalAmount" value="' + totalAmount + '" />';
         for(var i = 0; i<orderItems.length; i++){
+            orderFormInfo += '<input type="text" name="orderItems[' + i + '].itemId" value="${clothesInfo.clothesId}" />';
             orderFormInfo += '<input type="text" name="orderItems[' + i + '].itemName" value="${clothesInfo.clothesName}" />';
             orderFormInfo += '<input type="text" name="orderItems[' + i + '].previewImg" value="${clothesInfo.previewImages[0]}" />';
             orderFormInfo += '<input type="text" name="orderItems[' + i + '].size" value="' + orderItems[i].size + '" />';
-            orderFormInfo += '<input type="text" name="orderItems[' + i + '].quantity" value="' + orderItems[i].quantity + '" />';
+            orderFormInfo += '<input type="text" name="orderItems[' + i + '].orderQuantity" value="' + orderItems[i].quantity + '" />';
             orderFormInfo += '<input type="text" name="orderItems[' + i + '].price" value="' + orderItems[i].price + '" />';
         }
         console.log(orderFormInfo);

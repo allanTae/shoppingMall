@@ -4,6 +4,7 @@ import com.allan.shoppingMall.common.exception.ErrorCode;
 import com.allan.shoppingMall.common.exception.ItemNotFoundException;
 import com.allan.shoppingMall.common.value.Address;
 import com.allan.shoppingMall.domains.delivery.domain.Delivery;
+import com.allan.shoppingMall.domains.delivery.domain.DeliveryStatus;
 import com.allan.shoppingMall.domains.item.domain.clothes.ClothesRepository;
 import com.allan.shoppingMall.domains.item.domain.ItemRepository;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
@@ -35,9 +36,6 @@ public class OrderService {
     @Transactional
     public Long order(OrderRequest request, Member member){
         // 카테고리에 따른 분기 처리가 필요. 카테고리 추가시 코드 수정이 필요하다.
-        // 의상 상품인 경우 로직.
-        Clothes findClothes = clothesRepository.findById(request.getItemId()).orElseThrow(()
-                -> new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND.getMessage(), ErrorCode.ENTITY_NOT_FOUND));
 
         Order order = Order.builder()
                 .orderer(member)
@@ -45,7 +43,9 @@ public class OrderService {
                         .address(Address.builder()
                                 .roadAddress(request.getAddress())
                                 .detailAddress(request.getDetailAddress())
+                                .postCode(request.getPostcode())
                                 .build())
+                        .deliveryStatus(DeliveryStatus.DELIVERY_READY)
                         .build())
                 .orderStatus(OrderStatus.ORDER_READY)
                 .ordererInfo(OrdererInfo.builder()

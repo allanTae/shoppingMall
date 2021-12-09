@@ -11,7 +11,6 @@ import java.util.List;
 @Getter
 @Setter
 public class OrderSummaryRequest {
-    private Long itemId;
     private Long totalQuantity;
     private Long totalAmount;
     private List<OrderItemSummary> orderItems;
