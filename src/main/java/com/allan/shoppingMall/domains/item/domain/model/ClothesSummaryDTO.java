@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 프론트단으로 전달 할 요약 된 의상 정보를 전달하기 위한 ClothesDTO 클래스.
+ * 프론트단으로 전달 할 의상 요약정보를 가지고 있는 DTO 클래스.
  */
 
 @Getter

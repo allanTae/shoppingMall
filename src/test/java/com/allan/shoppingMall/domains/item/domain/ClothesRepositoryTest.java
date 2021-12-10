@@ -2,6 +2,7 @@ package com.allan.shoppingMall.domains.item.domain;
 
 import com.allan.shoppingMall.common.config.jpa.auditing.JpaAuditingConfig;
 import com.allan.shoppingMall.domains.item.domain.clothes.*;
+import com.allan.shoppingMall.domains.member.domain.Member;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -9,6 +10,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.List;
@@ -119,6 +123,35 @@ public class ClothesRepositoryTest {
         assertThat(findClothes.getItemImages().get(3).getImageType().getWhereToUse(), is(TEST_CLOTHES.getItemImages().get(3).getImageType().getWhereToUse()));
     }
 
+    @Test
+    public void 최근_등록된_상품_페이징_조회_테스트() throws Exception {
+        //given
+        Clothes TEST_CLOTHES1 = createClothes("testName1", "testEng1");
+        Clothes TEST_CLOTHES2 = createClothes("testName2", "testEng2");
+        Clothes TEST_CLOTHES3 = createClothes("testName3", "testEng3");
+        Clothes TEST_CLOTHES4 = createClothes("testName4", "testEng4");
+        Clothes TEST_CLOTHES5 = createClothes("testName5", "testEng5");
+
+        testEntityManager.persist(TEST_CLOTHES1);
+        testEntityManager.persist(TEST_CLOTHES2);
+        testEntityManager.persist(TEST_CLOTHES3);
+        testEntityManager.persist(TEST_CLOTHES4);
+        testEntityManager.persist(TEST_CLOTHES5);
+
+        testEntityManager.flush();
+
+        //when
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "createdDate"));
+        Page<Clothes> page = clothesRepository.findAll(pageRequest);
+
+        //then
+        List<Clothes> content = page.getContent();
+        assertThat(content.size(), is(3));
+        assertThat(content.get(0).getName(), is("testName5"));
+        assertThat(content.get(1).getName(), is("testName4"));
+        assertThat(content.get(2).getName(), is("testName3"));
+    }
+
     private Clothes createClothes() {
         Clothes clothes = Clothes.builder()
                 .name("testName")
@@ -126,6 +159,17 @@ public class ClothesRepositoryTest {
                 .engName("testEngName")
                 .color(Color.RED)
                 .build();
+        return clothes;
+    }
+
+    private Clothes createClothes(String name, String engName) {
+        Clothes clothes = Clothes.builder()
+                .name(name)
+                .price(1000l)
+                .engName(engName)
+                .color(Color.RED)
+                .build();
+        clothes.changeClothesSizes(createClothesSizes(SizeLabel.S, 0.0,0.0, 0.0,0.0, 0.0, 0.0, 0.0, 1l));
         return clothes;
     }
 

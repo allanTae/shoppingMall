@@ -8,9 +8,12 @@ import com.allan.shoppingMall.domains.item.domain.model.*;
 import com.allan.shoppingMall.domains.item.infra.ImageFileHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
 
 import java.io.IOException;
 import java.util.List;
@@ -189,11 +192,11 @@ public class ClothesService {
     }
 
     /**
-     * PREVIEW 이미지를 포함한 의상정보를 반환하는 메소드.
+     * index.jsp 에서 arraival 에 표시할 상품에 대한 PREVIEW 이미지, 상품이름, 가격 등의 정보를 반환하는 메소드.
      * @return List<ClothesSummaryDTO>
      */
-    public List<ClothesSummaryDTO> getClothesSummary(){
-        List<Clothes> clothesList = clothesRepository.getClothesList();
+    public List<ClothesSummaryDTO> getClothesSummary(Pageable pageable){
+        List<Clothes> clothesList = clothesRepository.findAll(pageable).getContent();
 
         List<ClothesSummaryDTO> clothesSummaryDTOS = clothesList
                 .stream()

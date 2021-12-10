@@ -8,7 +8,6 @@ import com.allan.shoppingMall.domains.order.domain.model.OrderSummaryRequest;
 import com.allan.shoppingMall.domains.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,9 +31,6 @@ public class OrderController {
 
     @PostMapping("/save")
     public String order(@ModelAttribute OrderRequest request, Authentication authentication){
-
-        log.info("request: " + request.toString());
-
         Member findMember = authenticationConverter.getMemberFromAuthentication(authentication);
 
         if(null == request.getOrdererName()){

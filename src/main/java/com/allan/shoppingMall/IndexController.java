@@ -3,10 +3,13 @@ package com.allan.shoppingMall;
 import com.allan.shoppingMall.common.value.LoginUserInfo;
 import com.allan.shoppingMall.domains.infra.AuthenticationConverter;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
+import com.allan.shoppingMall.domains.item.domain.clothes.ClothesRepository;
 import com.allan.shoppingMall.domains.item.service.ClothesService;
 import com.allan.shoppingMall.domains.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,7 +26,8 @@ public class IndexController {
 
     @RequestMapping("/index")
     public String getIndex(Model model, Authentication authentication){
-        model.addAttribute("ClothesSummaryList", clothesService.getClothesSummary());
+        model.addAttribute("ClothesSummaryList", clothesService.getClothesSummary(PageRequest.of(0, 9, Sort.by(Sort.Direction.DESC, "createdDate"))));
+
         if(authentication != null){
             getUserInfo(authentication, model);
         }

@@ -1,6 +1,8 @@
 package com.allan.shoppingMall.domains.item.domain.clothes;
 
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,4 +24,5 @@ public interface ClothesRepository extends JpaRepository<Clothes, Long> {
     @Query("select clothes from Clothes clothes join fetch clothes.itemImages" +
             " where clothes.itemId = :clothesId")
     public Optional<Clothes> getClothes(@Param("clothesId") Long clothesId);
+
 }

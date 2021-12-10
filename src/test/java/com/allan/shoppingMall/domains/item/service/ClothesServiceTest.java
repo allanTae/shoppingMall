@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.*;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -58,21 +59,50 @@ public class ClothesServiceTest {
     @Test
     public void 의류_상품_리스트_테스트() throws Exception {
         //given
+        Page<Clothes> TEST_CLOTHES = createClothesByPaging();
         List<Clothes> TEST_CLOTHES_LIST = createClothesList();
-        given(clothesRepository.getClothesList())
-                .willReturn(TEST_CLOTHES_LIST);
+        given(clothesRepository.findAll(any(Pageable.class))).willReturn(TEST_CLOTHES);
 
         //when
-        List<ClothesSummaryDTO> clothes = clothesService.getClothesSummary();
+        List<ClothesSummaryDTO> clothes = clothesService.getClothesSummary(PageRequest.of(0, 9, Sort.by(Sort.Direction.DESC, "createdDate")));
 
         //then
-        verify(clothesRepository, atLeastOnce()).getClothesList();
+        verify(clothesRepository, atLeastOnce()).findAll(any(Pageable.class));
         assertThat(clothes.get(0).getClothesId(), is(TEST_CLOTHES_LIST.get(0).getItemId()));
         assertThat(clothes.get(0).getClothesName(), is(TEST_CLOTHES_LIST.get(0).getName()));
         assertThat(clothes.get(0).getPrice(), is(TEST_CLOTHES_LIST.get(0).getPrice()));
         assertThat(clothes.get(0).getProfileImageIds().size(), is(TEST_CLOTHES_LIST.get(0).getItemImages().size() - 1));
         assertThat(clothes.get(0).getProfileImageIds().get(0), is(TEST_CLOTHES_LIST.get(0).getItemImages().get(0).getItemImageId()));
         assertThat(clothes.get(0).getProfileImageIds().get(1), is(TEST_CLOTHES_LIST.get(0).getItemImages().get(2).getItemImageId()));
+    }
+
+    private Page<Clothes> createClothesByPaging() {
+        Clothes clothes = Clothes.builder()
+                .name("testClothesName")
+                .price(100l)
+                .build();
+
+        clothes.changeItemImages(List.of(ItemImage.builder()
+                        .imageType(ImageType.PREVIEW)
+                        .itemImagePath("testImagePath")
+                        .build(),
+                ItemImage.builder()
+                        .imageType(ImageType.PRODUCT)
+                        .itemImagePath("testImagePath2")
+                        .build(),
+                ItemImage.builder()
+                        .imageType(ImageType.PREVIEW)
+                        .itemImagePath("testImagePath3")
+                        .build())
+        );
+
+        ReflectionTestUtils.setField(clothes, "itemId", 1l);
+
+        PageImpl<Clothes> page = new PageImpl<>(List.of(
+                clothes
+        ));
+
+        return page;
     }
 
     @Test

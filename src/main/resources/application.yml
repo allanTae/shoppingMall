@@ -39,19 +39,6 @@ spring:
     level:
       org.hibernate.SQL: DEBUG
 
-
-#  logging:
-#    level:
-#      org:
-#        hibernate:
-#          type:
-#            desriptor:
-#              sql: trace
-#    com:
-#      atoz_develop:
-#        mybatissample:
-#          repository: TRACE
-
   # jpa 설정.
   jpa:
     show-sql: false
