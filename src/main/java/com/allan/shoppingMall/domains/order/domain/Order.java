@@ -34,7 +34,7 @@ public class Order extends BaseEntity {
     private Member orderer;
 
     @Column(name = "order_status", nullable = false)
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -79,15 +79,19 @@ public class Order extends BaseEntity {
      * orderItem 의 구현체에 따라 다른 메소드를 호출하도록 처리.
      */
     public void cancelOrder(){
+        log.info("cancelOrder() call!!!");
         // 주문상태 점검.
-        if(this.orderStatus == OrderStatus.ORDER_READY){
+        if(this.orderStatus == OrderStatus.ORDER_ITEM_READY){
             this.orderStatus = OrderStatus.ORDER_CANCEL;
+            // 배송 취소.
             this.delivery.cancelDelivery();
             for(OrderItem orderItem : this.orderItems){
                 if( orderItem instanceof OrderClothes){
+                    log.info("orderItem is OrderClothes!!");
                     OrderClothes orderClothes = (OrderClothes) orderItem;
                     orderClothes.cancleOrderClothes();
                 }else{
+                    log.info("orderItem is not OrderClothes");
                     orderItem.cancelOrderItem();
                 }
 

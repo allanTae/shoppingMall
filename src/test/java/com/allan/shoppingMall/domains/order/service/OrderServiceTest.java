@@ -4,6 +4,9 @@ import com.allan.shoppingMall.domains.item.domain.Item;
 import com.allan.shoppingMall.domains.item.domain.ItemRepository;
 import com.allan.shoppingMall.domains.item.domain.clothes.*;
 import com.allan.shoppingMall.domains.member.domain.Member;
+import com.allan.shoppingMall.domains.order.domain.Order;
+import com.allan.shoppingMall.domains.order.domain.OrderClothes;
+import com.allan.shoppingMall.domains.order.domain.OrderItem;
 import com.allan.shoppingMall.domains.order.domain.OrderRepository;
 import com.allan.shoppingMall.domains.order.domain.model.OrderLineRequest;
 import com.allan.shoppingMall.domains.order.domain.model.OrderRequest;
@@ -21,9 +24,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.verify;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -84,6 +86,43 @@ public class OrderServiceTest {
         verify(orderRepository, atLeastOnce()).save(any());
         assertThat(TEST_CLOTHES.getStockQuantity(), is(12l));
         assertThat(TEST_CLOTHES_SIZE.getStockQuantity(), is(2l));
+    }
+
+
+    @Test
+    public void 주문취소_테스트() throws Exception {
+        //given
+        Order TEST_ORDER = mock(Order.class);
+
+        given(orderRepository.findById(any()))
+                .willReturn(Optional.of(TEST_ORDER));
+
+        doNothing().when(TEST_ORDER).cancelOrder();
+
+        //when
+        orderService.cancelOrder(any());
+
+        //then
+        verify(orderRepository, atLeastOnce()).findById(any());
+        verify(TEST_ORDER, atLeastOnce()).cancelOrder();
+    }
+
+    private Clothes createClothes() {
+
+        Clothes clothes = Clothes.builder()
+                .build();
+
+        clothes.changeClothesSizes(List.of(
+                ClothesSize.builder()
+                        .stockQuantity(15l)
+                        .sizeLabel(SizeLabel.M)
+                        .build(),
+                ClothesSize.builder()
+                        .stockQuantity(15l)
+                        .sizeLabel(SizeLabel.S)
+                        .build()
+        ));
+        return clothes;
     }
 
     private ClothesSize createClothesSize() {

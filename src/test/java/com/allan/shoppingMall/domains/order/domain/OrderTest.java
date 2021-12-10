@@ -8,6 +8,7 @@ import com.allan.shoppingMall.domains.item.domain.Color;
 import com.allan.shoppingMall.domains.item.domain.Item;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
 import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSize;
+import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
 import com.allan.shoppingMall.domains.member.domain.Gender;
 import com.allan.shoppingMall.domains.member.domain.Member;
 import com.allan.shoppingMall.domains.member.domain.MemberRole;
@@ -49,49 +50,59 @@ public class OrderTest {
     }
 
     /**
-     * 주문시, 동일한 상품이 리스트에 추가여부를 확인하는 테스트.
-     * 오류로 인하여 동일한 상품이 추가되어 이중 결제가 되는 것을 방지하기 위함.
+     * 의상 상품의 경우, OrderItem 대신 OrderClothes 가 들어가게 되고,
+     * 의상의 경우, 동일한 상품 아이디와 동일한 사이즈의 제품이 주문되는 경우는 없기때문에
+     * itemId, SizeLabel을 통해 상품의 동일성 여부를 판단하고, 동일하다고 판단하는 경우 동일 제품을 주문하지 않는다.
      */
-    @Test
-    public void 주문시_중복상품_추가_테스트() throws Exception {
-        //given
-        Member TEST_ORDERER = createMember();
-        ClothesSize TEST_CLOTHES_SIZE = createClothesSize();
-        Clothes TEST_CLOTHES = createClothes(TEST_CLOTHES_SIZE);
-        testEntityManager.persist(TEST_CLOTHES);
-        testEntityManager.persist(TEST_ORDERER);
-
-        Order TEST_ORDER = createOrderByMember(TEST_ORDERER);
-        TEST_ORDER.changeOrderItems(createdOrderItems(TEST_CLOTHES));
-        testEntityManager.persist(TEST_ORDER);
-
-        //when
-        TEST_ORDER.changeOrderItems(createdOrderItems(TEST_CLOTHES));
-
-        //then
-        assertThat(TEST_ORDER.getOrderItems().size(), is(1));
-    }
-
-
     @Test
     public void 주문시_옷_상품_중복_추가_테스트() throws Exception {
         //given
         Member TEST_ORDERER = createMember();
-        ClothesSize TEST_CLOTHES_SIZE = createClothesSize();
-        Clothes TEST_CLOTHES = createClothes(TEST_CLOTHES_SIZE);
-
-        testEntityManager.persist(TEST_CLOTHES);
-        testEntityManager.persist(TEST_ORDERER);
+        ClothesSize TEST_CLOTHES_SIZE1 = createClothesSize(SizeLabel.S, 15l);
+        ClothesSize TEST_CLOTHES_SIZE2 = createClothesSize(SizeLabel.M, 15l);
+        Clothes TEST_CLOTHES = createClothes(List.of(TEST_CLOTHES_SIZE1, TEST_CLOTHES_SIZE2));
 
         Order TEST_ORDER = createOrderByMember(TEST_ORDERER);
-        TEST_ORDER.changeOrderItems(createdOrderClothes(TEST_CLOTHES, TEST_CLOTHES_SIZE));
+        TEST_ORDER.changeOrderItems(List.of(new OrderClothes(2l, TEST_CLOTHES, TEST_CLOTHES_SIZE1),
+                                            new OrderClothes(2l, TEST_CLOTHES, TEST_CLOTHES_SIZE2)));
         testEntityManager.persist(TEST_ORDER);
 
         //when
-        TEST_ORDER.changeOrderItems(createdOrderClothes(TEST_CLOTHES, TEST_CLOTHES_SIZE));
+        TEST_ORDER.changeOrderItems(List.of(new OrderClothes(2l, TEST_CLOTHES, TEST_CLOTHES_SIZE1)));
 
         //then
-        assertThat(TEST_ORDER.getOrderItems().size(), is(1));
+        assertThat(TEST_ORDER.getOrderItems().size(), is(2));
+        OrderClothes orderClothes1 = (OrderClothes) TEST_ORDER.getOrderItems().get(0);
+        OrderClothes orderClothes2 = (OrderClothes) TEST_ORDER.getOrderItems().get(1);
+        assertThat(orderClothes1.getClothesSize().getSizeLabel(), is(SizeLabel.S));
+        assertThat(orderClothes2.getClothesSize().getSizeLabel(), is(SizeLabel.M));
+    }
+
+    @Test
+    public void 주문_취소_테스트() throws Exception {
+        //given
+        Member TEST_ORDERER = createMember();
+        ClothesSize TEST_CLOTHES_SIZE1 = createClothesSize(SizeLabel.S, 15l);
+        ClothesSize TEST_CLOTHES_SIZE2 = createClothesSize(SizeLabel.M, 15l);
+        Clothes TEST_CLOTHES = createClothes(List.of(TEST_CLOTHES_SIZE1, TEST_CLOTHES_SIZE2));
+
+        Order TEST_ORDER = createOrderByMember(TEST_ORDERER);
+        TEST_ORDER.changeOrderItems(List.of(new OrderClothes(2l, TEST_CLOTHES, TEST_CLOTHES_SIZE1),
+                                            new OrderClothes(2l, TEST_CLOTHES, TEST_CLOTHES_SIZE2)));
+
+        testEntityManager.persist(TEST_ORDERER);
+        testEntityManager.persist(TEST_CLOTHES);
+        testEntityManager.persist(TEST_ORDER);
+        testEntityManager.flush();
+        testEntityManager.clear();
+
+        //when
+        TEST_ORDER.cancelOrder();
+
+        //then
+        assertThat(TEST_CLOTHES.getStockQuantity(), is(30l));
+        assertThat(TEST_CLOTHES_SIZE1.getStockQuantity(), is(15l));
+        assertThat(TEST_CLOTHES_SIZE2.getStockQuantity(), is(15l));
     }
 
     private Member createMember() {
@@ -111,12 +122,6 @@ public class OrderTest {
                 .build();
     }
 
-    private List<OrderItem> createdOrderClothes(Clothes clothes, ClothesSize clothesSize){
-        return List.of(
-                new OrderClothes(10l, clothes, clothesSize)
-        );
-    }
-
     private List<OrderItem> createdOrderItems(Item item
     ){
         return List.of(
@@ -126,7 +131,7 @@ public class OrderTest {
     }
 
 
-    private Clothes createClothes(ClothesSize clothesSize){
+    private Clothes createClothes(List<ClothesSize> clothesSizes){
         Clothes clothes = Clothes.builder()
                 .name("testClothesName")
                 .price(100l)
@@ -136,20 +141,21 @@ public class OrderTest {
 
 
 
-        clothes.changeClothesSizes(List.of(clothesSize));
+        clothes.changeClothesSizes(clothesSizes);
 
         return clothes;
     }
 
-    private ClothesSize createClothesSize(){
+    private ClothesSize createClothesSize(SizeLabel sizeLabel, Long stockQuantity){
         return ClothesSize.builder()
-                .stockQuantity(30l)
+                .sizeLabel(sizeLabel)
+                .stockQuantity(stockQuantity)
                 .build();
     }
 
     private Order createOrderByMember() {
         return Order.builder()
-                .orderStatus(OrderStatus.ORDER_READY)
+                .orderStatus(OrderStatus.ORDER_ITEM_READY)
                 .orderer(createMember())
                 .delivery(Delivery.builder()
                         .address(new Address("", "", "", "", ""))
@@ -160,7 +166,7 @@ public class OrderTest {
 
     private Order createOrderByMember(Member orderer) {
         return Order.builder()
-                .orderStatus(OrderStatus.ORDER_COMPLETE)
+                .orderStatus(OrderStatus.ORDER_ITEM_READY)
                 .orderer(orderer)
                 .delivery(Delivery.builder()
                         .address(new Address("", "", "", "", ""))

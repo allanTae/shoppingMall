@@ -20,7 +20,7 @@ public class Delivery extends BaseEntity {
     private Long deliveryId;
 
     @Column(name = "delivery_status", nullable = false)
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private DeliveryStatus deliveryStatus;
 
     @Embedded

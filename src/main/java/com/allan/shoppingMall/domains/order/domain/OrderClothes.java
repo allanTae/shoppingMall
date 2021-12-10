@@ -11,7 +11,6 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "order_clothes")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j

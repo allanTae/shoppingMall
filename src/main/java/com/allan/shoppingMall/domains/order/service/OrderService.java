@@ -2,6 +2,7 @@ package com.allan.shoppingMall.domains.order.service;
 
 import com.allan.shoppingMall.common.exception.ErrorCode;
 import com.allan.shoppingMall.common.exception.ItemNotFoundException;
+import com.allan.shoppingMall.common.exception.order.OrderNotFoundException;
 import com.allan.shoppingMall.common.value.Address;
 import com.allan.shoppingMall.domains.delivery.domain.Delivery;
 import com.allan.shoppingMall.domains.delivery.domain.DeliveryStatus;
@@ -47,7 +48,7 @@ public class OrderService {
                                 .build())
                         .deliveryStatus(DeliveryStatus.DELIVERY_READY)
                         .build())
-                .orderStatus(OrderStatus.ORDER_READY)
+                .orderStatus(OrderStatus.ORDER_ITEM_READY)
                 .ordererInfo(OrdererInfo.builder()
                                 .ordererName(request.getOrdererName())
                                 .ordererPhone(request.getOrdererPhone())
@@ -73,5 +74,15 @@ public class OrderService {
         orderRepository.save(order);
 
         return order.getOrderId();
+    }
+
+    @Transactional
+    public Long cancelOrder(Long orderId){
+        Order findOrder = orderRepository.findById(orderId).orElseThrow(()
+                -> new OrderNotFoundException(ErrorCode.ENTITY_NOT_FOUND.getMessage(), ErrorCode.ENTITY_NOT_FOUND));
+
+        findOrder.cancelOrder();
+
+        return findOrder.getOrderId();
     }
 }

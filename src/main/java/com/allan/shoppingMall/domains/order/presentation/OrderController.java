@@ -53,6 +53,12 @@ public class OrderController {
         return "order/orderResult";
     }
 
+    @PostMapping("/cancel/{orderId}")
+    public String cancelOrder(@PathVariable("orderId") Long orderId){
+        orderService.cancelOrder(orderId);
+        return "/index";
+    }
+
 
     /**
      * 로그인한 계정의 정보를 전달하는 메소드.

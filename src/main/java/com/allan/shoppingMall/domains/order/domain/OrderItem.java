@@ -21,6 +21,8 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "order_items")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "dtype")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Slf4j
