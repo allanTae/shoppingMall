@@ -47,6 +47,7 @@ public class OrderService {
                                 .postCode(request.getPostcode())
                                 .build())
                         .deliveryStatus(DeliveryStatus.DELIVERY_READY)
+                        .deliveryMemo(request.getDeliveryMemo())
                         .build())
                 .orderStatus(OrderStatus.ORDER_ITEM_READY)
                 .ordererInfo(OrdererInfo.builder()

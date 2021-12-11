@@ -5,7 +5,7 @@
         <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
             <div class="container">
                 <div class="brandLogo">
-                    <a class="navbar-brand" href="#page-top"><img src="${pageContext.request.contextPath}/resources/common/img/index/navbar-logo.svg" alt="..." /></a>
+                    <a class="navbar-brand" href="${pageContext.request.contextPath}/index"><img src="${pageContext.request.contextPath}/resources/common/img/index/navbar-logo.svg" alt="..." /></a>
                 </div>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                     Menu

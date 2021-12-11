@@ -157,9 +157,15 @@ public class OrderTest {
         return Order.builder()
                 .orderStatus(OrderStatus.ORDER_ITEM_READY)
                 .orderer(createMember())
+                .ordererInfo(OrdererInfo.builder()
+                        .ordererName("testOrdererName")
+                        .ordererEmail("test@email.email")
+                        .ordererPhone("010-2222-2222")
+                        .build())
                 .delivery(Delivery.builder()
                         .address(new Address("", "", "", "", ""))
                         .deliveryStatus(DeliveryStatus.DELIVERY_READY)
+                        .deliveryMemo("testDeliveryMemeo")
                         .build())
                 .build();
     }
@@ -168,9 +174,15 @@ public class OrderTest {
         return Order.builder()
                 .orderStatus(OrderStatus.ORDER_ITEM_READY)
                 .orderer(orderer)
+                .ordererInfo(OrdererInfo.builder()
+                        .ordererName("testOrdererName")
+                        .ordererEmail("test@email.email")
+                        .ordererPhone("010-2020-2020")
+                        .build())
                 .delivery(Delivery.builder()
                         .address(new Address("", "", "", "", ""))
                         .deliveryStatus(DeliveryStatus.DELIVERY_READY)
+                        .deliveryMemo("testDeliveryMemo")
                         .build())
                 .build();
     }

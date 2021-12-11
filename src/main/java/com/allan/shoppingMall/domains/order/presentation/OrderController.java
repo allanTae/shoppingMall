@@ -33,13 +33,13 @@ public class OrderController {
     public String order(@ModelAttribute OrderRequest request, Authentication authentication){
         Member findMember = authenticationConverter.getMemberFromAuthentication(authentication);
 
-        if(null == request.getOrdererName()){
+        if(null == request.getOrdererName() || request.getOrdererName().equals("")){
             request.setOrdererName(findMember.getName());
         }
-        if(null == request.getOrdererPhone()){
+        if(null == request.getOrdererPhone() || request.getOrdererPhone().equals("")){
             request.setOrdererPhone(findMember.getPhone());
         }
-        if(null == request.getOrdererEmail()){
+        if(null == request.getOrdererEmail() || request.getOrdererEmail().equals("")){
             request.setOrdererEmail(findMember.getEmail());
         }
 

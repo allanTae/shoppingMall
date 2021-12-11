@@ -15,13 +15,13 @@ import javax.persistence.Embeddable;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrdererInfo {
 
-    @Column(name = "orderer_name")
+    @Column(name = "orderer_name", nullable = false)
     private String ordererName;
 
-    @Column(name = "orderer_phone")
+    @Column(name = "orderer_phone", nullable = false)
     private String ordererPhone;
 
-    @Column(name = "orderer_email")
+    @Column(name = "orderer_email", nullable = false)
     private String ordererEmail;
 
     @Builder

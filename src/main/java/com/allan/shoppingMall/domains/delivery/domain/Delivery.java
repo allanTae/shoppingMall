@@ -26,10 +26,14 @@ public class Delivery extends BaseEntity {
     @Embedded
     private Address address;
 
+    @Column(name="delivery_memo", nullable = false)
+    private String deliveryMemo;
+
     @Builder
-    public Delivery(DeliveryStatus deliveryStatus, Address address) {
+    public Delivery(DeliveryStatus deliveryStatus, Address address, String deliveryMemo) {
         this.deliveryStatus = deliveryStatus;
         this.address = address;
+        this.deliveryMemo = deliveryMemo;
     }
 
     /**

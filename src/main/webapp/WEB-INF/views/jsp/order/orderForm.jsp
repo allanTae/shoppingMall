@@ -199,6 +199,17 @@
     $(".ordererInfoWrap").html(htmls);
   }
 
+  function checkValidation(){
+     var selectedOptionIndex = $('#deliveryMemo option').index($('#deliveryMemo option:selected'));
+     if(selectedOptionIndex === 0){
+        alert("배송메모를 선택 해 주세요.");
+        return false;
+     }
+
+
+     return true;
+  }
+
   function getOrderForm(){
 
     var ordererName = $('#userInfo_name').val();
@@ -217,7 +228,7 @@
     }else{
         deliveryMemo = $('#customMemo').val();
     }
-
+    console.log("deliveryMemo= " + deliveryMemo);
 
     var orderForm = '';
     orderForm += '<input type="text" name="ordererName" value="' + ordererName + '" />';
@@ -235,16 +246,17 @@
         orderForm += '<input type="text" name="orderItems[' + (${index.count} - 1) + '].size" value="' + "${orderItem.size}" + '" />';
     </c:forEach>
 
-    console.log(orderForm);
     return orderForm;
   }
 
   // 주문 버튼 event.
   $(document).on("click", "#btnOrder", function(){
-       let form =$('<form action="${pageContext.request.contextPath}/order/save" method="post">' +
-           getOrderForm() +
-           '</form>');
-       $("body").append(form);
-       form.submit();
+       if(checkValidation() === true){
+        let form =$('<form action="${pageContext.request.contextPath}/order/save" method="post">' +
+            getOrderForm() +
+            '</form>');
+        $("body").append(form);
+        form.submit();
+       }
   });
 </script>
