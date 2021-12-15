@@ -7,12 +7,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- *  주문하는 상품의 요약정보.
+ * 상세보기창에서(clothesDetail.jsp) 주문 창으로(orderForm.jsp) 주문 할 상품들의 정보들을
+ * 전달하기 위해 사용함.(OrderSummaryRequest 에 포함 된 정보.)
  */
 @Getter
 @Setter
 @NoArgsConstructor
-public class OrderItemSummary {
+public class OrderItemSummaryRequest {
     private Long itemId;
     private String itemName;
     private SizeLabel size;
@@ -26,7 +27,7 @@ public class OrderItemSummary {
     }
 
     @Builder
-    public OrderItemSummary(Long itemId, String itemName, SizeLabel size, Long orderQunatity, Long price, Long previewImg) {
+    public OrderItemSummaryRequest(Long itemId, String itemName, SizeLabel size, Long orderQunatity, Long price, Long previewImg) {
         this.itemId = itemId;
         this.itemName = itemName;
         this.size = size;

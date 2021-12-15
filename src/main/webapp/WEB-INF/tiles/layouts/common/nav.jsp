@@ -32,14 +32,19 @@
                         <li class="nav-item"><a class="nav-link" href="#team">about</a></li>
                         <sec:authorize access="hasRole('ROLE_ADMIN')" >
                             <li class="nav-item dropdown">
-                                <a class="nav-link" href="#team" class="dropdown-toggle" id="dropDownManager" data-bs-toggle="dropdown" aria-expanded="false">관리자 메뉴</a>
+                                <a class="nav-link" href="#" class="dropdown-toggle" id="dropDownManager" data-bs-toggle="dropdown" aria-expanded="false">관리자 메뉴</a>
                                 <ul class="dropdown-menu" aria-labelledby="dropDownManager">
                                   <li><a class="dropdown-item" href="${pageContext.request.contextPath}/clothes/clothesForm">상품 등록</a></li>
                                 </ul>
                             </li>
                         </sec:authorize>
                         <sec:authorize access="hasRole('ROLE_USER')" >
-                            <li class="nav-item"><a class="nav-link" href="#team">myMenu</a></li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link" href="#" class="dropdown-toggle" id="dropDownUser" data-bs-toggle="dropdown" aria-expanded="false">myMenu</a>
+                                <ul class="dropdown-menu" aria-labelledby="dropDownUser">
+                                  <li><a class="dropdown-item" href="${pageContext.request.contextPath}/myOrder/list">주문내역</a></li>
+                                </ul>
+                            </li>
                         </sec:authorize>
                         <sec:authorize access="!isAuthenticated()">
                             <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/auth/loginForm">login</a></li>

@@ -127,7 +127,7 @@ public class ClothesService {
      */
     public ClothesDTO getClothes(Long clothesId){
 
-        Clothes findClothes = clothesRepository.findById(clothesId)
+        Clothes findClothes = clothesRepository.getClothes(clothesId)
                 .orElseThrow(() ->
                         new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND.getMessage(), ErrorCode.ENTITY_NOT_FOUND));
 

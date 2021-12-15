@@ -121,14 +121,14 @@ public class ClothesServiceTest {
         TEST_CLOTHES.changeModelSizes(List.of(ModelSize.builder().modelWeight(10.5).build()));
         TEST_CLOTHES.changeItemImages(List.of(ItemImage.builder().imageType(ImageType.PREVIEW).build()));
 
-        given(clothesRepository.findById(any()))
+        given(clothesRepository.getClothes(any()))
                 .willReturn(Optional.of(TEST_CLOTHES));
 
         //when
         ClothesDTO clothes = clothesService.getClothes(any());
 
         //then
-        verify(clothesRepository, atLeastOnce()).findById(any());
+        verify(clothesRepository, atLeastOnce()).getClothes(any());
         assertThat(clothes.getClothesName(), is(TEST_CLOTHES.getName()));
         assertThat(clothes.getPrice(), is(TEST_CLOTHES.getPrice()));
         assertThat(clothes.getEngName(), is(TEST_CLOTHES.getEngName()));

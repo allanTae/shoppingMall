@@ -13,5 +13,5 @@ import java.util.List;
 public class OrderSummaryRequest {
     private Long totalQuantity;
     private Long totalAmount;
-    private List<OrderItemSummary> orderItems;
+    private List<OrderItemSummaryRequest> orderItems;
 }

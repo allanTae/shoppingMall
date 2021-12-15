@@ -1,20 +1,22 @@
 package com.allan.shoppingMall.domains.order.service;
 
-import com.allan.shoppingMall.domains.item.domain.Item;
+import com.allan.shoppingMall.domains.item.domain.ItemImage;
 import com.allan.shoppingMall.domains.item.domain.ItemRepository;
 import com.allan.shoppingMall.domains.item.domain.clothes.*;
 import com.allan.shoppingMall.domains.member.domain.Member;
-import com.allan.shoppingMall.domains.order.domain.Order;
-import com.allan.shoppingMall.domains.order.domain.OrderClothes;
-import com.allan.shoppingMall.domains.order.domain.OrderItem;
-import com.allan.shoppingMall.domains.order.domain.OrderRepository;
+import com.allan.shoppingMall.domains.order.domain.*;
 import com.allan.shoppingMall.domains.order.domain.model.OrderLineRequest;
 import com.allan.shoppingMall.domains.order.domain.model.OrderRequest;
+import com.allan.shoppingMall.domains.order.domain.model.OrderSummaryDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.Rollback;
 
 import java.util.List;
@@ -22,7 +24,6 @@ import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
@@ -107,22 +108,42 @@ public class OrderServiceTest {
         verify(TEST_ORDER, atLeastOnce()).cancelOrder();
     }
 
-    private Clothes createClothes() {
-
-        Clothes clothes = Clothes.builder()
+    @Test
+    public void 현재_자신의_주문_목록_페이징_테스트() throws Exception {
+        //given
+        ItemImage TEST_ITEM_IMAGE = ItemImage.builder()
                 .build();
 
-        clothes.changeClothesSizes(List.of(
-                ClothesSize.builder()
-                        .stockQuantity(15l)
-                        .sizeLabel(SizeLabel.M)
-                        .build(),
-                ClothesSize.builder()
-                        .stockQuantity(15l)
-                        .sizeLabel(SizeLabel.S)
-                        .build()
-        ));
-        return clothes;
+        ClothesSize TEST_CLOTHES_SIZE = ClothesSize.builder()
+                .stockQuantity(10l)
+                .build();
+
+        Clothes TEST_CLOTHES = Clothes.builder()
+                .name("testClothesName")
+                .price(1000l)
+                .build();
+        TEST_CLOTHES.changeClothesSizes(List.of(TEST_CLOTHES_SIZE));
+        TEST_CLOTHES.changeItemImages(List.of(TEST_ITEM_IMAGE));
+
+        OrderClothes TEST_ORDER_CLOTHES = new OrderClothes(10l, TEST_CLOTHES, TEST_CLOTHES_SIZE);
+
+        Order TEST_ORDER = Order.builder()
+                .orderStatus(OrderStatus.ORDER_ITEM_READY)
+                .build();
+
+        TEST_ORDER.changeOrderItems(List.of(TEST_ORDER_CLOTHES));
+        Page<Order> TEST_PAGE_RESPONSE = new PageImpl<>(List.of(TEST_ORDER));
+
+        given(orderRepository.getOrderListByAuthId(any(), any()))
+                .willReturn(TEST_PAGE_RESPONSE);
+
+        PageRequest TEST_PAGE_REQUEST = PageRequest.of(1, 10);
+
+        //when
+        Page<Order> page = orderService.getMyOrderSummaryList("testAuthId", TEST_PAGE_REQUEST);
+
+        //then
+        verify(orderRepository, atLeastOnce()).getOrderListByAuthId(any(), any());
     }
 
     private ClothesSize createClothesSize() {

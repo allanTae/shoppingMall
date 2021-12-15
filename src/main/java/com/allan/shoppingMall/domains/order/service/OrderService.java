@@ -14,7 +14,13 @@ import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSizeRepository;
 import com.allan.shoppingMall.domains.member.domain.Member;
 import com.allan.shoppingMall.domains.order.domain.*;
 import com.allan.shoppingMall.domains.order.domain.model.OrderRequest;
+import com.allan.shoppingMall.domains.order.domain.model.OrderSummaryDTO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +30,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class OrderService {
 
     private final OrderRepository orderRepository;
@@ -85,5 +92,35 @@ public class OrderService {
         findOrder.cancelOrder();
 
         return findOrder.getOrderId();
+    }
+
+    public Page<Order> getMyOrderSummaryList(String authId, Pageable pageable){
+
+        int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);
+        pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdDate"));
+        Page<Order> orderPage = orderRepository.getOrderListByAuthId(authId, pageable);
+
+        return orderPage;
+    }
+
+    public List<OrderSummaryDTO> getOrderSummaryDTO(List<Order> orders){
+        return
+                orders.stream()
+                        .map(order -> {
+                            String orderItemsName = "";
+                            if(order.getOrderItems().size() > 1)
+                                orderItemsName = order.getOrderItems().get(0).getItem().getName() + "외 " + (order.getOrderItems().size()-1) + "건";
+                            else
+                                orderItemsName = order.getOrderItems().get(0).getItem().getName();
+
+                            return OrderSummaryDTO.builder()
+                                    .orderId(order.getOrderId())
+                                    .orderStatus(order.getOrderStatus().getDesc())
+                                    .orderName(orderItemsName)
+                                    .profileImgId(order.getOrderItems().get(0).getItem().getItemImages().get(0).getItemImageId())
+                                    .createdDate(order.getCreatedDate())
+                                    .build();
+                        })
+                        .collect(Collectors.toList());
     }
 }

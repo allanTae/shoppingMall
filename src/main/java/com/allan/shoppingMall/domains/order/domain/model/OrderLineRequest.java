@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * 주문 할 상품의 요약 정보.
+ * 주문 할 상품의 요약 정보.(OrderRequest 에 포함 된 정보.)
  * 주문시, 서버로 전달 할 각 주문 상품에 대한 정보들.
  */
 
