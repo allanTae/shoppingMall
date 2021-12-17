@@ -166,6 +166,8 @@ public class OrderTest {
                         .address(new Address("", "", "", "", ""))
                         .deliveryStatus(DeliveryStatus.DELIVERY_READY)
                         .deliveryMemo("testDeliveryMemeo")
+                        .recipient("testRecipient")
+                        .recipientPhone("000-0000-0000")
                         .build())
                 .build();
     }
@@ -183,6 +185,8 @@ public class OrderTest {
                         .address(new Address("", "", "", "", ""))
                         .deliveryStatus(DeliveryStatus.DELIVERY_READY)
                         .deliveryMemo("testDeliveryMemo")
+                        .recipient("testRecipient")
+                        .recipientPhone("000-0000-0000")
                         .build())
                 .build();
     }

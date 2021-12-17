@@ -13,6 +13,8 @@ import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSize;
 import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSizeRepository;
 import com.allan.shoppingMall.domains.member.domain.Member;
 import com.allan.shoppingMall.domains.order.domain.*;
+import com.allan.shoppingMall.domains.order.domain.model.OrderDetailDTO;
+import com.allan.shoppingMall.domains.order.domain.model.OrderItemDTO;
 import com.allan.shoppingMall.domains.order.domain.model.OrderRequest;
 import com.allan.shoppingMall.domains.order.domain.model.OrderSummaryDTO;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,6 +58,8 @@ public class OrderService {
                                 .build())
                         .deliveryStatus(DeliveryStatus.DELIVERY_READY)
                         .deliveryMemo(request.getDeliveryMemo())
+                        .recipient(request.getRecipient())
+                        .recipientPhone(request.getRecipientPhone())
                         .build())
                 .orderStatus(OrderStatus.ORDER_ITEM_READY)
                 .ordererInfo(OrdererInfo.builder()
@@ -94,6 +99,12 @@ public class OrderService {
         return findOrder.getOrderId();
     }
 
+    /**
+     * 자신의 주문 리스트를 페이징하여 반환하기 위한 메소드.
+     * (기본 페이징 사이즈는 10 입니다.)
+     * @param authId 사용자 아이디.
+     * @param pageable 페이지 정보.
+     */
     public Page<Order> getMyOrderSummaryList(String authId, Pageable pageable){
 
         int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);
@@ -103,6 +114,11 @@ public class OrderService {
         return orderPage;
     }
 
+    /**
+     * 컨트롤러단에서 전달받은 Page<Order> 를 프론트단으로 전송 할 List<OrderSummaryDTO> 반환하기 위한 메소드.
+     * @param orders 페이징 한 Order 정보.
+     * @return List<OrderSummaryDTO>
+     */
     public List<OrderSummaryDTO> getOrderSummaryDTO(List<Order> orders){
         return
                 orders.stream()
@@ -122,5 +138,57 @@ public class OrderService {
                                     .build();
                         })
                         .collect(Collectors.toList());
+    }
+
+    /**
+     * 주문 1건에 대한 상세 주문정보를 반환하는 메소드.
+     * @param orderId
+     * @return OrderDetailDTO
+     */
+    public OrderDetailDTO getOrderDetailDTO(Long orderId){
+        Order findOrder = orderRepository.findById(orderId).orElseThrow(()
+                -> new OrderNotFoundException(ErrorCode.ENTITY_NOT_FOUND.getMessage(), ErrorCode.ENTITY_NOT_FOUND));
+
+        List<OrderItemDTO> orderItemDTOS = findOrder.getOrderItems()
+                .stream()
+                .map(orderItem -> {
+                    OrderItemDTO orderItemDTO = OrderItemDTO.builder()
+                            .name(orderItem.getItem().getName())
+                            .price(orderItem.getItem().getPrice())
+                            .color(orderItem.getItem().getColor().getDesc())
+                            .profileImg(orderItem.getItem().getItemImages().get(0).getItemImageId())
+                            .orderQuantity(orderItem.getOrderQuantity())
+                            .discountName("없음")
+                            .discountPrice(0l)
+                            .build();
+
+                    // Clothes 상품만 사이즈 정보를 가지고 있기에(ClothesSize 로 관리)
+                    // OrderClothes 인 경우를 체크하고 size 정보를 추가한다.
+                    if(orderItem instanceof OrderClothes){
+                        OrderClothes orderClothes = (OrderClothes) orderItem;
+                        orderItemDTO.setSize(orderClothes.getClothesSize().getSizeLabel());
+                    }
+
+                    return orderItemDTO;
+                })
+                .collect(Collectors.toList());
+
+        OrderDetailDTO orderDetailDTO = OrderDetailDTO.builder()
+                .orderId(findOrder.getOrderId())
+                .orderDate(LocalDateTime.now())
+                .orderItems(orderItemDTOS)
+                .recipient(findOrder.getDelivery().getRecipient())
+                .recipientPhone(findOrder.getDelivery().getRecipientPhone())
+                .address(findOrder.getDelivery().getAddress().getRoadAddress() + findOrder.getDelivery().getAddress().getDetailAddress())
+                .orderStatus(findOrder.getOrderStatus().getDesc())
+                .ordererInfo(OrdererInfo.builder()
+                        .ordererName(findOrder.getOrdererInfo().getOrdererName())
+                        .ordererPhone(findOrder.getOrdererInfo().getOrdererPhone())
+                        .ordererEmail(findOrder.getOrdererInfo().getOrdererEmail())
+                        .build())
+                .deliveryMemo(findOrder.getDelivery().getDeliveryMemo())
+                .build();
+
+        return orderDetailDTO;
     }
 }

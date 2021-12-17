@@ -92,6 +92,8 @@ public class OrderRepositoryTest {
                         .deliveryMemo("testMemo1")
                         .deliveryStatus(DeliveryStatus.DELIVERY_READY)
                         .address(new Address("", "", "", "", ""))
+                        .recipient("testRecipient")
+                        .recipientPhone("000-0000-0000")
                         .build())
                 .ordererInfo(
                         OrdererInfo.builder()
@@ -113,6 +115,8 @@ public class OrderRepositoryTest {
                         .deliveryMemo("testMemo2")
                         .deliveryStatus(DeliveryStatus.DELIVERY_READY)
                         .address(new Address("", "", "", "", ""))
+                        .recipient("testRecipient")
+                        .recipientPhone("000-0000-0000")
                         .build())
                 .ordererInfo(
                         OrdererInfo.builder()
@@ -134,6 +138,8 @@ public class OrderRepositoryTest {
                         .deliveryMemo("testMemo3")
                         .deliveryStatus(DeliveryStatus.DELIVERY_READY)
                         .address(new Address("", "", "", "", ""))
+                        .recipient("testRecipient")
+                        .recipientPhone("000-0000-0000")
                         .build())
                 .ordererInfo(
                         OrdererInfo.builder()
@@ -155,6 +161,8 @@ public class OrderRepositoryTest {
                         .deliveryMemo("testMemo3")
                         .deliveryStatus(DeliveryStatus.DELIVERY_READY)
                         .address(new Address("", "", "", "", ""))
+                        .recipient("testRecipient")
+                        .recipientPhone("000-0000-0000")
                         .build())
                 .ordererInfo(
                         OrdererInfo.builder()
@@ -176,6 +184,8 @@ public class OrderRepositoryTest {
                         .deliveryMemo("testMemo3")
                         .deliveryStatus(DeliveryStatus.DELIVERY_READY)
                         .address(new Address("", "", "", "", ""))
+                        .recipient("testRecipient")
+                        .recipientPhone("000-0000-0000")
                         .build())
                 .ordererInfo(
                         OrdererInfo.builder()
@@ -197,6 +207,8 @@ public class OrderRepositoryTest {
                         .deliveryMemo("testMemo3")
                         .deliveryStatus(DeliveryStatus.DELIVERY_READY)
                         .address(new Address("", "", "", "", ""))
+                        .recipient("testRecipient")
+                        .recipientPhone("000-0000-0000")
                         .build())
                 .ordererInfo(
                         OrdererInfo.builder()
@@ -218,6 +230,8 @@ public class OrderRepositoryTest {
                         .deliveryMemo("testMemo3")
                         .deliveryStatus(DeliveryStatus.DELIVERY_READY)
                         .address(new Address("", "", "", "", ""))
+                        .recipient("testRecipient")
+                        .recipientPhone("000-0000-0000")
                         .build())
                 .ordererInfo(
                         OrdererInfo.builder()

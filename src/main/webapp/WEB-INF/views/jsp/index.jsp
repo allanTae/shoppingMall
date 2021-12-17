@@ -25,7 +25,7 @@
                                 <div class="col-md-3">
                                     <div class="card">
                                         <div class="card-img">
-                                            <img src="${pageContext.request.contextPath}/resources/common/img/index/carousel/sample1.jpeg" class="img-fluid" width="500" height="650"/>
+                                            <img src="${pageContext.request.contextPath}/resources/common/img/index/carousel/caro1.jpeg" class="img-fluid" width="500" height="650"/>
                                         </div>
                                     </div>
                                 </div>
@@ -34,7 +34,7 @@
                                 <div class="col-md-3">
                                     <div class="card">
                                         <div class="card-img">
-                                            <img src="${pageContext.request.contextPath}/resources/common/img/index/carousel/sample2.jpeg" width="500" height="650" class="img-fluid">
+                                            <img src="${pageContext.request.contextPath}/resources/common/img/index/carousel/caro2.jpeg" width="500" height="650" class="img-fluid">
                                         </div>
                                     </div>
                                 </div>
@@ -43,7 +43,7 @@
                                 <div class="col-md-3">
                                     <div class="card">
                                         <div class="card-img">
-                                            <img src="${pageContext.request.contextPath}/resources/common/img/index/carousel/sample3.jpeg" width="500" height="650" class="img-fluid">
+                                            <img src="${pageContext.request.contextPath}/resources/common/img/index/carousel/caro3.jpeg" width="500" height="650" class="img-fluid">
                                         </div>
                                     </div>
                                 </div>
@@ -52,7 +52,7 @@
                                 <div class="col-md-3">
                                     <div class="card">
                                         <div class="card-img">
-                                            <img src="${pageContext.request.contextPath}/resources/common/img/index/carousel/sample4.jpeg" width="500" height="650" class="img-fluid">
+                                            <img src="${pageContext.request.contextPath}/resources/common/img/index/carousel/caro4.jpeg" width="500" height="650" class="img-fluid">
                                         </div>
                                     </div>
                                 </div>
@@ -61,7 +61,7 @@
                                 <div class="col-md-3">
                                     <div class="card">
                                         <div class="card-img">
-                                            <img src="${pageContext.request.contextPath}/resources/common/img/index/carousel/sample5.jpeg" width="500" height="650" class="img-fluid">
+                                            <img src="${pageContext.request.contextPath}/resources/common/img/index/carousel/caro5.jpeg" width="500" height="650" class="img-fluid">
                                         </div>
                                     </div>
                                 </div>
@@ -70,7 +70,7 @@
                                 <div class="col-md-3">
                                     <div class="card">
                                         <div class="card-img">
-                                            <img src="${pageContext.request.contextPath}/resources/common/img/index/carousel/sample6.jpeg" width="500" height="650" class="img-fluid">
+                                            <img src="${pageContext.request.contextPath}/resources/common/img/index/carousel/caro6.jpeg" width="500" height="650" class="img-fluid">
                                         </div>
                                     </div>
                                 </div>
@@ -79,7 +79,7 @@
                                 <div class="col-md-3">
                                     <div class="card">
                                         <div class="card-img">
-                                            <img src="${pageContext.request.contextPath}/resources/common/img/index/carousel/sample7.jpeg" width="500" height="650" class="img-fluid">
+                                            <img src="${pageContext.request.contextPath}/resources/common/img/index/carousel/caro7.jpeg" width="500" height="650" class="img-fluid">
                                         </div>
                                     </div>
                                 </div>
@@ -88,9 +88,8 @@
                                 <div class="col-md-3">
                                     <div class="card">
                                         <div class="card-img">
-                                            <img src="//via.placeholder.com/500x650/fac0?text=8" class="img-fluid">
+                                            <img src="${pageContext.request.contextPath}/resources/common/img/index/carousel/caro8.jpeg" width="500" height="650" class="img-fluid">
                                         </div>
-                                        <div class="card-img-overlay">Slide 8</div>
                                     </div>
                                 </div>
                             </div>

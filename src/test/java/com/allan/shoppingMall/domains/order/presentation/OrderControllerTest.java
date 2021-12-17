@@ -2,6 +2,8 @@ package com.allan.shoppingMall.domains.order.presentation;
 
 import com.allan.shoppingMall.domains.infra.AuthenticationConverter;
 import com.allan.shoppingMall.domains.member.domain.Member;
+import com.allan.shoppingMall.domains.order.domain.OrderStatus;
+import com.allan.shoppingMall.domains.order.domain.model.OrderDetailDTO;
 import com.allan.shoppingMall.domains.order.domain.model.OrderRequest;
 import com.allan.shoppingMall.domains.order.domain.model.OrderSummaryRequest;
 import com.allan.shoppingMall.domains.order.service.OrderService;
@@ -14,6 +16,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+
+import java.time.LocalDateTime;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -98,5 +102,36 @@ public class OrderControllerTest {
         //then
         resultActions
                 .andExpect(view().name("order/orderResult"));
+    }
+
+    @Test
+    public void 상세주문_조회_테스트() throws Exception {
+        //given
+        OrderDetailDTO TEST_ORDER_DETAIL_DTO = OrderDetailDTO.builder()
+                .orderDate(LocalDateTime.now())
+                .orderStatus(OrderStatus.ORDER_ITEM_READY.getDesc())
+                .build();
+        given(orderService.getOrderDetailDTO(any()))
+                .willReturn(TEST_ORDER_DETAIL_DTO);
+
+        // when
+        ResultActions resultActions = mvc.perform(get("/order/1"));
+
+        //then
+        verify(orderService, atLeastOnce()).getOrderDetailDTO(any());
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(view().name("order/orderDetail"));
+    }
+
+    @Test
+    public void 주문_취소_테스트() throws Exception {
+        //given, when
+        ResultActions resultActions = mvc.perform(post("/order/cancel/1"));
+
+        //then
+        verify(orderService,atLeastOnce()).cancelOrder(any());
+        resultActions
+                .andExpect(status().is3xxRedirection());
     }
 }

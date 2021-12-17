@@ -7,32 +7,10 @@
 <c:url var="getBoardList" value="/board/getBoardList">
 </c:url>
 <script>
-	function fn_contentView(boardId){
-		var url= "${pageContext.request.contextPath}/board/boardContent";
-		url = url + "?boardId=" +boardId;
+	function fn_contentView(orderId){
+		var url= "${pageContext.request.contextPath}/order/" + orderId;
 		location.href = url;
 	}
-
-	// 로그인 버튼 이벤트
-	$(document).on('click', '#btnLogin', function(e){
-		e.preventDefault();
-		location.href = "${pageContext.request.contextPath}/user/login";
-	});
-	// 로그아웃 버튼 이벤트
-	$(document).on('click', '#btnLogout', function(e){
-        e.preventDefault();
-		location.href = "${pageContext.request.contextPath}/user/logout";
-	});
-	// 사용자 관리 페이지 버튼 이벤트
-	$(document).on('click', '#btnUserPage', function(e){
-		e.preventDefault();
-		location.href = "${pageContext.request.contextPath}/user/getUserList";
-	});
-	// 자신이 작성한 게시글 목록 버튼 이벤트
-    $(document).on('click', '#btnMyBoard', function(e){
-        e.preventDefault();
-        location.href = "${pageContext.request.contextPath}/myBoard/getBoardList";
-    });
 
     $(document).on('click', '#btnPrev', function(e){
         e.preventDefault();
@@ -83,20 +61,20 @@
 		<h2>주문내역</h2>
 
 		<!-- content-left {s} -->
-		<div class="table-responsive myOrderTableWrap" id="con-left">
+		<div class="myOrderTableWrap" id="con-left">
             <c:choose>
                 <c:when test="${empty myOrderList }" >
                     <tr><td colspan="5" align="center">데이터가 없습니다.</td></tr>
                 </c:when>
                 <c:when test="${!empty myOrderList}">
                     <c:forEach var="list" items="${myOrderList}">
-                        <a href="#" onclick="fn_contentView()">
+                        <a href="#" onclick="fn_contentView(${list.orderId})">
                            <div class="orderItemWrap border mb-2">
                              <div class="row orderItem com-md-12">
                                 <div class="orderProfileImg col-md-2 p-0">
                                     <img class="p-1" src="${pageContext.request.contextPath}/image/${list.profileImgId}" width="90px" height="90px"/>
                                 </div>
-                                <div class="orderInfoWrap col-md-6 text-start">
+                                <div class="orderInfoWrap col-md-6 text-start mt-1">
                                     <div class="orderInfo_by_orderName_orderNumWrap">
                                         <div class="col-md-8 orderName">주문: <c:out value="${list.orderName}" /></div>
                                         <div class="col-md-4 orderNum">주문번호: <c:out value="${list.orderId}" /></div>
@@ -105,7 +83,7 @@
                                         <div class="col-md-12 orderStatus">주문상태: <c:out value="${list.orderStatus}" /></div>
                                     </div>
                                 </div>
-                                <div class="orderDateWrap col-md-4">
+                                <div class="orderDateWrap col-md-4 mt-4">
                                     <div class="orderDate"><c:out value="${list.createdDate}"/></div>
                                 </div>
                              </div>
@@ -117,10 +95,13 @@
 		</div>
 		<!-- content-left {e} -->
 
+    <p class="m-0"><br /></p>
 	</div>
 	<!-- container{e} -->
 
 	<!-- paginationContainer{s} -->
+    <p class="m-0"><br /></p>
+
 	<div id="paginationContainer" class="container">
 
 		<!-- pagination{s} -->
