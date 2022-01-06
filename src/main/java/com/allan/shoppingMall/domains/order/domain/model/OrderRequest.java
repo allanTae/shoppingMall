@@ -6,11 +6,13 @@ import lombok.Setter;
 import java.util.List;
 
 /**
- * 주문상세창에서(orderForm.jsp)에서 서버측에 전달하는 주문정보를 가지고 있는 객체입니다.
+ * 주문상세창에서(orderForm.jsp)에서 주문 도메인 생성을 위해
+ * 서버측에 전달하는 주문정보를 가지고 있는 객체입니다.
  */
 @Getter
 @Setter
 public class OrderRequest {
+    // 주문 상품 정보.
     private List<OrderLineRequest> orderItems;
 
     // 주문자 정보.

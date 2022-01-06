@@ -3,10 +3,7 @@ package com.allan.shoppingMall.domains.order.presentation;
 import com.allan.shoppingMall.common.domain.model.UserInfo;
 import com.allan.shoppingMall.domains.infra.AuthenticationConverter;
 import com.allan.shoppingMall.domains.member.domain.Member;
-import com.allan.shoppingMall.domains.order.domain.model.OrderDetailDTO;
-import com.allan.shoppingMall.domains.order.domain.model.OrderItemDTO;
-import com.allan.shoppingMall.domains.order.domain.model.OrderRequest;
-import com.allan.shoppingMall.domains.order.domain.model.OrderSummaryRequest;
+import com.allan.shoppingMall.domains.order.domain.model.*;
 import com.allan.shoppingMall.domains.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,24 +45,32 @@ public class OrderController {
         if(null == request.getOrdererEmail() || request.getOrdererEmail().equals("")){
             request.setOrdererEmail(findMember.getEmail());
         }
-
         orderService.order(request, findMember);
 
         return "redirect:/order/orderResult";
     }
 
-    @GetMapping("/orderResult")
-    public String getOrderResult(){
+    /**
+     * 주문 후, 주문 결과 페이지를 출력하는 메소드.
+     * 주문페이지(orderForm.jsp)에서 Iamport api 결제 요청 실패시, 생성 된 '임시저장' 주문를 삭제 합니다.
+     * @param orderResultRequest 주문 결과 정보를 담고 있는 request object.
+     * @return
+     */
+    @PostMapping("/orderResult")
+    public String getOrderResult(@ModelAttribute("orderResult") OrderResultRequest orderResultRequest, Authentication authentication){
+        // 임시 주문 삭제.
+        orderService.deleteAllTempOrder(authentication.getName());
+
         return "order/orderResult";
     }
 
     /**
      * 주문 취소 함수.
-     * @param orderId OrderEntity id.
+     * @param orderNum OrderEntity id.
      */
-    @PostMapping("/cancel/{orderId}")
-    public String cancelOrder(@PathVariable("orderId") Long orderId){
-        orderService.cancelOrder(orderId);
+    @PostMapping("/cancel/{orderNum}")
+    public String cancelOrder(@PathVariable("orderNum") String orderNum, Authentication authentication){
+        orderService.cancelMyOrder(orderNum, authentication.getName());
         return "redirect:/myOrder/list";
     }
 
@@ -80,6 +85,20 @@ public class OrderController {
         model.addAttribute("orderInfo", orderDetail);
 
         return "order/orderDetail";
+    }
+
+    @GetMapping("/order/error")
+    public String getOrderFailResult(@RequestParam("imp_uid") String impUid,
+                                     @RequestParam("merchant_uid") String merchantUid,
+                                     @RequestParam("imp_success") boolean impSuccess,
+                                     @RequestParam("error_msg") String errorMsg,
+                                     Model model){
+
+        model.addAttribute("imp_uid", impUid);
+        model.addAttribute("merchant_uid", merchantUid);
+        model.addAttribute("imp_success", impSuccess);
+        model.addAttribute("error_msg", errorMsg);
+        return "order/orderFailResult";
     }
 
     /**

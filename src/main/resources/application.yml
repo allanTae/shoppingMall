@@ -18,6 +18,17 @@ server:
 decorator.datasource.p6spy.enable-logging: true
 decorator.datasource.p6spy.multiline: true
 
+#logging:
+#  level:
+#    org.hibernate: trace
+
+# logging 설정.
+logging:
+  level:
+#    org.hibernate: trace
+    org.hibernate.SQL: debug
+    org.hibernate.type.descriptor.sql: trace
+
 spring:
   profiles:
     active: devDB
@@ -34,14 +45,11 @@ spring:
       prefix: /WEB-INF/views/jsp/
       suffix: .jsp
 
-  # logging 설정.
-  logging:
-    level:
-      org.hibernate.SQL: DEBUG
+
 
   # jpa 설정.
   jpa:
-    show-sql: false
+    show-sql: true
     hibernate:
       ddl-auto: update
     properties:

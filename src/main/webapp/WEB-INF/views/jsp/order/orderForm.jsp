@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix = "fmt" uri = "http://java.sun.com/jsp/jstl/fmt" %>
-
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <article>
 	<div class="container orderCardContainer col-md-10" role="main">
@@ -103,8 +103,37 @@
 
 </article>
 
+<!-- sweetalert -->
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<script type="text/javascript">
+	var paymentConfirm = function(titleText, contentText, orderResponse) {
+        swal({
+          title: titleText,
+          text: contentText,
+          icon: "warning",
+          buttons: {
+            cancel: "계속해서 주문",
+            orderResult: {
+                text: "주문결과 창으로 이동하시겠습니까.?",
+                value: "orderResult",
+            },
+          },
+        })
+        .then((value) => {
+          if(value === "orderResult"){
+            swal("주문결과창으로 이동합니다.", {
+              icon: "success",
+            });
+            postOrderResultForm(orderResponse);
+          }
+        });
+	}
+</script>
+
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
+    // daum postcode api.
     function getPostcode() {
         new daum.Postcode({
             oncomplete: function(data) {
@@ -155,9 +184,11 @@
     }
 </script>
 
+<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+
 <script>
 
-  //
+  // 배송메모 select event.
   $(document).on("change", "#deliveryMemo", function(){
     if($(this).val() === "직접입력"){
         var htmls = '<input type="text" placeholder="배송메모를 입력 해 주세요." class="form-control" id="customMemo" />';
@@ -206,57 +237,167 @@
         return false;
      }
 
-
      return true;
   }
 
-  function getOrderForm(){
+  // 주문 요청 메소드.
+  $(document).on('click', '#btnOrder', function(e){
+  		e.preventDefault();
 
-    var ordererName = $('#userInfo_name').val();
-    var ordererPhone = $('#userInfo_phone').val();
-    var ordererEmail = $('#userInfo_email').val();
+        var ordererName = $('#userInfo_name').val();
+        var ordererPhone = $('#userInfo_phone').val();
+        var ordererEmail = $('#userInfo_email').val();
 
-    var recipient = $('#recipientName').val();
-    var recipientPhone = $('#recipientPhone').val();
-    var postcode = $('#postcode').val();
-    var address = $('#address').val();
-    var detailAddress = $('#detailAddress').val();
-    var deliveryMemo;
+        var recipient = $('#recipientName').val();
+        var recipientPhone = $('#recipientPhone').val();
+        var postcode = $('#postcode').val();
+        var address = $('#address').val();
+        var detailAddress = $('#detailAddress').val();
+        var deliveryMemo;
 
-    if($('#customMemo').val()===undefined){
-        deliveryMemo = $('#deliveryMemo').val();
-    }else{
-        deliveryMemo = $('#customMemo').val();
+        if($('#customMemo').val()===undefined){
+            deliveryMemo = $('#deliveryMemo').val();
+        }else{
+            deliveryMemo = $('#customMemo').val();
+        }
+
+        var orderItemList = [];
+        <c:forEach var="orderItem" items="${orderInfo.orderItems}" varStatus="index">
+            orderItemList.push({
+                "itemId": ${orderItem.itemId},
+                "orderQuantity": ${orderItem.orderQuantity},
+                "size": "${orderItem.size}"
+            });
+        </c:forEach>
+
+        var paramData = JSON.stringify({"orderItems": orderItemList,
+                                        "ordererName": ordererName,
+                                        "ordererPhone": ordererPhone,
+                                        "ordererEmail": ordererEmail,
+                                        "recipient": recipient,
+                                        "recipientPhone": recipientPhone,
+                                        "postcode": postcode,
+                                        "address": address,
+                                        "detailAddress": detailAddress,
+                                        "deliveryMemo": deliveryMemo
+        });
+        var headers = {"Content-Type" : "application/json; charset=UTF-8;"
+              , "X-HTTP-Method-Override" : "POST"};
+        $.ajax({
+          url: "${pageContext.request.contextPath}/order"
+          , headers : headers
+          , data : paramData
+          , type : 'POST'
+          , dataType : 'json'
+          , success: function(result){
+              // order domain create success
+              console.log("message: " + result.message);
+              console.log("orderNum: " + result.orderNum);
+              requestPay(result.orderNum);
+          }
+          , error:function(request,status,error){
+            console.log("error: " + error);
+            alert("주문에 실패했습니다.");
+          }
+        });
+  	});
+
+    // 결제 요청 메소드.
+  	function requestPay(orderId) {
+  	      var IMP = window.IMP;
+          IMP.init("imp19951233");
+          var orderName = "";
+          if(${fn:length(orderInfo.orderItems)} > 1){
+            orderName = "${orderInfo.orderItems[0].itemName}" + "외 " + ${fn:length(orderInfo.orderItems)} +"건";
+          }else{
+            orderName = "${orderInfo.orderItems[0].itemName}";
+          }
+          var totalAmount = ${orderInfo.totalAmount};
+
+          // IMP.request_pay(param, callback) 결제창 호출
+          IMP.request_pay({
+              // param
+		      pg : 'html5_inicis',
+		      pay_method : 'card',
+              merchant_uid: orderId,
+              name: orderName,
+              amount: totalAmount,
+              buyer_email: $('#userInfo_email').val(),
+              buyer_name: $('#userInfo_email').val(),
+              buyer_tel: $('#userInfo_phone').val(),
+              buyer_addr: $('#address').val() + ' ' + $('#detailAddress').val(),
+              buyer_postcode: $('#postcode').val(),
+
+              // confirm_url : "${pageContext.request.contextPath}/order/validate", // iamport 측에서 제공하는 검증 url(단, 사용하기전 iamport사측에 요청해야 함)
+              m_redirect_url : '${pageContext.request.contextPath}/order/orderForm' // 모바일버전을 위한 리다이렉트 url.
+          }, function (rsp) { // callback
+              // iamport 결제 응답 성공.
+              if (rsp.success) {
+                  var headers = {"Content-Type" : "application/json; charset=UTF-8;"
+                                , "X-HTTP-Method-Override" : "POST"};
+                  var paramData = JSON.stringify({"imp_uid": rsp.imp_uid,
+                                                  "merchant_uid": rsp.merchant_uid
+                  });
+                  console.log("결제 성공");
+                  // 결제 성공 시 결제 유효성 검사
+                   $.ajax({
+                    url: "${pageContext.request.contextPath}/order/complete"
+                    , headers : headers
+                    , data : paramData
+                    , type : 'POST'
+                    , dataType : 'json'
+                    , success: function(result){
+                        // 결제 유효성 검사 성공
+                        if(result.orderResult === "결제 성공"){
+                            alert("주문을 성공하였습니다.");
+                            postOrderResultForm(result);
+                        }else{
+                            // 결제 유효성 검사 실패
+                            paymentConfirm("결제결과 안내", result.orderResult + '하였습니다. \n' + result.errorResponse.errMsg, result);
+                        }
+                    }
+                    , error:function(request,status,error){
+                      alert("주문을 실패했습니다.");
+                    }
+                   });
+              } else {
+                  // iamport api 결제 실패 시 로직
+                  var orderResponse = {
+                    orderResult: "결제에 실패하였습니다.",
+                    orderNum: orderId,
+                    errorResponse: {
+                        errorCode: rsp.error_code,
+                        errMsg: rsp.error_msg
+                    }
+                  };
+
+                  paymentConfirm("결제결과 안내", '결제를 실패 하였습니다. \n' + rsp.error_msg, orderResponse);
+
+              }
+          });
     }
-    console.log("deliveryMemo= " + deliveryMemo);
 
-    var orderForm = '';
-    orderForm += '<input type="text" name="ordererName" value="' + ordererName + '" />';
-    orderForm += '<input type="text" name="ordererPhone" value="' + ordererPhone + '" />';
-    orderForm += '<input type="text" name="ordererEmail" value="' + ordererEmail + '" />';
-    orderForm += '<input type="text" name="recipient" value="' + recipient + '" />';
-    orderForm += '<input type="text" name="recipientPhone" value="' + recipientPhone + '" />';
-    orderForm += '<input type="text" name="postcode" value="' + postcode + '" />';
-    orderForm += '<input type="text" name="address" value="' + address + '" />';
-    orderForm += '<input type="text" name="detailAddress" value="' + detailAddress + '" />';
-    orderForm += '<input type="text" name="deliveryMemo" value="' + deliveryMemo + '" />';
-    <c:forEach var="orderItem" items="${orderInfo.orderItems}" varStatus="index">
-        orderForm += '<input type="text" name="orderItems[' + (${index.count} - 1) + '].itemId" value="' + ${orderItem.itemId} + '" />';
-        orderForm += '<input type="text" name="orderItems[' + (${index.count} - 1) + '].orderQuantity" value="' + ${orderItem.orderQuantity} + '" />';
-        orderForm += '<input type="text" name="orderItems[' + (${index.count} - 1) + '].size" value="' + "${orderItem.size}" + '" />';
-    </c:forEach>
-
-    return orderForm;
-  }
-
-  // 주문 버튼 event.
-  $(document).on("click", "#btnOrder", function(){
-       if(checkValidation() === true){
-        let form =$('<form action="${pageContext.request.contextPath}/order/save" method="post">' +
-            getOrderForm() +
+    // 주문 결과 폼 전송 메소드.
+    function postOrderResultForm(orderResponse){
+        let form =$('<form action="${pageContext.request.contextPath}/order/orderResult" method="post">' +
+            getOrderForm(orderResponse) +
             '</form>');
         $("body").append(form);
         form.submit();
-       }
-  });
+    }
+
+    // 주문 및 결제 결과 폼 내용 생성 메소드.
+    function getOrderForm(orderResponse){
+        var orderFormInfo = "";
+        orderFormInfo += '<input type="text" name="orderResult" value="' + orderResponse.orderResult + '" />';
+        orderFormInfo += '<input type="text" name="orderNum" value="' + orderResponse.orderNum + '" />';
+        if(orderResponse.errorResponse !== null){
+            console.log("getOrderForm() orderResponse.errorResponse: " + orderResponse.errorResponse);
+            orderFormInfo += '<input type="text" name="orderErrorResponse.errorCode" value="' + orderResponse.errorResponse.errorCode + '" />';
+            orderFormInfo += '<input type="text" name="orderErrorResponse.errMsg" value="' + orderResponse.errorResponse.errMsg + '" />';
+        }
+        console.log(orderFormInfo);
+        return orderFormInfo;
+    }
+
 </script>

@@ -33,8 +33,8 @@
                               <tbody class="border-0">
                                 <c:forEach var="clothesFabric" items="${clothesInfo.clothesFabrics}" varStatus="index" >
                                     <tr>
-                                        <td class="text-left" ><c:out value="${clothesFabric.materialPart}" /></td>
-                                        <td class="text-left" ><c:out value="${clothesFabric.materialDesc}" /></td>
+                                        <td class="text-start" ><c:out value="${clothesFabric.materialPart}" /></td>
+                                        <td class="text-start" ><c:out value="${clothesFabric.materialDesc}" /></td>
                                     </tr>
                                 </c:forEach>
                               </tbody>
@@ -51,7 +51,7 @@
                               <tbody class="border-0">
                                 <c:forEach var="clothesDetail" items="${clothesInfo.clothesDetails}" varStatus="index" >
                                     <tr>
-                                        <td class="text-left" ><c:out value="${clothesDetail.detailDesc}" /></td>
+                                        <td class="text-start" ><c:out value="${clothesDetail.detailDesc}" /></td>
                                     </tr>
                                 </c:forEach>
                               </tbody>

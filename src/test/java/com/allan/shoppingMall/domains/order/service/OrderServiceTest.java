@@ -1,15 +1,19 @@
 package com.allan.shoppingMall.domains.order.service;
 
+import com.allan.shoppingMall.common.exception.order.payment.PaymentFailByValidatedOrderStatusException;
+import com.allan.shoppingMall.common.exception.order.payment.PaymentFailException;
 import com.allan.shoppingMall.common.value.Address;
 import com.allan.shoppingMall.domains.delivery.domain.Delivery;
+import com.allan.shoppingMall.domains.delivery.domain.DeliveryStatus;
 import com.allan.shoppingMall.domains.item.domain.Color;
 import com.allan.shoppingMall.domains.item.domain.ItemImage;
-import com.allan.shoppingMall.domains.item.domain.ItemRepository;
 import com.allan.shoppingMall.domains.item.domain.clothes.*;
 import com.allan.shoppingMall.domains.member.domain.Member;
 import com.allan.shoppingMall.domains.order.domain.*;
 import com.allan.shoppingMall.domains.order.domain.model.OrderLineRequest;
 import com.allan.shoppingMall.domains.order.domain.model.OrderRequest;
+import com.allan.shoppingMall.domains.payment.domain.PaymentRepository;
+import com.allan.shoppingMall.domains.payment.domain.model.PaymentIamportDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,11 +23,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.hamcrest.Matchers.is;
@@ -35,13 +41,13 @@ import static org.mockito.Mockito.*;
 public class OrderServiceTest {
 
     @Mock
+    PaymentRepository paymentRepository;
+
+    @Mock
     ClothesRepository clothesRepository;
 
     @Mock
     OrderRepository orderRepository;
-
-    @Mock
-    ItemRepository itemRepository;
 
     @Mock
     ClothesSizeRepository clothesSizeRepository;
@@ -96,16 +102,16 @@ public class OrderServiceTest {
         //given
         Order TEST_ORDER = mock(Order.class);
 
-        given(orderRepository.findById(any()))
+        given(orderRepository.findByOrderNumAndAuthId(any(), any()))
                 .willReturn(Optional.of(TEST_ORDER));
 
         doNothing().when(TEST_ORDER).cancelOrder();
 
         //when
-        orderService.cancelOrder(any());
+        orderService.cancelMyOrder(any(), any());
 
         //then
-        verify(orderRepository, atLeastOnce()).findById(any());
+        verify(orderRepository, atLeastOnce()).findByOrderNumAndAuthId(any(), any());
         verify(TEST_ORDER, atLeastOnce()).cancelOrder();
     }
 
@@ -129,7 +135,6 @@ public class OrderServiceTest {
         OrderClothes TEST_ORDER_CLOTHES = new OrderClothes(10l, TEST_CLOTHES, TEST_CLOTHES_SIZE);
 
         Order TEST_ORDER = Order.builder()
-                .orderStatus(OrderStatus.ORDER_ITEM_READY)
                 .build();
 
         TEST_ORDER.changeOrderItems(List.of(TEST_ORDER_CLOTHES));
@@ -177,9 +182,12 @@ public class OrderServiceTest {
                         .ordererEmail("test@test.test")
                         .ordererPhone("000-0000-0000")
                         .build())
-                .orderStatus(OrderStatus.ORDER_ITEM_READY)
                 .build();
         TEST_ORDER.changeOrderItems(List.of(TEST_ORDER_CLOTHES));
+
+        // OrderStatus 는 insert 시점에 자동으로 설정되기 때문에
+        // 테스트를 위해서 따로 값을 추가.
+        ReflectionTestUtils.setField(TEST_ORDER, "orderStatus", OrderStatus.ORDER_TEMP);
 
         given(orderRepository.findById(any()))
                 .willReturn(Optional.of(TEST_ORDER));
@@ -189,6 +197,212 @@ public class OrderServiceTest {
 
         //then
         verify(orderRepository, atLeastOnce()).findById(any());
+    }
+
+    @Test
+    public void 아임포트_결제_주문_유효성검사_주문금액과_결제금액_불일치로인한_결제실패_테스트() throws Exception {
+        //given
+        ClothesSize TEST_CLOTHES_SIZE = ClothesSize.builder()
+                .sizeLabel(SizeLabel.S)
+                .stockQuantity(10l)
+                .build();
+
+        Clothes TEST_CLOTHES = Clothes.builder()
+                .price(3000l)
+                .build();
+
+        TEST_CLOTHES.changeClothesSizes(List.of(TEST_CLOTHES_SIZE));
+
+        OrderClothes TEST_ORDER_CLOTHES = new OrderClothes(3l, TEST_CLOTHES, TEST_CLOTHES_SIZE);
+
+        Order TEST_ORDER = Order.builder().build();
+        TEST_ORDER.changeOrderItems(List.of(TEST_ORDER_CLOTHES));
+
+        // OrderStatus 는 insert 시점에 자동으로 설정되기 때문에
+        // 테스트를 위해서 따로 값을 추가.
+        ReflectionTestUtils.setField(TEST_ORDER, "orderStatus", OrderStatus.ORDER_TEMP);
+
+        given(orderRepository.findByOrderNumAndAuthId(any(), any()))
+                .willReturn(Optional.of(TEST_ORDER));
+
+        //when, then
+
+        assertThrows(PaymentFailException.class, () -> {
+            orderService.validatePaymentByIamport(PaymentIamportDTO.builder().paymentAmount(2000l).build(),any(), any());
+        });
+        verify(orderRepository, atLeastOnce()).findByOrderNumAndAuthId(any(),any());
+    }
+
+    @Test
+    public void 아임포트_결제_주문_유효성검사_성공_테스트() throws Exception {
+        //given
+        ClothesSize TEST_CLOTHES_SIZE = ClothesSize.builder()
+                .sizeLabel(SizeLabel.S)
+                .stockQuantity(10l)
+                .build();
+
+        Clothes TEST_CLOTHES = Clothes.builder()
+                .price(3000l)
+                .build();
+
+        TEST_CLOTHES.changeClothesSizes(List.of(TEST_CLOTHES_SIZE));
+
+        OrderClothes TEST_ORDER_CLOTHES = new OrderClothes(3l, TEST_CLOTHES, TEST_CLOTHES_SIZE);
+
+        Order TEST_ORDER = Order.builder()
+                .build();
+
+        TEST_ORDER.changeOrderItems(List.of(TEST_ORDER_CLOTHES));
+
+        PaymentIamportDTO TEST_PAYMENT_DTO = PaymentIamportDTO.builder()
+                .payStatus("paid")
+                .payMethod("card")
+                .merchantUid("testOrderNum")
+                .impUid("testPaymentNum")
+                .paymentAmount(3000l)
+                .build();
+
+        given(orderRepository.findByOrderNumAndAuthId(any(), any()))
+                .willReturn(Optional.of(TEST_ORDER));
+
+
+        // OrderStatus 는 insert 시점에 자동으로 설정되기 때문에
+        // 테스트를 위해서 따로 값을 추가.
+        ReflectionTestUtils.setField(TEST_ORDER, "orderStatus", OrderStatus.ORDER_TEMP);
+
+        //when
+        orderService.validatePaymentByIamport(TEST_PAYMENT_DTO, any(), any());
+
+        //then
+        verify(paymentRepository, atLeastOnce()).save(any());
+        verify(orderRepository, atLeastOnce()).findByOrderNumAndAuthId(any(), any());
+        assertThat(TEST_ORDER.getOrderStatus(), is(OrderStatus.ORDER_ITEM_READY));
+    }
+
+    @Test
+    public void 아임포트_결제_주문_유효성검사_주문상태_부적합으로인한_결제실패_테스트() throws Exception {
+        //given
+        ClothesSize TEST_CLOTHES_SIZE = ClothesSize.builder()
+                .sizeLabel(SizeLabel.S)
+                .stockQuantity(10l)
+                .build();
+
+        Clothes TEST_CLOTHES = Clothes.builder()
+                .price(3000l)
+                .build();
+
+        TEST_CLOTHES.changeClothesSizes(List.of(TEST_CLOTHES_SIZE));
+
+        OrderClothes TEST_ORDER_CLOTHES = new OrderClothes(3l, TEST_CLOTHES, TEST_CLOTHES_SIZE);
+
+        Order TEST_ORDER = Order.builder()
+                .build();
+
+        ReflectionTestUtils.setField(TEST_ORDER, "orderStatus", OrderStatus.ORDER_ITEM_READY);
+
+        TEST_ORDER.changeOrderItems(List.of(TEST_ORDER_CLOTHES));
+
+        PaymentIamportDTO TEST_PAYMENT_DTO = PaymentIamportDTO.builder()
+                .payStatus("paid")
+                .payMethod("card")
+                .merchantUid("testOrderNum")
+                .impUid("testPaymentNum")
+                .paymentAmount(3000l)
+                .build();
+
+        given(orderRepository.findByOrderNumAndAuthId(any(), any()))
+                .willReturn(Optional.of(TEST_ORDER));
+
+        // OrderStatus 는 insert 시점에 자동으로 설정되기 때문에(자세한 사항은 Order domain 참조)
+        // 테스트를 위해서 따로 값을 추가.
+        ReflectionTestUtils.setField(TEST_ORDER, "orderStatus", OrderStatus.ORDER_ITEM_READY);
+
+        //when, then
+        assertThrows(PaymentFailByValidatedOrderStatusException.class, () -> {
+            orderService.validatePaymentByIamport(TEST_PAYMENT_DTO, any(), any());
+        });
+        verify(orderRepository, atLeastOnce()).findByOrderNumAndAuthId(any(), any());
+    }
+
+    @Test
+    public void 결제실패시_임시_주문_삭제_테스트() throws Exception {
+        //given
+
+        Clothes TEST_CLOTHES = Clothes.builder()
+                .price(1000l)
+                .build();
+
+        ClothesSize TEST_CLOTHES_SIZE = ClothesSize.builder()
+                .sizeLabel(SizeLabel.S)
+                .stockQuantity(10l)
+                .build();
+
+        TEST_CLOTHES.changeClothesSizes(List.of(TEST_CLOTHES_SIZE));
+
+        Order TEST_TEMP_ORDER = Order.builder()
+                .delivery(Delivery.builder()
+                        .deliveryStatus(DeliveryStatus.DELIVERY_READY)
+                        .build())
+                .build();
+
+        TEST_TEMP_ORDER.changeOrderItems(List.of(OrderClothes.builder()
+                .item(TEST_CLOTHES)
+                .orderQuantity(5l)
+                .build()));
+
+        ReflectionTestUtils.setField(TEST_TEMP_ORDER, "orderStatus", OrderStatus.ORDER_TEMP);
+        given(orderRepository.findByOrderNumAndAuthId(any(), any()))
+                .willReturn(Optional.of(TEST_TEMP_ORDER));
+
+        //when
+        orderService.deleteTempOrder(any(), any());
+
+        //then
+        verify(orderRepository, atLeastOnce()).delete(any());
+        verify(orderRepository, atLeastOnce()).findByOrderNumAndAuthId(any(), any());
+    }
+
+
+    @Test
+    public void 로그인한_회원_임시주문목록_삭제_테스트() throws Exception {
+        //given
+        Clothes TEST_CLOTHES = Clothes.builder()
+                .price(1000l)
+                .build();
+
+        ClothesSize TEST_CLOTHES_SIZE = ClothesSize.builder()
+                .sizeLabel(SizeLabel.S)
+                .stockQuantity(100l)
+                .build();
+
+        TEST_CLOTHES.changeClothesSizes(List.of(TEST_CLOTHES_SIZE));
+
+        Member TEST_ORDERER = Member.builder()
+                .authId("testAuthId")
+                .build();
+
+        Order TEST_ORDER = Order.builder()
+                .orderer(TEST_ORDERER)
+                .delivery(Delivery.builder()
+                        .deliveryStatus(DeliveryStatus.DELIVERY_READY)
+                        .build())
+                .build();
+
+        ReflectionTestUtils.setField(TEST_ORDER, "orderStatus", OrderStatus.ORDER_TEMP);
+
+        TEST_ORDER.changeOrderItems(List.of(
+                new OrderClothes(10l, TEST_CLOTHES, TEST_CLOTHES_SIZE)
+        ));
+
+        given(orderRepository.getOrderIdsByAuthId(any(String.class), any()))
+                .willReturn(List.of(TEST_ORDER));
+
+        //when
+        orderService.deleteAllTempOrder(TEST_ORDERER.getAuthId());
+
+        //then
+        verify(orderRepository, atLeastOnce()).getOrderIdsByAuthId(any(), any());
+        verify(orderRepository, atLeastOnce()).delete(any());
     }
 
     private ClothesSize createClothesSize() {

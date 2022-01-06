@@ -3,6 +3,7 @@ package com.allan.shoppingMall.domains.order.domain;
 import com.allan.shoppingMall.common.domain.BaseEntity;
 import com.allan.shoppingMall.common.exception.ErrorCode;
 import com.allan.shoppingMall.common.exception.order.OrderCancelFailException;
+import com.allan.shoppingMall.common.exception.order.payment.PaymentFailByValidatedOrderStatusException;
 import com.allan.shoppingMall.domains.delivery.domain.Delivery;
 import com.allan.shoppingMall.domains.member.domain.Member;
 import lombok.AccessLevel;
@@ -10,15 +11,16 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import javax.persistence.*;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 주문 정보를 저장히기 위한 엔티티.
+ * 주문 상태는 다음과 같은 순서로 진행 됩니다.
+ * 임시주문 => 상품준비중 => 주문접수 => 주문완료(자세한 상태 정보는 OrderStatus 참조)
  */
-
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -27,7 +29,7 @@ import java.util.List;
 public class Order extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long OrderId;
+    private Long orderId;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -41,18 +43,40 @@ public class Order extends BaseEntity {
     @JoinColumn(name = "delivery_id")
     private Delivery delivery;
 
-    @OneToMany(mappedBy = "order",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "order", cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
     @Embedded
     private OrdererInfo ordererInfo;
 
+    @Column(name = "order_num", unique = true)
+    private String orderNum;
+
+    // 주문 생성시, OrderStatus 기본 설정.
+    // 주문상태의 기본값은 '임시주문' 상태입니다.
+    // 주문 정보는 order domain id + 날자 정보로 이루어집니다.
+    @PrePersist
+    public void setUp(){
+        this.orderStatus = OrderStatus.ORDER_TEMP;
+    }
+
+    // orderId 를 사용해서 주문번호를 생성함.
+    // orderId 는 현재 Identity strategy 를 사용하고 있기 때문에 데이터베이스 저장시점에 생성이 된다.
+    // 그렇기에, 저장된 이후 실행되는 endUp() 를 통해서 저장하도록 한다.
+    @PostPersist
+    public void endUp(){
+        String dateInfo = this.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+        String orderNum = "order_uid_" + this.orderId + "_" + dateInfo;
+        this.orderNum = orderNum;
+        log.info(this.orderId + " orderNum: " + orderNum);
+    }
+
     @Builder
-    public Order(Member orderer, OrderStatus orderStatus, Delivery delivery, OrdererInfo ordererInfo) {
+    public Order(Member orderer, Delivery delivery, OrdererInfo ordererInfo, String orderNum) {
         this.orderer = orderer;
-        this.orderStatus = orderStatus;
         this.delivery = delivery;
         this.ordererInfo = ordererInfo;
+        this.orderNum = orderNum;
     }
 
     /**
@@ -79,25 +103,33 @@ public class Order extends BaseEntity {
      * orderItem 의 구현체에 따라 다른 메소드를 호출하도록 처리.
      */
     public void cancelOrder(){
-        log.info("cancelOrder() call!!!");
         // 주문상태 점검.
-        if(this.orderStatus == OrderStatus.ORDER_ITEM_READY){
+        if(this.orderStatus == OrderStatus.ORDER_ITEM_READY || this.orderStatus == OrderStatus.ORDER_TEMP){
             this.orderStatus = OrderStatus.ORDER_CANCEL;
             // 배송 취소.
             this.delivery.cancelDelivery();
             for(OrderItem orderItem : this.orderItems){
                 if( orderItem instanceof OrderClothes){
-                    log.info("orderItem is OrderClothes!!");
                     OrderClothes orderClothes = (OrderClothes) orderItem;
                     orderClothes.cancleOrderClothes();
                 }else{
-                    log.info("orderItem is not OrderClothes");
                     orderItem.cancelOrderItem();
                 }
-
             }
         }else{
-            throw new OrderCancelFailException(ErrorCode.ORDER_CANCEL_NOT_ALLOWED.getMessage(), ErrorCode.ORDER_CANCEL_NOT_ALLOWED);
+            throw new OrderCancelFailException(ErrorCode.ORDER_CANCEL_NOT_ALLOWED);
         }
+    }
+
+    /**
+     * 주문을 결제하는 메소드.
+     * 현재 주문의 상태를 결제완료(상품준비중) 상태로 변경한다.(주문의 상태 정보에 대해선 OrderStatus 참조하세요.)
+     */
+    public void payOrder() {
+       if(this.orderStatus == OrderStatus.ORDER_TEMP){
+           this.orderStatus = OrderStatus.ORDER_ITEM_READY;
+       }else{
+           throw new PaymentFailByValidatedOrderStatusException(ErrorCode.PAYMENT_INVALID_ORDER_STATUS);
+       }
     }
 }

@@ -5,6 +5,7 @@ import com.allan.shoppingMall.domains.member.domain.Member;
 import com.allan.shoppingMall.domains.order.domain.OrderStatus;
 import com.allan.shoppingMall.domains.order.domain.model.OrderDetailDTO;
 import com.allan.shoppingMall.domains.order.domain.model.OrderRequest;
+import com.allan.shoppingMall.domains.order.domain.model.OrderResultRequest;
 import com.allan.shoppingMall.domains.order.domain.model.OrderSummaryRequest;
 import com.allan.shoppingMall.domains.order.service.OrderService;
 import org.junit.jupiter.api.Test;
@@ -96,8 +97,15 @@ public class OrderControllerTest {
 
     @Test
     public void 주문결과_테스트() throws Exception {
-        //given, when
-        ResultActions resultActions = mvc.perform(get("/order/orderResult"));
+        //given
+        OrderResultRequest orderResult = new OrderResultRequest();
+        orderResult.setOrderResult("주문성공");
+        orderResult.setOrderNum("testOrderNum");
+
+        // when
+        ResultActions resultActions = mvc.perform(post("/order/orderResult")
+                                                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                                                    .flashAttr("orderResult", orderResult));
 
         //then
         resultActions
@@ -130,7 +138,7 @@ public class OrderControllerTest {
         ResultActions resultActions = mvc.perform(post("/order/cancel/1"));
 
         //then
-        verify(orderService,atLeastOnce()).cancelOrder(any());
+        verify(orderService,atLeastOnce()).cancelMyOrder(any(), any());
         resultActions
                 .andExpect(status().is3xxRedirection());
     }
