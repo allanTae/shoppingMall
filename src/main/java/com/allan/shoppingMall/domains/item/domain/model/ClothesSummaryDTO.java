@@ -23,13 +23,15 @@ public class ClothesSummaryDTO {
     private List<Long> profileImageIds; // 이미지 파일을 조회하기 위한 itemImage entity의 식별자.
     private String imagePath;
     private ImageType imageType;
+    private String clothesColor;
 
     @Builder
-    public ClothesSummaryDTO(Long clothesId, String clothesName, Long price, List<Long> profileImageIds) {
+    public ClothesSummaryDTO(Long clothesId, String clothesName, Long price, List<Long> profileImageIds, String clothesColor) {
         this.clothesId = clothesId;
         this.clothesName = clothesName;
         this.price = price;
         this.profileImageIds = profileImageIds;
+        this.clothesColor = clothesColor;
     }
 
     /**

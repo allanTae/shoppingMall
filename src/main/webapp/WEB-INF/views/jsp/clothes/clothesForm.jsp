@@ -104,12 +104,12 @@
 					<div class="row">
 						<label for="name" class="col-md-2 col-form-label text-md-right">상품명</label>
 						<div class="col-md-4">
-							<input name="name" id="name" class="form-control" placeholder="상품이름" />
+							<input name="name" id="name" class="form-control" placeholder="상품이름(필수입력)" />
 						</div>
 
                         <label for="engName" class="col-md-2 col-form-label text-md-right text-nowrap">영문 상품명</label>
                         <div class="col-md-4">
-                            <form:input path="engName" id="engName" class="form-control" placeholder="영어상품이름" />
+                            <form:input path="engName" id="engName" class="form-control" placeholder="영어상품이름(필수입력)" />
                         </div>
 					</div>
 					<div class="row">
@@ -130,9 +130,12 @@
                         <div class="col-md-4">
                             <select class="form-select" name="clothesColor">
                                 <option selected>색상을 선택 해 주세요.</option>
-                                <option value="1">빨간색</option>
-                                <option value="2">파란색</option>
-                                <option value="3">노란색</option>
+                                <option value="1">RED</option>
+                                <option value="2">BLUE</option>
+                                <option value="3">YELLOW</option>
+                                <option value="4">BLACK</option>
+                                <option value="5">WHITE</option>
+                                <option value="6">GRAY</option>
                             </select>
                         </div>
                     </div>
@@ -161,7 +164,13 @@
                               <tbody class="border-0">
                                 <tr>
                                   <th scope="row">1</th>
-                                  <td><input type="text" class="form-control" name="clothesFabrics[0].materialPart" placeholder="원단 부위"></td>
+                                  <td>
+                                    <select class="form-select" name="clothesFabrics[0].materialPart">
+                                        <option selected>원단 부의를 선택해 주세요.</option>
+                                        <option value="겉면">겉면</option>
+                                        <option value="속면">속면</option>
+                                    </select>
+                                  </td>
                                   <td colspan="2"><input type="text" class="form-control" name="clothesFabrics[0].materialDesc" placeholder="원단 설명"></td>
                                 </tr>
                               </tbody>

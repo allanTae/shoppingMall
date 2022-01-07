@@ -206,6 +206,7 @@ public class ClothesService {
                             .clothesName(clothes.getName())
                             .price(clothes.getPrice())
                             .profileImageIds(ClothesSummaryDTO.toImagePath(clothes.getItemImages()))
+                            .clothesColor(clothes.getColor().getDesc())
                             .build();
                     return clothesSummary;
                 }).collect(Collectors.toList());

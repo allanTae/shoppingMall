@@ -5,7 +5,7 @@
     <!-- Banner -->
     <header class="masthead">
         <div class="container">
-            <div class="masthead-subheading">Welcome To Our SeeAa Mall!</div>
+            <div class="masthead-subheading">Welcome To Our TaeTae Mall!</div>
             <div class="masthead-heading text-uppercase">It's Nice To Meet You</div>
         </div>
     </header>
@@ -130,7 +130,7 @@
                                           <img class="img-fluid" src=<c:out value="${pageContext.request.contextPath}/image/${clothes.profileImageIds[0]}" /> alt="..." />
                                       </a>
                                       <div class="clothes-caption">
-                                          <div class="clothes-caption-heading"><c:out value="${clothes.clothesName}" /></div>
+                                          <div class="clothes-caption-heading"><c:out value="${clothes.clothesName}(${clothes.clothesColor})" /></div>
                                           <div class="clothes-caption-subheading text-muted"><c:out value="${clothes.price}" /></div>
                                       </div>
                                   </div>

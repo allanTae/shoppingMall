@@ -15,12 +15,12 @@
             </div>
             <div class="goodsForm col-md-6 p-4">
                 <header class="pb-5 border-bottom" >
-                    <div class="itemName"><c:out value="${clothesInfo.clothesName}" /></div>
+                    <div class="itemName"><c:out value="${clothesInfo.clothesName}(${clothesInfo.color})" /></div>
                     <div class="itemPrice"><fmt:formatNumber type="number" maxFractionDigits="3" value="${clothesInfo.price}" />원</div>
                 </header>
                 <div class="goodsSummary">
                     <div class="pt-3">
-                        <p class="m-0"><c:out value="${clothesInfo.clothesName}" /></p>
+                        <p class="m-0"><c:out value="${clothesInfo.clothesName}(${clothesInfo.color})" /></p>
                         <p class="m-0"><c:out value="${clothesInfo.engName}" /></p>
                         <p class="m-0"><br /></p>
                         <div class="form-group row m-0">

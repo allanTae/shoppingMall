@@ -87,7 +87,9 @@
         location.href = "${pageContext.request.contextPath}/oauth2/authorization/kakao";
         e.preventDefault();
     });
+
 </script>
+
     <div>
         <!-- login form {s} -->
         <form:form class="form-login" name="form" id="form" role="form"

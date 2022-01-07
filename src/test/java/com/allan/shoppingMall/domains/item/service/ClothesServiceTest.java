@@ -59,9 +59,10 @@ public class ClothesServiceTest {
     @Test
     public void 의류_상품_리스트_테스트() throws Exception {
         //given
-        Page<Clothes> TEST_CLOTHES = createClothesByPaging();
         List<Clothes> TEST_CLOTHES_LIST = createClothesList();
+        Page<Clothes> TEST_CLOTHES = createClothesByPaging(TEST_CLOTHES_LIST);
         given(clothesRepository.findAll(any(Pageable.class))).willReturn(TEST_CLOTHES);
+
 
         //when
         List<ClothesSummaryDTO> clothes = clothesService.getClothesSummary(PageRequest.of(0, 9, Sort.by(Sort.Direction.DESC, "createdDate")));
@@ -76,31 +77,9 @@ public class ClothesServiceTest {
         assertThat(clothes.get(0).getProfileImageIds().get(1), is(TEST_CLOTHES_LIST.get(0).getItemImages().get(2).getItemImageId()));
     }
 
-    private Page<Clothes> createClothesByPaging() {
-        Clothes clothes = Clothes.builder()
-                .name("testClothesName")
-                .price(100l)
-                .build();
+    private Page<Clothes> createClothesByPaging(List<Clothes> clothesList) {
 
-        clothes.changeItemImages(List.of(ItemImage.builder()
-                        .imageType(ImageType.PREVIEW)
-                        .itemImagePath("testImagePath")
-                        .build(),
-                ItemImage.builder()
-                        .imageType(ImageType.PRODUCT)
-                        .itemImagePath("testImagePath2")
-                        .build(),
-                ItemImage.builder()
-                        .imageType(ImageType.PREVIEW)
-                        .itemImagePath("testImagePath3")
-                        .build())
-        );
-
-        ReflectionTestUtils.setField(clothes, "itemId", 1l);
-
-        PageImpl<Clothes> page = new PageImpl<>(List.of(
-                clothes
-        ));
+        PageImpl<Clothes> page = new PageImpl<>(clothesList);
 
         return page;
     }
@@ -144,20 +123,21 @@ public class ClothesServiceTest {
         Clothes clothes = Clothes.builder()
                 .name("testClothesName")
                 .price(100l)
+                .color(Color.RED)
                 .build();
 
         clothes.changeItemImages(List.of(ItemImage.builder()
-                                            .imageType(ImageType.PREVIEW)
-                                            .itemImagePath("testImagePath")
-                                            .build(),
-                                        ItemImage.builder()
-                                                .imageType(ImageType.PRODUCT)
-                                                .itemImagePath("testImagePath2")
-                                                .build(),
-                                        ItemImage.builder()
-                                                .imageType(ImageType.PREVIEW)
-                                                .itemImagePath("testImagePath3")
-                                                .build())
+                        .imageType(ImageType.PREVIEW)
+                        .itemImagePath("testImagePath")
+                        .build(),
+                ItemImage.builder()
+                        .imageType(ImageType.PRODUCT)
+                        .itemImagePath("testImagePath2")
+                        .build(),
+                ItemImage.builder()
+                        .imageType(ImageType.PREVIEW)
+                        .itemImagePath("testImagePath3")
+                        .build())
         );
 
         ReflectionTestUtils.setField(clothes, "itemId", 1l);

@@ -6,6 +6,7 @@
 <!DOCTYPE html> <html lang="kr">
 <head>
 <meta charset="utf-8">
+<title>TaeTae Mall</title>
 
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
