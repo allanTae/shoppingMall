@@ -1,4 +1,4 @@
-package com.allan.shoppingMall.domains.payment.domain.model;
+package com.allan.shoppingMall.domains.payment.domain.model.iamport;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -81,16 +81,41 @@
 				</div>
 				<div class="orderInfoRightWrap col-md-5 pe-0">
                     <div class="paymentInfoWrap p-3 mb-3">
-                        <p class="text-start mb-1">최종결제 금액</p>
-                        <div class="row col-md-12">
-                            <p class="col-md-4 text-start">상품 가격</p>
-                            <p class="col-md-3"> </p>
-                            <p class="col-md-5 text-end"><fmt:formatNumber type="number" maxFractionDigits="3" value="${orderInfo.totalAmount}" />원</p>
+                        <h5 class="text-start mb-1">최종결제 금액</h5>
+                        <div class="row col-md-12 mb-0">
+                            <p class="col-md-4 text-start mb-0">상품 가격</p>
+                            <p class="col-md-3 mb-0"> </p>
+                            <p class="col-md-5 mb-0 text-end"><fmt:formatNumber type="number" maxFractionDigits="3" value="${orderInfo.totalAmount}" />원</p>
                         </div>
+                        <c:if test="${orderInfo.isDeliveryFree eq false}">
+                             <div class="row col-md-12 mb-0" id="deliveryAmountWrap">
+                               <p class="col-md-4 mb-0 text-start">배송비</p>
+                               <p class="col-md-3 mb-0"> </p>
+                               <p class="col-md-5 mb-0 text-end">+<fmt:formatNumber type="number" maxFractionDigits="3" value="${orderInfo.deliveryAmount}" />원</p>
+                             </div>
+                        </c:if>
                         <hr />
                         <div class="row col-md-12">
                             <p class="col-md-6 text-start">총 결제금액(${orderInfo.totalQuantity}개)</p>
-                            <p class="col-md-6 text-end"><fmt:formatNumber type="number" maxFractionDigits="3" value="${orderInfo.totalAmount}" />원</p>
+                            <c:choose>
+                                <c:when test="${orderInfo.isDeliveryFree eq false}">
+                                    <p class="col-md-6 text-end"><fmt:formatNumber type="number" maxFractionDigits="3" value="${orderInfo.totalAmount + orderInfo.deliveryAmount}" />원</p>
+                                </c:when>
+                                <c:when test="${orderInfo.isDeliveryFree eq true}">
+                                    <p class="col-md-6 text-end"><fmt:formatNumber type="number" maxFractionDigits="3" value="${orderInfo.totalAmount}" />원</p>
+                                </c:when>
+                            </c:choose>
+
+                        </div>
+                    </div>
+                    <div class="mileageInfoWrap p-3 mb-3 text-start">
+                        <h5 class="mb-1">마일리지</h5>
+                        <p></p>
+                        <label for="mileage" class="mb-1 form-label">마일리지 포인트</label>
+                        <div class="row col-md-12 ps-1">
+                            <input type="text" class="col-md-6" id="mileagePoint" value="0"/>
+                            <p class="col-sm-1 p-0" role="paragraph"></p>
+                            <button class="btn btn-secondary col-md-4" id="btnMileageUse">모두 사용하기</button>
                         </div>
                     </div>
                     <div class="orderButtonWrap row col-md-12 m-0">
@@ -184,6 +209,7 @@
     }
 </script>
 
+
 <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
 
 <script>
@@ -270,6 +296,8 @@
             });
         </c:forEach>
 
+        var usedMileage = Number($('#mileagePoint').val());
+
         var paramData = JSON.stringify({"orderItems": orderItemList,
                                         "ordererName": ordererName,
                                         "ordererPhone": ordererPhone,
@@ -279,7 +307,8 @@
                                         "postcode": postcode,
                                         "address": address,
                                         "detailAddress": detailAddress,
-                                        "deliveryMemo": deliveryMemo
+                                        "deliveryMemo": deliveryMemo,
+                                        "usedMileage": usedMileage
         });
         var headers = {"Content-Type" : "application/json; charset=UTF-8;"
               , "X-HTTP-Method-Override" : "POST"};
@@ -312,8 +341,15 @@
           }else{
             orderName = "${orderInfo.orderItems[0].itemName}";
           }
-          var totalAmount = ${orderInfo.totalAmount};
 
+          var totalAmount = ${orderInfo.totalAmount};
+          // 배송비.
+          if(!${orderInfo.isDeliveryFree}){
+            totalAmount = totalAmount + ${orderInfo.deliveryAmount} ;
+          }
+          totalAmount = totalAmount - Number($('#mileagePoint').val());
+
+          console.log("총 결제 금액: " + totalAmount);
           // IMP.request_pay(param, callback) 결제창 호출
           IMP.request_pay({
               // param
@@ -323,7 +359,7 @@
               name: orderName,
               amount: totalAmount,
               buyer_email: $('#userInfo_email').val(),
-              buyer_name: $('#userInfo_email').val(),
+              buyer_name: $('#userInfo_name').val(),
               buyer_tel: $('#userInfo_phone').val(),
               buyer_addr: $('#address').val() + ' ' + $('#detailAddress').val(),
               buyer_postcode: $('#postcode').val(),
@@ -370,9 +406,7 @@
                         errMsg: rsp.error_msg
                     }
                   };
-
                   paymentConfirm("결제결과 안내", '결제를 실패 하였습니다. \n' + rsp.error_msg, orderResponse);
-
               }
           });
     }
@@ -399,5 +433,24 @@
         console.log(orderFormInfo);
         return orderFormInfo;
     }
+
+    // 마일리지 버튼
+    var availableMileage = ${availableMileage};
+    $(document).on('click', '#btnMileageUse', function(e){
+        console.log("mileage text: " + availableMileage);
+        $('#mileagePoint').val(availableMileage)
+    });
+
+    // 셀렉트 된 상품의 주문량 change 이벤트.
+    $(document).on("change","#mileagePoint",function(){
+        var mileage = Number($(this).val());
+        console.log("mileage: " + mileage);
+        if(mileage > availableMileage){
+            alert("최대로 사용 할 수 있는 포인트는 " + availableMileage + "입니다.");
+            $(this).val(availableMileage)
+        }
+
+        $(this).blur(); // enter시 blur.
+    });
 
 </script>

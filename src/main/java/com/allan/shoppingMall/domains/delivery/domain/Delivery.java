@@ -35,10 +35,13 @@ public class Delivery extends BaseEntity {
     @Column(name="delivery_memo", nullable = false)
     private String deliveryMemo;
 
+    @Column(name = "delivery_amount") // not null 필요.
+    private Long deliveryAmount;
+
     @Builder
     public Delivery(DeliveryStatus deliveryStatus, Address address, String deliveryMemo, String recipient, String recipientPhone) {
         this.deliveryStatus = deliveryStatus;
-        this.address = address;
+        setAddressAndAmount(address);
         this.deliveryMemo = deliveryMemo;
         this.recipient = recipient;
         this.recipientPhone =recipientPhone;
@@ -52,6 +55,22 @@ public class Delivery extends BaseEntity {
             this.deliveryStatus = DeliveryStatus.DELIVERY_CANCEL;
         else{
             throw new OrderCancelFailException(ErrorCode.ORDER_CANCEL_NOT_ALLOWED.getMessage(), ErrorCode.ORDER_CANCEL_NOT_ALLOWED);
+        }
+    }
+
+    /**
+     * 주소 오브젝트와 배송비를 설정하는 메소드.
+     * @param address 주소 정보.
+     */
+    private void setAddressAndAmount(Address address){
+        // 주소 설정.
+        this.address = address;
+        // 배송비 설정.
+        boolean isJeju = address.getPostCode().substring(0, 2).equals("63");
+        if(isJeju){
+            this.deliveryAmount = 4000l;
+        }else{
+            this.deliveryAmount = 3000l;
         }
     }
 }

@@ -57,9 +57,6 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = false, name="date_of_birth")
     private String dateOfBirth;
 
-    @Column(nullable = false)
-    private Long milege;
-
     @Column(name = "created_by", nullable = false, updatable = false)
     private String createdBy;
 
@@ -73,7 +70,6 @@ public class Member extends BaseTimeEntity {
      */
     @PrePersist
     public void setUp(){
-        this.milege = 100l;
         this.createdBy = "system";
         this.updatedBy = "system";
         // TaeTae 애플리케이션 서비스에서 초기 가입시, 닉네임 설정은 아이디로 설정.
@@ -108,7 +104,7 @@ public class Member extends BaseTimeEntity {
     }
 
     @Builder
-    public Member(Long memberId, int age, String authId, String pwd, Address address, Gender gender, String email, String phone, String dateOfBirth, Long milege, String name, String nickName, MemberRole role) {
+    public Member(Long memberId, int age, String authId, String pwd, Address address, Gender gender, String email, String phone, String dateOfBirth, String name, String nickName, MemberRole role) {
         this.memberId = memberId;
         this.age = age;
         this.authId = authId;
@@ -118,7 +114,6 @@ public class Member extends BaseTimeEntity {
         this.email = email;
         this.phone = phone;
         this.dateOfBirth = dateOfBirth;
-        this.milege = milege;
         this.name = name;
         this.nickName = nickName;
         this.role = role;

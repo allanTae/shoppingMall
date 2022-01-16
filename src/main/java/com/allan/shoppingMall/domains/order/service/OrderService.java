@@ -13,6 +13,9 @@ import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
 import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSize;
 import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSizeRepository;
 import com.allan.shoppingMall.domains.member.domain.Member;
+import com.allan.shoppingMall.domains.mileage.domain.model.MileageContent;
+import com.allan.shoppingMall.domains.mileage.domain.model.MileageDTO;
+import com.allan.shoppingMall.domains.mileage.service.MileageService;
 import com.allan.shoppingMall.domains.order.domain.*;
 import com.allan.shoppingMall.domains.order.domain.model.OrderDetailDTO;
 import com.allan.shoppingMall.domains.order.domain.model.OrderItemDTO;
@@ -20,7 +23,9 @@ import com.allan.shoppingMall.domains.order.domain.model.OrderRequest;
 import com.allan.shoppingMall.domains.order.domain.model.OrderSummaryDTO;
 import com.allan.shoppingMall.domains.payment.domain.Payment;
 import com.allan.shoppingMall.domains.payment.domain.PaymentRepository;
-import com.allan.shoppingMall.domains.payment.domain.model.PaymentIamportDTO;
+import com.allan.shoppingMall.domains.payment.domain.model.PaymentDTO;
+import com.allan.shoppingMall.domains.payment.domain.model.iamport.PaymentIamportDTO;
+import com.allan.shoppingMall.domains.payment.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -44,6 +49,8 @@ public class OrderService {
     private final ClothesRepository clothesRepository;
     private final ClothesSizeRepository clothesSizeRepository;
     private final PaymentRepository paymentRepository;
+    private final PaymentService paymentService;
+    private final MileageService mileageService;
 
     /**
      * 상품 상세페이지를 통해서 바로 주문하는 경우 사용하는 주문 메소드.
@@ -93,6 +100,11 @@ public class OrderService {
         order.changeOrderItems(orderItems);
         orderRepository.save(order);
 
+        // 주문시, 마일리지 차감.
+        if(request.getUsedMileage() != null && request.getUsedMileage() > 0){
+            mileageService.deductMileage(order.getOrderNum(), member.getAuthId(), -request.getUsedMileage(), MileageContent.USED_MILEAGE_DEDUCTION);
+        }
+
         return order.getOrderNum();
     }
 
@@ -108,6 +120,8 @@ public class OrderService {
                 -> new OrderNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
         findOrder.cancelOrder();
+
+        mileageService.deleteMileage(findOrder.getOrderNum()); // 마일리지 삭제.
 
         return findOrder.getOrderId();
     }
@@ -162,6 +176,7 @@ public class OrderService {
         Order findOrder = orderRepository.findById(orderId).orElseThrow(()
                 -> new OrderNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
+        // 주문 상품.
         List<OrderItemDTO> orderItemDTOS = findOrder.getOrderItems()
                 .stream()
                 .map(orderItem -> {
@@ -186,6 +201,16 @@ public class OrderService {
                 })
                 .collect(Collectors.toList());
 
+        // 결제 정보.
+        PaymentDTO payment = paymentService.getPamentDetail(findOrder.getPaymentNum());
+        payment.setDeliveryAmount(findOrder.getDelivery().getDeliveryAmount()); // 배송비.
+
+        // 마일리지 정보.
+        MileageDTO mileage = mileageService.getMileageByOrderNum(findOrder.getOrderNum(), MileageContent.USED_MILEAGE_DEDUCTION);
+        payment.setMileagePoint(mileage.getMileagePoint());
+
+        // 할인 정보.
+
         OrderDetailDTO orderDetailDTO = OrderDetailDTO.builder()
                 .orderId(findOrder.getOrderId())
                 .orderDate(LocalDateTime.now())
@@ -200,6 +225,9 @@ public class OrderService {
                         .ordererEmail(findOrder.getOrdererInfo().getOrdererEmail())
                         .build())
                 .deliveryMemo(findOrder.getDelivery().getDeliveryMemo())
+                .orderNum(findOrder.getOrderNum())
+                .deliveryAmount(findOrder.getDelivery().getDeliveryAmount())
+                .paymentInfo(payment)
                 .build();
 
         return orderDetailDTO;
@@ -212,22 +240,30 @@ public class OrderService {
      * 1) 주문 금액과 결제 금액의 일치여부, 일치하지 않을 시 PaymentFailByValidatedAmountException throw
      * 2) 주문의 주문상태가 결제 가능한여부, 일치하지 않을 시 PaymentFailByValidatedOrderStatusException throw
      * @param paymentDTO 컨트롤러에서 전달 받은 Iamprot 조회 정보를 가지고 있는 DTO 객체.
-     * @param orderNum 주문번호.
      * @param authId 회원 아이디.
      * @return validate result
      */
     @Transactional
-    public void validatePaymentByIamport(PaymentIamportDTO paymentDTO, String orderNum, String authId) {
-        Order findOrder = orderRepository.findByOrderNumAndAuthId(authId, orderNum).orElseThrow(()
+    public void validatePaymentByIamport(PaymentIamportDTO paymentDTO, String authId) {
+        Order findOrder = orderRepository.findByOrderNumAndAuthId(authId, paymentDTO.getMerchantUid()).orElseThrow(()
                 -> new PaymentFailException(ErrorCode.ORDER_NOT_FOUND));
 
-        long totalAmount = findOrder.getOrderItems()
+        long orderITemsAmount = findOrder.getOrderItems()
                 .stream()
                 .mapToLong( orderItem -> orderItem.getItem().getPrice())
                 .sum();
 
+        // 배송비.
+        long deliveryAmount = findOrder.getDelivery().getDeliveryAmount();
+
+        // 마일리지.
+        long mileagePoint = mileageService.getMileageByOrderNum(findOrder.getOrderNum(), MileageContent.USED_MILEAGE_DEDUCTION).getMileagePoint();
+
+        // 총금액.
+        long orderTotalAmount = orderITemsAmount + deliveryAmount - mileagePoint;
+
         // 주문 금액과 결제 총금액 확인
-        if(paymentDTO.getPaymentAmount() != totalAmount){
+        if(paymentDTO.getPaymentAmount() != orderTotalAmount){
             throw new PaymentFailByValidatedAmountException(ErrorCode.PAYMENT_AMOUNT_IS_NOT_EQUAL_BY_ORDER_AMOUNT);
         }else{
             completeOrder(paymentDTO, authId);
@@ -243,6 +279,13 @@ public class OrderService {
      */
     @Transactional
     private Long completeOrder(PaymentIamportDTO paymentDTO, String authId) {
+        Order findOrder = orderRepository.findByOrderNumAndAuthId(authId, paymentDTO.getMerchantUid()).orElseThrow(()
+                -> new PaymentFailException(ErrorCode.ORDER_NOT_FOUND));
+
+        // 주문 상태 변경.
+        findOrder.payOrder(paymentDTO.getImpUid());
+
+        // 결제 도메인.
         Payment payment = Payment.builder()
                 .paymentNum(paymentDTO.getImpUid())
                 .orderNum(paymentDTO.getMerchantUid())
@@ -252,13 +295,11 @@ public class OrderService {
                 .orderName(paymentDTO.getName())
                 .build();
 
+        //결제시, 상품금액의 10퍼센트 마일리지 적립.
+        mileageService.accumulateMileage(paymentDTO.getMerchantUid(), authId, (long)(paymentDTO.getPaymentAmount() * 0.1)
+                , MileageContent.PAYMENT_MILEAGE_ACCUMULATE);
+
         paymentRepository.save(payment);
-
-        Order findOrder = orderRepository.findByOrderNumAndAuthId(authId, paymentDTO.getMerchantUid()).orElseThrow(()
-                -> new PaymentFailException(ErrorCode.ORDER_NOT_FOUND));
-
-        // 주문 상태 변경.
-        findOrder.payOrder();
 
         return payment.getPaymentId();
     }
@@ -273,10 +314,11 @@ public class OrderService {
     public void deleteTempOrder(String orderNum, String authId){
         orderRepository.findByOrderNumAndAuthId(orderNum, authId).ifPresent(order -> {
             if(order.getOrderStatus() == OrderStatus.ORDER_TEMP){
+                mileageService.deleteMileage(order.getOrderNum()); // 마일리지 삭제.
                 order.cancelOrder(); // 상품 재고량 복구.
                 orderRepository.delete(order);
-                //orderRepository.deleteByOrderNum(orderNum);
             }else{
+                log.error("결제 취소시, 임시상태 주문을 삭제하는데 실패하였습니다.");
                 log.error("주문번호: " + orderNum + " 건은 삭제 가능한 주문 정보가 아닙니다.");
             }
         });
@@ -285,6 +327,8 @@ public class OrderService {
 
     /**
      * 현재 로그인한 회원의 아이디의 '임시주문' 주문을 삭제하는 메소드.
+     * deleteTempOrder()는 벡엔드단에서 결제처리가 실패 한 경우, '임시저장' 상태의 주문을 삭제하는데 사용되고,
+     * deleteAllTempOrder()는 프론트단에서 결제처리가 실패 한 경우, '임시저장' 상태의 주문윽 삭제하는데 사용된다.
      * @param authId 로그인한 회원의 아이디.
      */
     @Transactional
@@ -292,6 +336,7 @@ public class OrderService {
         List<Order> findTempOrders = orderRepository.getOrderIdsByAuthId(authId, OrderStatus.ORDER_TEMP);
         if(!findTempOrders.isEmpty()){
             for(Order order: findTempOrders){
+                mileageService.deleteMileage(order.getOrderNum()); // 마일리지 삭제.
                 order.cancelOrder(); // 상품 재고량 복구.
                 orderRepository.delete(order);
             }

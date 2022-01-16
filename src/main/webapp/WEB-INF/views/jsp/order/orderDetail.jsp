@@ -81,6 +81,27 @@
        </div>
 	   <!-- end of deliveryInfoWrap -->
 
+	   <h5 class="text-start">결제 정보</h5>
+       	   <div class="deliveryInfoWrap row col-md-12 m-0 mb-5" style="border-top: 2px solid black; border-bottom: 2px solid #c9c9c9;">
+                  <div class="deliveryInfoHead col-md-1 p-2 text-start">
+                   <p class="mb-1">결제방식</p>
+                   <p class="mb-1">${orderInfo.paymentInfo.payMethod}</p>
+                  </div>
+                  <div class="deliveryInfoBody col-md-6 p-2 text-start bg-white">
+                   <p class="mb-1">카드이름: ${orderInfo.paymentInfo.cardName}</p>
+                   <p class="mb-1">카드번호: ${orderInfo.paymentInfo.cardNum}</p>
+                  </div>
+                  <div class="ordererInfo col-md-4 p-2 text-start">
+                   <h5>결제금액 정보</h5>
+                   <p class="mb-1">상품금액: ${orderInfo.paymentInfo.totalAmount}</p>
+                   <p class="mb-1">배송비: ${orderInfo.paymentInfo.deliveryAmount}</p>
+                   <c:if test="${orderInfo.paymentInfo.mileagePoint > 0}">
+                     <p class="mb-1">마일리지 사용: ${orderInfo.paymentInfo.mileagePoint}</p>
+                   </c:if>
+                  </div>
+              </div>
+       	   <!-- end of deliveryInfoWrap -->
+
        <div class="btnWrap mb-5">
         <c:if test="${orderInfo.isCancelOrder}">
             <button type="button" class="btn btn-warning" id="btnOrderCancel">주문 취소</button>

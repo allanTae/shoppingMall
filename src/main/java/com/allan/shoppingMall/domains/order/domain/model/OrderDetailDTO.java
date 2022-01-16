@@ -2,6 +2,7 @@ package com.allan.shoppingMall.domains.order.domain.model;
 
 import com.allan.shoppingMall.domains.order.domain.OrderStatus;
 import com.allan.shoppingMall.domains.order.domain.OrdererInfo;
+import com.allan.shoppingMall.domains.payment.domain.model.PaymentDTO;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,6 +22,9 @@ public class OrderDetailDTO {
     // 주문 정보.
     private Long orderId;
     private String orderDate;
+    private String orderNum;
+    private String orderStatus;
+    private OrdererInfo ordererInfo;
 
     // 주문 상품 정보.
     private List<OrderItemDTO> orderItems;
@@ -30,12 +34,16 @@ public class OrderDetailDTO {
     private String recipientPhone;
     private String address;
     private String deliveryMemo;
-    private String orderStatus;
+
     private boolean isCancelOrder; // 주문 취소 가능 여부.
-    private OrdererInfo ordererInfo;
+
+    // 결제 정보.
+    private PaymentDTO paymentInfo;
 
     @Builder
-    public OrderDetailDTO(Long orderId, LocalDateTime orderDate, List<OrderItemDTO> orderItems, String recipient, String recipientPhone, String address, String deliveryMemo, OrdererInfo ordererInfo, String orderStatus) {
+    public OrderDetailDTO(Long orderId, LocalDateTime orderDate, List<OrderItemDTO> orderItems, String recipient, String recipientPhone,
+                          String address, String deliveryMemo, OrdererInfo ordererInfo, String orderStatus, String orderNum,
+                          Long deliveryAmount, PaymentDTO paymentInfo) {
         this.orderId = orderId;
         orderDate(orderDate);
         this.orderItems = orderItems;
@@ -45,6 +53,8 @@ public class OrderDetailDTO {
         this.deliveryMemo = deliveryMemo;
         this.ordererInfo = ordererInfo;
         setOrderStatus(orderStatus);
+        this.orderNum = orderNum;
+        this.paymentInfo = paymentInfo;
     }
 
     private void orderDate(LocalDateTime createdDate){

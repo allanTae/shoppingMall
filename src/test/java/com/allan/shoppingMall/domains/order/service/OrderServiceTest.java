@@ -9,11 +9,16 @@ import com.allan.shoppingMall.domains.item.domain.Color;
 import com.allan.shoppingMall.domains.item.domain.ItemImage;
 import com.allan.shoppingMall.domains.item.domain.clothes.*;
 import com.allan.shoppingMall.domains.member.domain.Member;
+import com.allan.shoppingMall.domains.mileage.domain.model.MileageContent;
+import com.allan.shoppingMall.domains.mileage.domain.model.MileageDTO;
+import com.allan.shoppingMall.domains.mileage.service.MileageService;
 import com.allan.shoppingMall.domains.order.domain.*;
 import com.allan.shoppingMall.domains.order.domain.model.OrderLineRequest;
 import com.allan.shoppingMall.domains.order.domain.model.OrderRequest;
 import com.allan.shoppingMall.domains.payment.domain.PaymentRepository;
-import com.allan.shoppingMall.domains.payment.domain.model.PaymentIamportDTO;
+import com.allan.shoppingMall.domains.payment.domain.model.PaymentDTO;
+import com.allan.shoppingMall.domains.payment.domain.model.iamport.PaymentIamportDTO;
+import com.allan.shoppingMall.domains.payment.service.PaymentService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,7 +29,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.util.ReflectionTestUtils;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -44,6 +48,9 @@ public class OrderServiceTest {
     PaymentRepository paymentRepository;
 
     @Mock
+    PaymentService paymentService;
+
+    @Mock
     ClothesRepository clothesRepository;
 
     @Mock
@@ -51,6 +58,9 @@ public class OrderServiceTest {
 
     @Mock
     ClothesSizeRepository clothesSizeRepository;
+
+    @Mock
+    MileageService mileageService;
 
     @InjectMocks
     OrderService orderService;
@@ -86,12 +96,14 @@ public class OrderServiceTest {
         TEST_ORDER_REQUEST.setDeliveryMemo("testMemo");
         TEST_ORDER_REQUEST.setRecipient("testRecipient");
         TEST_ORDER_REQUEST.setRecipientPhone("1111111111");
+        TEST_ORDER_REQUEST.setUsedMileage(1000l);
 
         //when
         orderService.order(TEST_ORDER_REQUEST, TEST_MEMBER);
 
         //then
         verify(orderRepository, atLeastOnce()).save(any());
+        verify(mileageService, atLeastOnce()).deductMileage(any(), any(), any(), any());
         assertThat(TEST_CLOTHES.getStockQuantity(), is(12l));
         assertThat(TEST_CLOTHES_SIZE.getStockQuantity(), is(2l));
     }
@@ -113,6 +125,7 @@ public class OrderServiceTest {
         //then
         verify(orderRepository, atLeastOnce()).findByOrderNumAndAuthId(any(), any());
         verify(TEST_ORDER, atLeastOnce()).cancelOrder();
+        verify(mileageService,atLeastOnce()).deleteMileage(any());
     }
 
     @Test
@@ -171,6 +184,7 @@ public class OrderServiceTest {
         OrderClothes TEST_ORDER_CLOTHES = new OrderClothes(10l, TEST_CLOTHES, TEST_CLOTHES_SIZE);
 
         Order TEST_ORDER = Order.builder()
+                .orderNum("testOrderNum")
                 .delivery(Delivery.builder()
                         .address(new Address("testJibun", "testRoad", "560-110", "testDetail", "testExtra"))
                         .recipient("testRecipient")
@@ -191,6 +205,16 @@ public class OrderServiceTest {
 
         given(orderRepository.findById(any()))
                 .willReturn(Optional.of(TEST_ORDER));
+
+        PaymentDTO TEST_PAYMENT_DTO = PaymentDTO.builder()
+                .payMethod("card")
+                .build();
+        given(paymentService.getPamentDetail(any()))
+                .willReturn(TEST_PAYMENT_DTO);
+
+        MileageDTO TEST_MILEAGE_DTO = new MileageDTO(300l, MileageContent.USED_MILEAGE_DEDUCTION.getDesc());
+        given(mileageService.getMileageByOrderNum(any(), any()))
+                .willReturn(TEST_MILEAGE_DTO);
 
         //when
         orderService.getOrderDetailDTO(any());
@@ -215,7 +239,14 @@ public class OrderServiceTest {
 
         OrderClothes TEST_ORDER_CLOTHES = new OrderClothes(3l, TEST_CLOTHES, TEST_CLOTHES_SIZE);
 
-        Order TEST_ORDER = Order.builder().build();
+        Order TEST_ORDER = Order.builder()
+                .orderNum("testOrderNum")
+                .delivery(Delivery.builder()
+                        .address(Address.builder()
+                                .postCode("34000")
+                                .build())
+                        .build())
+                .build();
         TEST_ORDER.changeOrderItems(List.of(TEST_ORDER_CLOTHES));
 
         // OrderStatus 는 insert 시점에 자동으로 설정되기 때문에
@@ -225,10 +256,14 @@ public class OrderServiceTest {
         given(orderRepository.findByOrderNumAndAuthId(any(), any()))
                 .willReturn(Optional.of(TEST_ORDER));
 
+        MileageDTO TEST_MILEAGE_DTO = new MileageDTO(0l, "");
+        given(mileageService.getMileageByOrderNum(TEST_ORDER.getOrderNum(), MileageContent.USED_MILEAGE_DEDUCTION))
+                .willReturn(TEST_MILEAGE_DTO);
+
         //when, then
 
         assertThrows(PaymentFailException.class, () -> {
-            orderService.validatePaymentByIamport(PaymentIamportDTO.builder().paymentAmount(2000l).build(),any(), any());
+            orderService.validatePaymentByIamport(PaymentIamportDTO.builder().paymentAmount(2000l).build(), "testAuthId");
         });
         verify(orderRepository, atLeastOnce()).findByOrderNumAndAuthId(any(),any());
     }
@@ -250,32 +285,44 @@ public class OrderServiceTest {
         OrderClothes TEST_ORDER_CLOTHES = new OrderClothes(3l, TEST_CLOTHES, TEST_CLOTHES_SIZE);
 
         Order TEST_ORDER = Order.builder()
+                .orderNum("testOrderNum")
+                .delivery(Delivery.builder()
+                        .address(Address.builder()
+                                .postCode("63500") // 배송비 3000으로 자동 설정.
+                                .build())
+                        .build())
                 .build();
 
         TEST_ORDER.changeOrderItems(List.of(TEST_ORDER_CLOTHES));
+
+        MileageDTO TEST_MILEAGE_DTO = new MileageDTO(0l, "");
+        given(mileageService.getMileageByOrderNum(TEST_ORDER.getOrderNum(), MileageContent.USED_MILEAGE_DEDUCTION))
+                .willReturn(TEST_MILEAGE_DTO);
 
         PaymentIamportDTO TEST_PAYMENT_DTO = PaymentIamportDTO.builder()
                 .payStatus("paid")
                 .payMethod("card")
                 .merchantUid("testOrderNum")
                 .impUid("testPaymentNum")
-                .paymentAmount(3000l)
+                .paymentAmount(TEST_CLOTHES.getPrice() + TEST_ORDER.getDelivery().getDeliveryAmount() - TEST_MILEAGE_DTO.getMileagePoint())
                 .build();
 
         given(orderRepository.findByOrderNumAndAuthId(any(), any()))
                 .willReturn(Optional.of(TEST_ORDER));
-
 
         // OrderStatus 는 insert 시점에 자동으로 설정되기 때문에
         // 테스트를 위해서 따로 값을 추가.
         ReflectionTestUtils.setField(TEST_ORDER, "orderStatus", OrderStatus.ORDER_TEMP);
 
         //when
-        orderService.validatePaymentByIamport(TEST_PAYMENT_DTO, any(), any());
+        orderService.validatePaymentByIamport(TEST_PAYMENT_DTO, "testAuthId");
 
         //then
+        verify(orderRepository, atLeastOnce()).findByOrderNumAndAuthId("testAuthId", TEST_PAYMENT_DTO.getMerchantUid());
+        verify(mileageService, atLeastOnce()).getMileageByOrderNum(TEST_ORDER.getOrderNum(), MileageContent.USED_MILEAGE_DEDUCTION);
+        long accumulatePoint = (long) (TEST_PAYMENT_DTO.getPaymentAmount() * 0.1);
+        verify(mileageService, atLeastOnce()).accumulateMileage(TEST_PAYMENT_DTO.getMerchantUid(), "testAuthId", accumulatePoint, MileageContent.PAYMENT_MILEAGE_ACCUMULATE);
         verify(paymentRepository, atLeastOnce()).save(any());
-        verify(orderRepository, atLeastOnce()).findByOrderNumAndAuthId(any(), any());
         assertThat(TEST_ORDER.getOrderStatus(), is(OrderStatus.ORDER_ITEM_READY));
     }
 
@@ -296,22 +343,32 @@ public class OrderServiceTest {
         OrderClothes TEST_ORDER_CLOTHES = new OrderClothes(3l, TEST_CLOTHES, TEST_CLOTHES_SIZE);
 
         Order TEST_ORDER = Order.builder()
+                .orderNum("testOrderNum")
+                .delivery(Delivery.builder()
+                        .address(Address.builder()
+                                .postCode("65033")
+                                .build())
+                        .build())
                 .build();
 
         ReflectionTestUtils.setField(TEST_ORDER, "orderStatus", OrderStatus.ORDER_ITEM_READY);
-
         TEST_ORDER.changeOrderItems(List.of(TEST_ORDER_CLOTHES));
+
+        MileageDTO TEST_MILEAGE_DTO = new MileageDTO(0l, "");
+        given(mileageService.getMileageByOrderNum(TEST_ORDER.getOrderNum(), MileageContent.USED_MILEAGE_DEDUCTION))
+                .willReturn(TEST_MILEAGE_DTO);
 
         PaymentIamportDTO TEST_PAYMENT_DTO = PaymentIamportDTO.builder()
                 .payStatus("paid")
                 .payMethod("card")
                 .merchantUid("testOrderNum")
                 .impUid("testPaymentNum")
-                .paymentAmount(3000l)
+                .paymentAmount(TEST_CLOTHES.getPrice() + TEST_ORDER.getDelivery().getDeliveryAmount() - TEST_MILEAGE_DTO.getMileagePoint())
                 .build();
 
         given(orderRepository.findByOrderNumAndAuthId(any(), any()))
                 .willReturn(Optional.of(TEST_ORDER));
+
 
         // OrderStatus 는 insert 시점에 자동으로 설정되기 때문에(자세한 사항은 Order domain 참조)
         // 테스트를 위해서 따로 값을 추가.
@@ -319,9 +376,11 @@ public class OrderServiceTest {
 
         //when, then
         assertThrows(PaymentFailByValidatedOrderStatusException.class, () -> {
-            orderService.validatePaymentByIamport(TEST_PAYMENT_DTO, any(), any());
+            orderService.validatePaymentByIamport(TEST_PAYMENT_DTO, "testAuthId");
         });
-        verify(orderRepository, atLeastOnce()).findByOrderNumAndAuthId(any(), any());
+        verify(orderRepository, atLeastOnce()).findByOrderNumAndAuthId("testAuthId", TEST_PAYMENT_DTO.getMerchantUid());
+        verify(mileageService, atLeastOnce()).getMileageByOrderNum(TEST_ORDER.getOrderNum(), MileageContent.USED_MILEAGE_DEDUCTION);
+
     }
 
     @Test
@@ -342,6 +401,7 @@ public class OrderServiceTest {
         Order TEST_TEMP_ORDER = Order.builder()
                 .delivery(Delivery.builder()
                         .deliveryStatus(DeliveryStatus.DELIVERY_READY)
+                        .address(new Address("jibunAddress", "roadAddress", "34500", "detailAddress", "extraAddress"))
                         .build())
                 .build();
 
@@ -360,6 +420,7 @@ public class OrderServiceTest {
         //then
         verify(orderRepository, atLeastOnce()).delete(any());
         verify(orderRepository, atLeastOnce()).findByOrderNumAndAuthId(any(), any());
+        verify(mileageService, atLeastOnce()).deleteMileage(any());
     }
 
 
@@ -385,6 +446,7 @@ public class OrderServiceTest {
                 .orderer(TEST_ORDERER)
                 .delivery(Delivery.builder()
                         .deliveryStatus(DeliveryStatus.DELIVERY_READY)
+                        .address(new Address("jibunAddress", "roadAddress", "34500", "detailAddress", "extraAddress"))
                         .build())
                 .build();
 
@@ -403,6 +465,7 @@ public class OrderServiceTest {
         //then
         verify(orderRepository, atLeastOnce()).getOrderIdsByAuthId(any(), any());
         verify(orderRepository, atLeastOnce()).delete(any());
+        verify(mileageService, atLeastOnce()).deleteMileage(any());
     }
 
     private ClothesSize createClothesSize() {

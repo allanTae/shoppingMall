@@ -2,6 +2,7 @@ package com.allan.shoppingMall.domains.order.presentation;
 
 import com.allan.shoppingMall.domains.infra.AuthenticationConverter;
 import com.allan.shoppingMall.domains.member.domain.Member;
+import com.allan.shoppingMall.domains.mileage.service.MileageService;
 import com.allan.shoppingMall.domains.order.domain.OrderStatus;
 import com.allan.shoppingMall.domains.order.domain.model.OrderDetailDTO;
 import com.allan.shoppingMall.domains.order.domain.model.OrderRequest;
@@ -43,6 +44,9 @@ public class OrderControllerTest {
     @MockBean
     OrderService orderService;
 
+    @MockBean
+    MileageService mileageService;
+
     @Autowired
     MockMvc mvc;
 
@@ -54,6 +58,10 @@ public class OrderControllerTest {
         given(authenticationConverter.getMemberFromAuthentication(any()))
                 .willReturn(TEST_MEMBER);
 
+        long TEST_AVAILABLE_MILEAGE = 100l;
+        given(mileageService.getAvailableMileagePoint(any()))
+                .willReturn(TEST_AVAILABLE_MILEAGE);
+
         //when
         ResultActions resultActions = mvc.perform(get("/order/orderForm")
                                             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -61,6 +69,7 @@ public class OrderControllerTest {
 
         //then
         verify(authenticationConverter, atLeastOnce()).getMemberFromAuthentication(any());
+        verify(mileageService, atLeastOnce()).getAvailableMileagePoint(any());
         resultActions
                 .andExpect(model().attributeExists("orderInfo"))
                 .andExpect(model().attributeExists("userInfo"))

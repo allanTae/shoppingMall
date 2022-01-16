@@ -7,6 +7,8 @@ import com.allan.shoppingMall.domains.member.domain.Member;
 import com.allan.shoppingMall.domains.member.domain.MemberRepository;
 import com.allan.shoppingMall.domains.member.domain.MemberRole;
 import com.allan.shoppingMall.domains.member.domain.model.MemberForm;
+import com.allan.shoppingMall.domains.mileage.domain.model.MileageContent;
+import com.allan.shoppingMall.domains.mileage.service.MileageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final MileageService mileageService;
 
     @Transactional
     public Long join(MemberForm form){
@@ -43,6 +46,10 @@ public class MemberService {
         if(validateAuthId(member.getAuthId())){
             memberRepository.save(member);
         }
+
+        // 회원가입시, 3000 마일리지 적립.
+        mileageService.accumulateMileage("", form.getAuthId(), 3000l, MileageContent.JOIN_MILEAGE_ACCUMULATE);
+
         return member.getMemberId();
     }
 

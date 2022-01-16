@@ -55,19 +55,24 @@ public class Payment extends BaseEntity {
     @Column(name = "cancel_amount", nullable = false)
     private Long cancelAmount;
 
+    // 할인 금액.
+    @Column(name= "discount_amount")
+    private Long discountAmount;
+
     @PrePersist
     public void setUp(){
         this.cancelAmount = 0l;
     }
 
     @Builder
-    public Payment(String paymentNum, String orderNum, String payMethod, Long payAmount, String payStatus, String orderName) {
+    public Payment(String paymentNum, String orderNum, String payMethod, Long payAmount, String payStatus, String orderName, Long discountAmount) {
         this.paymentNum = paymentNum;
         this.orderNum = orderNum;
         this.payMethod = payMethod;
         this.payAmount = payAmount;
         this.payStatus = payStatus;
         this.orderName = orderName;
+        this.discountAmount = discountAmount;
     }
 
     /**
@@ -77,4 +82,5 @@ public class Payment extends BaseEntity {
     public void changeCancelAmount(Long cancelAmount){
         this.cancelAmount = cancelAmount;
     }
+
 }

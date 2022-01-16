@@ -3,7 +3,7 @@
     margin-top: 173px;
 }
 
-.orderItemsWrap, .ordererInfoWrap, .paymentInfoWrap, .deliveryInfoWrap {
+.orderItemsWrap, .ordererInfoWrap, .paymentInfoWrap, .deliveryInfoWrap, .mileageInfoWrap {
     background-color: rgba(79,79,79,0.03);
 }
 

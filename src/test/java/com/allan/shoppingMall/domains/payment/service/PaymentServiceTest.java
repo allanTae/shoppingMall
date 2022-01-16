@@ -16,8 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.Optional;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -30,9 +28,6 @@ public class PaymentServiceTest {
     PaymentRepository paymentRepository;
 
     @Mock
-    OrderService orderService;
-
-    @Mock
     IamportClient client;
 
     PaymentService paymentService;
@@ -40,7 +35,7 @@ public class PaymentServiceTest {
     @BeforeEach
     public void setUp(){
         MockitoAnnotations.openMocks(this);
-        paymentService = new PaymentService(paymentRepository, orderService, client);
+        paymentService = new PaymentService(paymentRepository, client);
     }
 
     @Test
@@ -66,13 +61,11 @@ public class PaymentServiceTest {
                 .willReturn(TEST_IAMPORT_RESPONSE);
 
         Long TEST_DELETED_ORDER_ID = 1l;
-        doNothing().when(orderService).deleteTempOrder(any(), any());
 
         //when
         paymentService.refundPaymentAll(TEST_PAYMENT.getPaymentNum(), TEST_PAYMENT.getPayAmount(), ErrorCode.PAYMENT_AMOUNT_IS_NOT_EQUAL_BY_ORDER_AMOUNT, any());
 
         //then
         verify(client, atLeastOnce()).cancelPaymentByImpUid(any());
-        verify(orderService, atLeastOnce()).deleteTempOrder(any(), any());
     }
 }

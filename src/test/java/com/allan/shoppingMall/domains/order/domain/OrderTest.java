@@ -95,8 +95,9 @@ public class OrderTest {
         assertThat(TEST_CLOTHES_SIZE2.getStockQuantity(), is(13l));
 
         // 주문 결제.
-        TEST_ORDER.payOrder();
+        TEST_ORDER.payOrder("testImpUid");
         assertThat(TEST_ORDER.getOrderStatus(), is(OrderStatus.ORDER_ITEM_READY));
+        assertThat(TEST_ORDER.getPaymentNum(), is("testImpUid"));
 
         //when
         TEST_ORDER.cancelOrder();
@@ -191,7 +192,7 @@ public class OrderTest {
 
         //when, then
         assertThrows(PaymentFailByValidatedOrderStatusException.class, () ->{
-            TEST_ORDER.payOrder();
+            TEST_ORDER.payOrder("testImpUid");
         });
     }
 
@@ -207,7 +208,6 @@ public class OrderTest {
                 .pwd("testPwd")
                 .address(new Address("", "", "", "", ""))
                 .dateOfBirth("2000-10-10")
-                .milege(10l)
                 .gender(Gender.MAN)
                 .build();
     }
@@ -272,7 +272,7 @@ public class OrderTest {
                         .ordererPhone("010-2020-2020")
                         .build())
                 .delivery(Delivery.builder()
-                        .address(new Address("", "", "", "", ""))
+                        .address(new Address("", "", "65055", "", ""))
                         .deliveryStatus(DeliveryStatus.DELIVERY_READY)
                         .deliveryMemo("testDeliveryMemo")
                         .recipient("testRecipient")

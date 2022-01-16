@@ -1,12 +1,15 @@
 package com.allan.shoppingMall.domains.payment.service;
 
 import com.allan.shoppingMall.common.exception.ErrorCode;
+import com.allan.shoppingMall.common.exception.PaymentNotFoundException;
 import com.allan.shoppingMall.common.exception.order.RefundFailException;
 import com.allan.shoppingMall.domains.order.service.OrderService;
 import com.allan.shoppingMall.domains.payment.domain.PaymentRepository;
+import com.allan.shoppingMall.domains.payment.domain.model.PaymentDTO;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.request.CancelData;
+import com.siot.IamportRestClient.response.Payment;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,13 +29,11 @@ import java.math.BigDecimal;
 public class PaymentService {
 
     private PaymentRepository paymentRepository;
-    private OrderService orderService;
     private IamportClient api;
 
     @Autowired(required = false)
-    public PaymentService(PaymentRepository paymentRepository, OrderService orderService) {
+    public PaymentService(PaymentRepository paymentRepository) {
         this.paymentRepository = paymentRepository;
-        this.orderService = orderService;
         this.api = new IamportClient("3101823184907840", "7269cbb2f71f7941f4d532c0097c06138e3056ad04699aa2b67de132a78727acd7852454b7f9d242");
     }
 
@@ -42,9 +43,8 @@ public class PaymentService {
      * 운용시에도 잘 동작하는 지 테스트 요망.
      */
     @Autowired(required = false)
-    public PaymentService(PaymentRepository paymentRepository, OrderService orderService, IamportClient client) {
+    public PaymentService(PaymentRepository paymentRepository, IamportClient client) {
         this.paymentRepository = paymentRepository;
-        this.orderService = orderService;
         this.api = client;
     }
 
@@ -82,10 +82,37 @@ public class PaymentService {
 //        paymentRepository.findByPaymentNum(impUid).ifPresent(payment ->
 //                payment.changeCancelAmount(finalCancelResponse.getCancelAmount().longValue()));
 
-        // 임시주문 상태 Order domain delete.
-        orderService.deleteTempOrder(cancelResponse.getMerchantUid(), authId);
-
         return cancelResponse.getMerchantUid();
+    }
+
+    /**
+     * @param impUid
+     * @return paymentDTO 사용자에게 결제 정보를 전달하기 위한 Object
+     */
+    public PaymentDTO getPamentDetail(String impUid){
+        Payment iamportPayment = null;
+        PaymentDTO payment = null;
+        try{
+            iamportPayment = api.paymentByImpUid(impUid).getResponse();
+        }catch (Exception e){
+            if(e instanceof  IamportResponseException || e instanceof  IOException){
+                throw new PaymentNotFoundException(e.getMessage(), ErrorCode.IAMPORT_ERROR);
+            }
+        }
+
+        if(iamportPayment != null){
+            payment = PaymentDTO.builder()
+                    .payMethod(iamportPayment.getPayMethod())
+                    .totalAmount(iamportPayment.getAmount().longValue())
+                    .build();
+            // card 결제정보.
+            if(iamportPayment.getPayMethod().equals("card")){
+                payment.setCardInfo(iamportPayment.getCardNumber(), iamportPayment.getCardName());
+                payment.setCardName(iamportPayment.getCardName());
+            }
+
+        }
+        return payment;
     }
 
 }

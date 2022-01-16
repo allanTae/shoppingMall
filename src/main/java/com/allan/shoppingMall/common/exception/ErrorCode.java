@@ -37,6 +37,10 @@ public enum ErrorCode {
     PAYMENT_INVALID_ORDER_STATUS(400, "PAY002", "결제가능한 주문 상태가 아닙니다."),
     PAYMENT_NOT_FOUND(400, "PAY002", "조회 된 결제가 없습니다."),
 
+    // Mileage
+    MILEAGE_POINT_NOT_ENOUGH_FOR_DEDUCT(400, "MILE001", "차감 할 마일리지 포인트가 부족합니다."),
+    MILEAGE_NOT_FOUND(400, "MILE002", "죄회 된 마일리지가 없습니다."),
+
     // Item
     ITEM_STOCK_QUANTITY_EXCEEDED(400, "I001", "상품의 재고량이 부족합니다."),
 

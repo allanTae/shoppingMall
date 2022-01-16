@@ -3,8 +3,10 @@ package com.allan.shoppingMall.domains.order.presentation;
 import com.allan.shoppingMall.common.domain.model.UserInfo;
 import com.allan.shoppingMall.domains.infra.AuthenticationConverter;
 import com.allan.shoppingMall.domains.member.domain.Member;
+import com.allan.shoppingMall.domains.mileage.service.MileageService;
 import com.allan.shoppingMall.domains.order.domain.model.*;
 import com.allan.shoppingMall.domains.order.service.OrderService;
+import com.allan.shoppingMall.domains.payment.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -20,11 +22,19 @@ public class OrderController {
 
     private final AuthenticationConverter authenticationConverter;
     private final OrderService orderService;
+    private final MileageService mileageService;
 
     @RequestMapping("/orderForm")
     public String orderForm(@ModelAttribute OrderSummaryRequest request, Authentication authentication, Model model){
+
+        // 주문 정보
         model.addAttribute("orderInfo", request);
         setUserInfo(model, authentication);
+
+        // 마일리지 정보.
+        long availableMileagePoint = mileageService.getAvailableMileagePoint(authentication.getName());
+        model.addAttribute("availableMileage", availableMileagePoint);
+
         return "order/orderForm";
     }
 
@@ -81,6 +91,7 @@ public class OrderController {
     @GetMapping("/{orderId}")
     public String getOrderDetail(@PathVariable("orderId") Long orderId, Model model){
 
+        // 주문정보 설정.
         OrderDetailDTO orderDetail = orderService.getOrderDetailDTO(orderId);
         model.addAttribute("orderInfo", orderDetail);
 

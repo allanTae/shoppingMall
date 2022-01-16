@@ -2,6 +2,8 @@ package com.allan.shoppingMall.domains.member.service;
 
 import com.allan.shoppingMall.domains.member.domain.MemberRepository;
 import com.allan.shoppingMall.domains.member.domain.model.MemberForm;
+import com.allan.shoppingMall.domains.mileage.domain.model.MileageContent;
+import com.allan.shoppingMall.domains.mileage.service.MileageService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,6 +21,9 @@ public class MemberServiceTest {
 
     @Mock
     MemberRepository memberRepository;
+
+    @Mock
+    MileageService mileageService;
 
     @InjectMocks
     MemberService memberService;
@@ -48,5 +53,6 @@ public class MemberServiceTest {
         //then
         verify(memberRepository, atLeastOnce()).save(any());
         verify(memberRepository, atLeastOnce()).findByAuthIdLike(any());
+        verify(mileageService, atLeastOnce()).accumulateMileage("", "testAuthId", 3000l, MileageContent.JOIN_MILEAGE_ACCUMULATE);
     }
 }

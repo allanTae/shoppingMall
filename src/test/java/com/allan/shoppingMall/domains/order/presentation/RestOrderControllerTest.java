@@ -102,7 +102,7 @@ public class RestOrderControllerTest {
         given(iamportClient.paymentByImpUid(any()))
                 .willReturn(TEST_IAMPORT_RESOURCE);
 
-        doNothing().when(orderService).validatePaymentByIamport(any(), any(), any());
+        doNothing().when(orderService).validatePaymentByIamport(any(), any());
 
         PaymentRequest TEST_PAYMENT_REQUEST = new PaymentRequest();
         TEST_PAYMENT_REQUEST.setImp_uid("test_imp_uid");
@@ -115,7 +115,7 @@ public class RestOrderControllerTest {
 
         //then
         verify(iamportClient, atLeastOnce()).paymentByImpUid(any());
-        verify(orderService, atLeastOnce()).validatePaymentByIamport(any(), any(), any());
+        verify(orderService, atLeastOnce()).validatePaymentByIamport(any(), any());
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("orderResult").value("결제 성공"))
@@ -134,7 +134,7 @@ public class RestOrderControllerTest {
                 .willReturn(TEST_IAMPORT_RESOURCE);
 
         PaymentFailException TEST_PAYMENT_FAIL_EXCEPTION = new PaymentFailException(ErrorCode.PAYMENT_AMOUNT_IS_NOT_EQUAL_BY_ORDER_AMOUNT);
-        doThrow( TEST_PAYMENT_FAIL_EXCEPTION).when(orderService).validatePaymentByIamport(any(), any(), any());
+        doThrow( TEST_PAYMENT_FAIL_EXCEPTION).when(orderService).validatePaymentByIamport(any(), any());
 
         RefundFailException TEST_REFUND_FAIL_EXCEPTION = new RefundFailException(ErrorCode.ORDER_REFUND_NOT_ALLOWED);
         doThrow(TEST_REFUND_FAIL_EXCEPTION).when(paymentService).refundPaymentAll(any(), any(), any(), any());
@@ -149,6 +149,8 @@ public class RestOrderControllerTest {
                 .content(asJsonString(TEST_PAYMENT_REQUEST)));
 
         //then
+        verify(orderService, atLeastOnce()).validatePaymentByIamport(any(), any());
+        verify(paymentService, atLeastOnce()).refundPaymentAll(any(), any(), any(), any());
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("orderResult").value("결제 및 환불 실패"))
@@ -170,7 +172,7 @@ public class RestOrderControllerTest {
                 .willReturn(TEST_IAMPORT_RESOURCE);
 
         PaymentFailByValidatedAmountException TEST_PAYMENT_FAIL_EXCEPTION = new PaymentFailByValidatedAmountException(ErrorCode.PAYMENT_AMOUNT_IS_NOT_EQUAL_BY_ORDER_AMOUNT);
-        doThrow( TEST_PAYMENT_FAIL_EXCEPTION).when(orderService).validatePaymentByIamport(any(), any(), any());
+        doThrow( TEST_PAYMENT_FAIL_EXCEPTION).when(orderService).validatePaymentByIamport(any(), any());
 
         String TEST_REFUND_PAYMENT_NUM = "test_payment_num";
         given(paymentService.refundPaymentAll(any(),any(), any(), any()))
@@ -186,6 +188,9 @@ public class RestOrderControllerTest {
                 .content(asJsonString(TEST_PAYMENT_REQUEST)));
 
         //then
+        verify(orderService, atLeastOnce()).validatePaymentByIamport(any(), any());
+        verify(paymentService, atLeastOnce()).refundPaymentAll(any(), any(), any(), any());
+        verify(orderService, atLeastOnce()).deleteTempOrder(TEST_PAYMENT.getMerchantUid(), "user");
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("orderResult").value("결제 실패"))
@@ -208,7 +213,7 @@ public class RestOrderControllerTest {
                 .willReturn(TEST_IAMPORT_RESOURCE);
 
         PaymentFailByValidatedOrderStatusException TEST_PAYMENT_FAIL_EXCEPTION = new PaymentFailByValidatedOrderStatusException(ErrorCode.PAYMENT_INVALID_ORDER_STATUS);
-        doThrow( TEST_PAYMENT_FAIL_EXCEPTION).when(orderService).validatePaymentByIamport(any(), any(), any());
+        doThrow( TEST_PAYMENT_FAIL_EXCEPTION).when(orderService).validatePaymentByIamport(any(), any());
 
         String TEST_REFUND_PAYMENT_NUM = "test_payment_num";
         given(paymentService.refundPaymentAll(any(),any(), any(), any()))
@@ -224,6 +229,9 @@ public class RestOrderControllerTest {
                 .content(asJsonString(TEST_PAYMENT_REQUEST)));
 
         //then
+        verify(orderService, atLeastOnce()).validatePaymentByIamport(any(), any());
+        verify(paymentService, atLeastOnce()).refundPaymentAll(any(), any(), any(), any());
+        verify(orderService, atLeastOnce()).deleteTempOrder(TEST_PAYMENT.getMerchantUid(), "user");
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("orderResult").value("결제 실패"))

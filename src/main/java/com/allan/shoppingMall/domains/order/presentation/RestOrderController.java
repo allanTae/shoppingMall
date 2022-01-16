@@ -3,14 +3,13 @@ package com.allan.shoppingMall.domains.order.presentation;
 import com.allan.shoppingMall.common.exception.BusinessException;
 import com.allan.shoppingMall.common.exception.order.payment.PaymentFailException;
 import com.allan.shoppingMall.common.exception.order.RefundFailException;
-import com.allan.shoppingMall.common.exception.order.RefundOrderFailException;
 import com.allan.shoppingMall.domains.infra.AuthenticationConverter;
 import com.allan.shoppingMall.domains.member.domain.Member;
 import com.allan.shoppingMall.domains.order.domain.model.OrderErrorResponse;
 import com.allan.shoppingMall.domains.order.domain.model.OrderRequest;
 import com.allan.shoppingMall.domains.order.domain.model.OrderResponse;
 import com.allan.shoppingMall.domains.order.service.OrderService;
-import com.allan.shoppingMall.domains.payment.domain.model.PaymentIamportDTO;
+import com.allan.shoppingMall.domains.payment.domain.model.iamport.PaymentIamportDTO;
 import com.allan.shoppingMall.domains.payment.domain.model.PaymentRequest;
 import com.allan.shoppingMall.domains.payment.service.PaymentService;
 import com.siot.IamportRestClient.IamportClient;
@@ -105,13 +104,17 @@ public class RestOrderController {
                     .payStatus(iamportPayment.getStatus())
                     .name(iamportPayment.getName())
                     .build();
-            orderService.validatePaymentByIamport(paymentDTO, request.getMerchant_uid(), authentication.getName());
+            orderService.validatePaymentByIamport(paymentDTO, authentication.getName());
             // 결제 성공.
             return new ResponseEntity<OrderResponse>(new OrderResponse("결제 성공", "empty"), HttpStatus.OK);
         }catch (PaymentFailException paymentEx){
             try{
-                if(iamportPayment != null)
+                if(iamportPayment != null) {
+                    // payment 환불 요청.
                     paymentService.refundPaymentAll(iamportPayment.getImpUid(), iamportPayment.getAmount().longValue(), paymentEx.getErrorCode(), authentication.getName());
+                    // 임시 주문 삭제.
+                    orderService.deleteTempOrder(iamportPayment.getMerchantUid(), authentication.getName());
+                }
             }catch (RefundFailException refundEx){
                 // 환불 실패.
                 return new ResponseEntity<OrderResponse>(new OrderResponse("결제 및 환불 실패", "empty", OrderErrorResponse.of(refundEx.getMessage(), refundEx.getErrorCode())),

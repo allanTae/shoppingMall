@@ -6,6 +6,7 @@ import com.allan.shoppingMall.common.exception.order.OrderCancelFailException;
 import com.allan.shoppingMall.common.exception.order.payment.PaymentFailByValidatedOrderStatusException;
 import com.allan.shoppingMall.domains.delivery.domain.Delivery;
 import com.allan.shoppingMall.domains.member.domain.Member;
+import com.allan.shoppingMall.domains.payment.domain.Payment;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -51,6 +52,9 @@ public class Order extends BaseEntity {
 
     @Column(name = "order_num", unique = true)
     private String orderNum;
+
+    @Column(name="payment_num", unique = true)
+    private String paymentNum;
 
     // 주문 생성시, OrderStatus 기본 설정.
     // 주문상태의 기본값은 '임시주문' 상태입니다.
@@ -125,11 +129,13 @@ public class Order extends BaseEntity {
      * 주문을 결제하는 메소드.
      * 현재 주문의 상태를 결제완료(상품준비중) 상태로 변경한다.(주문의 상태 정보에 대해선 OrderStatus 참조하세요.)
      */
-    public void payOrder() {
+    public void payOrder(String impUid) {
        if(this.orderStatus == OrderStatus.ORDER_TEMP){
+           this.paymentNum = impUid;
            this.orderStatus = OrderStatus.ORDER_ITEM_READY;
        }else{
            throw new PaymentFailByValidatedOrderStatusException(ErrorCode.PAYMENT_INVALID_ORDER_STATUS);
        }
     }
+
 }

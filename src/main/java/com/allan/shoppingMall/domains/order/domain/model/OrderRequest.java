@@ -28,6 +28,9 @@ public class OrderRequest {
     private String detailAddress;
     private String deliveryMemo;
 
+    // 마일리지 정보.
+    private Long usedMileage;
+
     @Override
     public String toString() {
         return "OrderRequest{" +
@@ -41,6 +44,7 @@ public class OrderRequest {
                 ", address='" + address + '\'' +
                 ", detailAddress='" + detailAddress + '\'' +
                 ", deliveryMemo='" + deliveryMemo + '\'' +
+                ", usedMileage='" + usedMileage + '\'' +
                 '}';
     }
 }
