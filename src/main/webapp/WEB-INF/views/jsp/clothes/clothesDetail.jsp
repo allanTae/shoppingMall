@@ -141,7 +141,7 @@
                 <p class="m-0"><br /></p>
                 <div class="buyBtns">
                     <button type="button" class="btn btn-secondary btn-lg" id="btnOrder">구매하기</button>
-                    <button type="button" class="btn btn-secondary btn-lg">장바구니</button>
+                    <button type="button" class="btn btn-secondary btn-lg" id="cart">장바구니</button>
                 </div>
             </div>
             <!-- end of goodsForm -->
@@ -456,5 +456,9 @@
           commaValue = String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
           return commaValue;
       }
+
+      $(document).on('click', "#cart", function(){
+        alert('업데이트 준비중 입니다.');
+      });
 
     </script>

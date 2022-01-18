@@ -49,7 +49,7 @@ public class ItemImageControllerTest {
         verify(itemImageRepository,atLeastOnce()).findById(any());
         resultActions
                 .andExpect(status().isOk())
-                .andExpect(header().string("Content-Type","image/jpeg;charset=UTF-8"));
+                .andExpect(header().string("Content-Type","image/jpeg"));
     }
 
     @Test
@@ -66,7 +66,7 @@ public class ItemImageControllerTest {
         verify(itemImageRepository,atLeastOnce()).findById(any());
         resultActions
                 .andExpect(status().isOk())
-                .andExpect(header().string("Content-Type","image/jpeg;charset=UTF-8"));
+                .andExpect(header().string("Content-Type","image/jpeg"));
     }
 
     private ItemImage createItemImage() {

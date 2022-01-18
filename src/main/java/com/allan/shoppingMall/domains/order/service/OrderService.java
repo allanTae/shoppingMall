@@ -96,8 +96,14 @@ public class OrderService {
                     return new OrderClothes(orderLineRequest.getOrderQuantity(), clothes, clothesSize);
                     // 그외의 상품인 경우.
                 }).collect(Collectors.toList());
-
         order.changeOrderItems(orderItems);
+
+        // 배송비 무료 판단.
+        long orderAmountSum = orderItems.stream()
+                .mapToLong(orderItem -> orderItem.getItem().getPrice() * orderItem.getOrderQuantity())
+                .sum();
+        order.getDelivery().freeDelivery(orderAmountSum);
+
         orderRepository.save(order);
 
         // 주문시, 마일리지 차감.
@@ -201,16 +207,26 @@ public class OrderService {
                 })
                 .collect(Collectors.toList());
 
-        // 결제 정보.
+        // 결제 정보)
+        // 1-1 기본 결제정보.
         PaymentDTO payment = paymentService.getPamentDetail(findOrder.getPaymentNum());
-        payment.setDeliveryAmount(findOrder.getDelivery().getDeliveryAmount()); // 배송비.
+        // 1-2 배송비.
+        payment.setDeliveryAmount(findOrder.getDelivery().getDeliveryAmount());
 
-        // 마일리지 정보.
+        // 1-3 상품가격.
+        long itemAmount = findOrder.getOrderItems()
+                .stream()
+                .mapToLong(orderItem -> {
+                    return orderItem.getItem().getPrice() * orderItem.getOrderQuantity();
+                })
+                .sum();
+        payment.setItemAmount(itemAmount);
+
+        // 1-4 마일리지 정보.
         MileageDTO mileage = mileageService.getMileageByOrderNum(findOrder.getOrderNum(), MileageContent.USED_MILEAGE_DEDUCTION);
         payment.setMileagePoint(mileage.getMileagePoint());
 
         // 할인 정보.
-
         OrderDetailDTO orderDetailDTO = OrderDetailDTO.builder()
                 .orderId(findOrder.getOrderId())
                 .orderDate(LocalDateTime.now())
@@ -250,7 +266,7 @@ public class OrderService {
 
         long orderITemsAmount = findOrder.getOrderItems()
                 .stream()
-                .mapToLong( orderItem -> orderItem.getItem().getPrice())
+                .mapToLong( orderItem -> (orderItem.getItem().getPrice() * orderItem.getOrderQuantity()) )
                 .sum();
 
         // 배송비.
@@ -260,7 +276,7 @@ public class OrderService {
         long mileagePoint = mileageService.getMileageByOrderNum(findOrder.getOrderNum(), MileageContent.USED_MILEAGE_DEDUCTION).getMileagePoint();
 
         // 총금액.
-        long orderTotalAmount = orderITemsAmount + deliveryAmount - mileagePoint;
+        long orderTotalAmount = orderITemsAmount + deliveryAmount + mileagePoint;
 
         // 주문 금액과 결제 총금액 확인
         if(paymentDTO.getPaymentAmount() != orderTotalAmount){

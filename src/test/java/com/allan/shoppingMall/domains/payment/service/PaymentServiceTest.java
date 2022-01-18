@@ -13,8 +13,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.math.BigDecimal;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -67,5 +70,34 @@ public class PaymentServiceTest {
 
         //then
         verify(client, atLeastOnce()).cancelPaymentByImpUid(any());
+    }
+
+    @Test
+    public void 결제정보_전달_테스트() throws Exception {
+        //given
+        com.siot.IamportRestClient.response.Payment TEST_PAYMENT = createPayment();
+
+        IamportResponse<com.siot.IamportRestClient.response.Payment> TEST_IAMPORT_RESOURCE = new IamportResponse<com.siot.IamportRestClient.response.Payment>();
+        ReflectionTestUtils.setField(TEST_IAMPORT_RESOURCE, "response", TEST_PAYMENT);
+
+        given(client.paymentByImpUid(any()))
+                .willReturn(TEST_IAMPORT_RESOURCE);
+
+        //when
+        paymentService.getPamentDetail(TEST_PAYMENT.getImpUid());
+
+        //then
+        verify(client, atLeastOnce()).paymentByImpUid(any());
+    }
+
+    private com.siot.IamportRestClient.response.Payment createPayment(){
+        com.siot.IamportRestClient.response.Payment TEST_PAYMENT = new com.siot.IamportRestClient.response.Payment();
+        ReflectionTestUtils.setField(TEST_PAYMENT, "imp_uid", "test_imp_uid");
+        ReflectionTestUtils.setField(TEST_PAYMENT, "merchant_uid", "test_merchant_uid");
+        ReflectionTestUtils.setField(TEST_PAYMENT, "pay_method", "test_pay_method");
+        ReflectionTestUtils.setField(TEST_PAYMENT, "status", "test_status");
+        ReflectionTestUtils.setField(TEST_PAYMENT, "amount", new BigDecimal(1));
+
+        return TEST_PAYMENT;
     }
 }

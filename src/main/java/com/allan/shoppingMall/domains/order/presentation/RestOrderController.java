@@ -17,10 +17,13 @@ import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.response.Payment;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 
 
@@ -33,12 +36,18 @@ public class RestOrderController {
     private PaymentService paymentService;
     private IamportClient api;
 
+    @Value("${payment.iamport.apiKey}")
+    private String apiKey;
+
+    @Value("${payment.iamport.apiSecret}")
+    private String apiSecret;
+
     @Autowired(required = false)
     public RestOrderController(AuthenticationConverter authenticationConverter, OrderService orderService, PaymentService paymentService){
         this.authenticationConverter = authenticationConverter;
         this.orderService = orderService;
         this.paymentService = paymentService;
-        this.api = new IamportClient("3101823184907840", "7269cbb2f71f7941f4d532c0097c06138e3056ad04699aa2b67de132a78727acd7852454b7f9d242");
+        this.api = new IamportClient(apiKey, apiSecret);
     }
 
     /**
@@ -50,6 +59,15 @@ public class RestOrderController {
         this.orderService = orderService;
         this.paymentService = paymentService;
         this.api = iamportClient;
+    }
+
+    /**
+     * Iamport 설정을 위한 초기화 메소드.
+     */
+    @PostConstruct
+    public void init(){
+        if(!apiKey.equals("testApiKey") && !apiSecret.equals("testApiSecret"))
+            this.api = new IamportClient(apiKey, apiSecret);
     }
 
     /**

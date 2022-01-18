@@ -87,25 +87,19 @@
                             <p class="col-md-3 mb-0"> </p>
                             <p class="col-md-5 mb-0 text-end"><fmt:formatNumber type="number" maxFractionDigits="3" value="${orderInfo.totalAmount}" />원</p>
                         </div>
-                        <c:if test="${orderInfo.isDeliveryFree eq false}">
+                        <c:if test="${orderInfo.deliveryAmount > 0}">
                              <div class="row col-md-12 mb-0" id="deliveryAmountWrap">
                                <p class="col-md-4 mb-0 text-start">배송비</p>
                                <p class="col-md-3 mb-0"> </p>
                                <p class="col-md-5 mb-0 text-end">+<fmt:formatNumber type="number" maxFractionDigits="3" value="${orderInfo.deliveryAmount}" />원</p>
                              </div>
                         </c:if>
+                        <div class="row col-md-12 mb-0" id="mileageAmountWrap">
+                        </div>
                         <hr />
-                        <div class="row col-md-12">
+                        <div class="row col-md-12" id="orderTotalAmountWrap">
                             <p class="col-md-6 text-start">총 결제금액(${orderInfo.totalQuantity}개)</p>
-                            <c:choose>
-                                <c:when test="${orderInfo.isDeliveryFree eq false}">
-                                    <p class="col-md-6 text-end"><fmt:formatNumber type="number" maxFractionDigits="3" value="${orderInfo.totalAmount + orderInfo.deliveryAmount}" />원</p>
-                                </c:when>
-                                <c:when test="${orderInfo.isDeliveryFree eq true}">
-                                    <p class="col-md-6 text-end"><fmt:formatNumber type="number" maxFractionDigits="3" value="${orderInfo.totalAmount}" />원</p>
-                                </c:when>
-                            </c:choose>
-
+                            <p class="col-md-6 text-end" id="orderTotalAmount"><fmt:formatNumber type="number" maxFractionDigits="3" value="${orderInfo.totalAmount + orderInfo.deliveryAmount}" />원</p>
                         </div>
                     </div>
                     <div class="mileageInfoWrap p-3 mb-3 text-start">
@@ -152,6 +146,15 @@
             });
             postOrderResultForm(orderResponse);
           }
+        });
+	}
+
+	var paymentAlert = function(titleText, contentText, icon) {
+	    swal({
+          title: titleText,
+          text: contentText,
+          icon: icon,
+          button: "확인",
         });
 	}
 </script>
@@ -257,9 +260,10 @@
   }
 
   function checkValidation(){
+    console.log("checkValidation() call!!!");
      var selectedOptionIndex = $('#deliveryMemo option').index($('#deliveryMemo option:selected'));
      if(selectedOptionIndex === 0){
-        alert("배송메모를 선택 해 주세요.");
+        paymentAlert("알림", "배송메모를 선택 해 주세요.", "warning");
         return false;
      }
 
@@ -269,6 +273,8 @@
   // 주문 요청 메소드.
   $(document).on('click', '#btnOrder', function(e){
   		e.preventDefault();
+  		if(checkValidation() === false)
+  		    return;
 
         var ordererName = $('#userInfo_name').val();
         var ordererPhone = $('#userInfo_phone').val();
@@ -326,7 +332,7 @@
           }
           , error:function(request,status,error){
             console.log("error: " + error);
-            alert("주문에 실패했습니다.");
+            paymentAlert("알림", "주문에 실패했습니다.", "warning");
           }
         });
   	});
@@ -342,11 +348,8 @@
             orderName = "${orderInfo.orderItems[0].itemName}";
           }
 
-          var totalAmount = ${orderInfo.totalAmount};
-          // 배송비.
-          if(!${orderInfo.isDeliveryFree}){
-            totalAmount = totalAmount + ${orderInfo.deliveryAmount} ;
-          }
+          var totalAmount = ${orderInfo.totalAmount} + ${orderInfo.deliveryAmount};
+
           totalAmount = totalAmount - Number($('#mileagePoint').val());
 
           console.log("총 결제 금액: " + totalAmount);
@@ -385,7 +388,7 @@
                     , success: function(result){
                         // 결제 유효성 검사 성공
                         if(result.orderResult === "결제 성공"){
-                            alert("주문을 성공하였습니다.");
+                            paymentAlert("알림", "주문을 성공하였습니다.", "success");
                             postOrderResultForm(result);
                         }else{
                             // 결제 유효성 검사 실패
@@ -393,7 +396,7 @@
                         }
                     }
                     , error:function(request,status,error){
-                      alert("주문을 실패했습니다.");
+                      paymentAlert("알림", "주문을 실패했습니다.", "warning");
                     }
                    });
               } else {
@@ -438,16 +441,38 @@
     var availableMileage = ${availableMileage};
     $(document).on('click', '#btnMileageUse', function(e){
         console.log("mileage text: " + availableMileage);
-        $('#mileagePoint').val(availableMileage)
+        $('#mileagePoint').val(availableMileage).trigger('change');
     });
 
     // 셀렉트 된 상품의 주문량 change 이벤트.
     $(document).on("change","#mileagePoint",function(){
         var mileage = Number($(this).val());
         console.log("mileage: " + mileage);
+        var orderTotalAmount = ${orderInfo.totalAmount + orderInfo.deliveryAmount} - mileage;
+        console.log("orderTotalAmount: " + orderTotalAmount);
+
+        $('#orderTotalAmount').text(orderTotalAmount.toLocaleString('ko-KR') + '원');
+
         if(mileage > availableMileage){
-            alert("최대로 사용 할 수 있는 포인트는 " + availableMileage + "입니다.");
-            $(this).val(availableMileage)
+            paymentAlert("알림", "최대로 사용 할 수 있는 포인트는 " + availableMileage + "입니다.", "warning");
+            $(this).val(availableMileage).trigger('change');
+            return;
+        }else if( mileage < 0 ){
+            paymentAlert("알림", "최소 1포인트 이상부터 사용이 가능합니다.", "warning");
+            $(this).val(0).trigger('change');
+            return;
+        }
+
+        if(mileage > 0){
+            var htmls = '';
+            htmls += '<p class="col-md-4 mb-0 text-start">마일리지</p>';
+            htmls += '<p class="col-md-3 mb-0"> </p>';
+            htmls += '<p class="col-md-5 mb-0 text-end">-' + mileage.toLocaleString('ko-KR') + '원</p>';
+
+            $('#mileageAmountWrap').html(htmls);
+        }else{
+            var htmls = '';
+            $('#mileageAmountWrap').html(htmls);
         }
 
         $(this).blur(); // enter시 blur.

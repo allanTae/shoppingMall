@@ -3,7 +3,6 @@ package com.allan.shoppingMall.domains.payment.service;
 import com.allan.shoppingMall.common.exception.ErrorCode;
 import com.allan.shoppingMall.common.exception.PaymentNotFoundException;
 import com.allan.shoppingMall.common.exception.order.RefundFailException;
-import com.allan.shoppingMall.domains.order.service.OrderService;
 import com.allan.shoppingMall.domains.payment.domain.PaymentRepository;
 import com.allan.shoppingMall.domains.payment.domain.model.PaymentDTO;
 import com.siot.IamportRestClient.IamportClient;
@@ -12,13 +11,12 @@ import com.siot.IamportRestClient.request.CancelData;
 import com.siot.IamportRestClient.response.Payment;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.math.BigDecimal;
-
-
 
 /**
  * 결제 도메인 서비스단 코드입니다.(IamPort api 에 의존하고 있습니다.)
@@ -31,10 +29,15 @@ public class PaymentService {
     private PaymentRepository paymentRepository;
     private IamportClient api;
 
+    @Value("${payment.iamport.apiKey}")
+    private String apiKey;
+
+    @Value("${payment.iamport.apiSecret}")
+    private String apiSecret;
+
     @Autowired(required = false)
     public PaymentService(PaymentRepository paymentRepository) {
         this.paymentRepository = paymentRepository;
-        this.api = new IamportClient("3101823184907840", "7269cbb2f71f7941f4d532c0097c06138e3056ad04699aa2b67de132a78727acd7852454b7f9d242");
     }
 
     /**
@@ -46,6 +49,14 @@ public class PaymentService {
     public PaymentService(PaymentRepository paymentRepository, IamportClient client) {
         this.paymentRepository = paymentRepository;
         this.api = client;
+    }
+
+    /**
+     * Iamport 설정을 위한 초기화 메소드.
+     */
+    @PostConstruct
+    private void init(){
+        this.api = new IamportClient(apiKey, apiSecret);
     }
 
     /**
@@ -114,5 +125,6 @@ public class PaymentService {
         }
         return payment;
     }
+
 
 }

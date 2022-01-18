@@ -8,7 +8,7 @@
 	<div class="container orderDetailContainer col-md-10" role="main">
 	   <h2 class="text-start">주문 / 배송조회</h2>
 	   <div class="text-start">
-	     <span>주문일자: ${orderInfo.orderDate} </span> <span class="ms-2">주문번호: ${orderInfo.orderId}</span>
+	     <span>주문일자: ${orderInfo.orderDate} </span> <span class="ms-2">주문번호: ${orderInfo.orderNum}</span>
 	   </div>
 	   <div class="orderItemsWrap mb-5">
             <table class="table-responsive col-md-12" >
@@ -93,11 +93,10 @@
                   </div>
                   <div class="ordererInfo col-md-4 p-2 text-start">
                    <h5>결제금액 정보</h5>
-                   <p class="mb-1">상품금액: ${orderInfo.paymentInfo.totalAmount}</p>
-                   <p class="mb-1">배송비: ${orderInfo.paymentInfo.deliveryAmount}</p>
-                   <c:if test="${orderInfo.paymentInfo.mileagePoint > 0}">
-                     <p class="mb-1">마일리지 사용: ${orderInfo.paymentInfo.mileagePoint}</p>
-                   </c:if>
+                   <p class="mb-1">상품금액: <fmt:formatNumber type="number" maxFractionDigits="3" value="${orderInfo.paymentInfo.itemAmount}" />원</p>
+                   <p class="mb-1">배송비: <fmt:formatNumber type="number" maxFractionDigits="3" value="${orderInfo.paymentInfo.deliveryAmount}" />원</p>
+                   <p class="mb-1">마일리지 사용: <fmt:formatNumber type="number" maxFractionDigits="3" value="${orderInfo.paymentInfo.mileagePoint}" />원</p>
+                   <p class="mb-1">총 결제금액: <fmt:formatNumber type="number" maxFractionDigits="3" value="${orderInfo.paymentInfo.totalAmount}" />원</p>
                   </div>
               </div>
        	   <!-- end of deliveryInfoWrap -->
@@ -120,5 +119,6 @@
 
     // 주문 취소 button event.
     $(document).on("click", "#btnOrderCancel", function(){
+        alert("업데이트 준비중 입니다.");
     });
 </script>

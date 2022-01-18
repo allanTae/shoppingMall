@@ -1,0 +1,4 @@
+payment:
+  iamport:
+    apiKey: "testApiKey"
+    apiSecret: "testApiSecret"

@@ -77,14 +77,17 @@
     // 소셜 로그인 버튼 이벤트들.
     $(document).on('click', '.btnNaver', function(e){
         location.href = "${pageContext.request.contextPath}/oauth2/authorization/naver";
+        alert("업데이트 준비중 입니다.");
         e.preventDefault();
     });
     $(document).on('click', '.btnGoogle', function(e){
         location.href = "${pageContext.request.contextPath}/oauth2/authorization/google";
+        alert("업데이트 준비중 입니다.");
         e.preventDefault();
     });
     $(document).on('click', '.btnKakao', function(e){
         location.href = "${pageContext.request.contextPath}/oauth2/authorization/kakao";
+        alert("업데이트 준비중 입니다.");
         e.preventDefault();
     });
 

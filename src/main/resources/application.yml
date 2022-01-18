@@ -31,6 +31,8 @@ logging:
 
 spring:
   profiles:
+    include:
+      - iamport
     active: devDB
 
   http:

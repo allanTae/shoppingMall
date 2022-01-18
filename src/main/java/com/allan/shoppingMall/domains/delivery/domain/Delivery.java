@@ -73,4 +73,12 @@ public class Delivery extends BaseEntity {
             this.deliveryAmount = 3000l;
         }
     }
+
+    /**
+     * 배송비 무료 설정 메소드.
+     */
+    public void freeDelivery(Long orderAmount){
+        if(orderAmount > 50000l)
+            this.deliveryAmount = 0l;
+    }
 }

@@ -35,3 +35,6 @@ out/
 
 ### 사진 파일경로 ###
 images/item/**/**
+
+### iamport ###
+application-iamport.yml

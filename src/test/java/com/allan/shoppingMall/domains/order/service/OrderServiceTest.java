@@ -284,6 +284,21 @@ public class OrderServiceTest {
 
         OrderClothes TEST_ORDER_CLOTHES = new OrderClothes(3l, TEST_CLOTHES, TEST_CLOTHES_SIZE);
 
+        ClothesSize TEST_CLOTHES_SIZE_2 = ClothesSize.builder()
+                .sizeLabel(SizeLabel.M)
+                .stockQuantity(10l)
+                .build();
+
+        Clothes TEST_CLOTHES_2 = Clothes.builder()
+                .price(4000l)
+                .build();
+
+        TEST_CLOTHES_2.changeClothesSizes(List.of(TEST_CLOTHES_SIZE_2));
+
+        OrderClothes TEST_ORDER_CLOTHES_2 = new OrderClothes(4l, TEST_CLOTHES_2, TEST_CLOTHES_SIZE_2);
+
+        List<OrderItem> TEST_ORDER_CLOTHES_LIST = List.of(TEST_ORDER_CLOTHES, TEST_ORDER_CLOTHES_2);
+
         Order TEST_ORDER = Order.builder()
                 .orderNum("testOrderNum")
                 .delivery(Delivery.builder()
@@ -293,9 +308,15 @@ public class OrderServiceTest {
                         .build())
                 .build();
 
-        TEST_ORDER.changeOrderItems(List.of(TEST_ORDER_CLOTHES));
+        TEST_ORDER.changeOrderItems(TEST_ORDER_CLOTHES_LIST);
 
-        MileageDTO TEST_MILEAGE_DTO = new MileageDTO(0l, "");
+        Long paymentAmount = TEST_ORDER_CLOTHES_LIST.stream()
+                .mapToLong(orderItem ->{
+                    return orderItem.getOrderQuantity() * orderItem.getItem().getPrice();
+                })
+                .sum();
+
+        MileageDTO TEST_MILEAGE_DTO = new MileageDTO(-200l, "");
         given(mileageService.getMileageByOrderNum(TEST_ORDER.getOrderNum(), MileageContent.USED_MILEAGE_DEDUCTION))
                 .willReturn(TEST_MILEAGE_DTO);
 
@@ -304,7 +325,7 @@ public class OrderServiceTest {
                 .payMethod("card")
                 .merchantUid("testOrderNum")
                 .impUid("testPaymentNum")
-                .paymentAmount(TEST_CLOTHES.getPrice() + TEST_ORDER.getDelivery().getDeliveryAmount() - TEST_MILEAGE_DTO.getMileagePoint())
+                .paymentAmount(paymentAmount + TEST_ORDER.getDelivery().getDeliveryAmount() + TEST_MILEAGE_DTO.getMileagePoint())
                 .build();
 
         given(orderRepository.findByOrderNumAndAuthId(any(), any()))
@@ -352,9 +373,15 @@ public class OrderServiceTest {
                 .build();
 
         ReflectionTestUtils.setField(TEST_ORDER, "orderStatus", OrderStatus.ORDER_ITEM_READY);
-        TEST_ORDER.changeOrderItems(List.of(TEST_ORDER_CLOTHES));
+        List<OrderItem> TEST_ORDER_ITEM_LIST = List.of(TEST_ORDER_CLOTHES);
+        long orderItemAmount = TEST_ORDER_ITEM_LIST.stream()
+                .mapToLong(orderItem -> {
+                    return orderItem.getItem().getPrice() * orderItem.getOrderQuantity();
+                }).sum();
 
-        MileageDTO TEST_MILEAGE_DTO = new MileageDTO(0l, "");
+        TEST_ORDER.changeOrderItems(TEST_ORDER_ITEM_LIST);
+
+        MileageDTO TEST_MILEAGE_DTO = new MileageDTO(-300l, "");
         given(mileageService.getMileageByOrderNum(TEST_ORDER.getOrderNum(), MileageContent.USED_MILEAGE_DEDUCTION))
                 .willReturn(TEST_MILEAGE_DTO);
 
@@ -363,7 +390,7 @@ public class OrderServiceTest {
                 .payMethod("card")
                 .merchantUid("testOrderNum")
                 .impUid("testPaymentNum")
-                .paymentAmount(TEST_CLOTHES.getPrice() + TEST_ORDER.getDelivery().getDeliveryAmount() - TEST_MILEAGE_DTO.getMileagePoint())
+                .paymentAmount(orderItemAmount + TEST_ORDER.getDelivery().getDeliveryAmount() + TEST_MILEAGE_DTO.getMileagePoint())
                 .build();
 
         given(orderRepository.findByOrderNumAndAuthId(any(), any()))
