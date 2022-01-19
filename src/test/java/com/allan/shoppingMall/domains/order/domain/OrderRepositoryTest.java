@@ -269,7 +269,8 @@ public class OrderRepositoryTest {
 
         //when
         // TEST_MEMBER_1 이 주문한 주문들만 조회.
-        Page<Order> page = orderRepository.getOrderListByAuthId(TEST_MEMBER_1.getAuthId(), PageRequest.of(0, 3,  Sort.by(Sort.Direction.ASC, "createdDate")));
+        Page<Order> page = orderRepository.getOrderListByAuthId(TEST_MEMBER_1.getAuthId(), List.of(OrderStatus.ORDER_TEMP)
+                , PageRequest.of(0, 3,  Sort.by(Sort.Direction.ASC, "createdDate")));
 
         //then
         List<Order> orders = page.getContent();

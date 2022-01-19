@@ -1,5 +1,6 @@
 package com.allan.shoppingMall.domains.order.domain.model;
 
+import com.allan.shoppingMall.domains.payment.domain.model.iamport.IamportResult;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,4 +19,7 @@ public class OrderResultRequest {
 
     // 주문에러.
     private OrderErrorResponse errorResponse;
+
+    // iamport result
+    IamportResult result;
 }

@@ -17,8 +17,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
      * @param authId 로그인 한 회원 아이디.
      * @param pageable 페이징 정보.
      */
-    @Query("select distinct o from Order o join o.orderItems where o.orderer.authId like :authId")
-    public Page<Order> getOrderListByAuthId(@Param("authId") String authId, Pageable pageable);
+    @Query("select distinct o from Order o join o.orderItems where o.orderer.authId like :authId and o.orderStatus in :orderStatusList")
+    public Page<Order> getOrderListByAuthId(@Param("authId") String authId, @Param("orderStatusList") List<OrderStatus> orderStatusList, Pageable pageable);
 
     /**
      * 현재 로그인 한 회원의 특정 주문번호로 조회 한 주문 도메인.

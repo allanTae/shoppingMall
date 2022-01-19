@@ -1,10 +1,12 @@
 package com.allan.shoppingMall.domains.order.presentation;
 
 import com.allan.shoppingMall.common.exception.BusinessException;
+import com.allan.shoppingMall.common.exception.ErrorCode;
 import com.allan.shoppingMall.common.exception.order.payment.PaymentFailException;
 import com.allan.shoppingMall.common.exception.order.RefundFailException;
 import com.allan.shoppingMall.domains.infra.AuthenticationConverter;
 import com.allan.shoppingMall.domains.member.domain.Member;
+import com.allan.shoppingMall.domains.order.domain.Order;
 import com.allan.shoppingMall.domains.order.domain.model.OrderErrorResponse;
 import com.allan.shoppingMall.domains.order.domain.model.OrderRequest;
 import com.allan.shoppingMall.domains.order.domain.model.OrderResponse;
@@ -125,6 +127,11 @@ public class RestOrderController {
             orderService.validatePaymentByIamport(paymentDTO, authentication.getName());
             // 결제 성공.
             return new ResponseEntity<OrderResponse>(new OrderResponse("결제 성공", "empty"), HttpStatus.OK);
+        }catch (IOException | IamportResponseException e){
+            log.error("validatePaymentAfter() cause iamport error!!");
+            log.error("message: " + e.getMessage());
+            return new ResponseEntity<OrderResponse>(new OrderResponse("결제 및 환불 실패", "empty", OrderErrorResponse.of(e.getMessage(), ErrorCode.IAMPORT_ERROR)),
+                    HttpStatus.OK);
         }catch (PaymentFailException paymentEx){
             try{
                 if(iamportPayment != null) {

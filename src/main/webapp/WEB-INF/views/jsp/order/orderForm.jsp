@@ -368,7 +368,7 @@
               buyer_postcode: $('#postcode').val(),
 
               // confirm_url : "${pageContext.request.contextPath}/order/validate", // iamport 측에서 제공하는 검증 url(단, 사용하기전 iamport사측에 요청해야 함)
-              m_redirect_url : '${pageContext.request.contextPath}/order/orderForm' // 모바일버전을 위한 리다이렉트 url.
+              m_redirect_url : '${pageContext.request.contextPath}/order/orderResult' // 모바일버전을 위한 리다이렉트 url.
           }, function (rsp) { // callback
               // iamport 결제 응답 성공.
               if (rsp.success) {

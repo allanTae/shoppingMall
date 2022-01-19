@@ -63,6 +63,7 @@ public class OrderController {
     /**
      * 주문 후, 주문 결과 페이지를 출력하는 메소드.
      * 주문페이지(orderForm.jsp)에서 Iamport api 결제 요청 실패시, 생성 된 '임시저장' 주문를 삭제 합니다.
+     * (모바일 환경 결제 실패시 호출 되는 핸들러 메소드이기도 합니다.)
      * @param orderResultRequest 주문 결과 정보를 담고 있는 request object.
      * @return
      */
@@ -71,7 +72,7 @@ public class OrderController {
         // 임시 주문 삭제.
         orderService.deleteAllTempOrder(authentication.getName());
 
-        return "order/orderResult";
+        return "redirect:/order/orderResult";
     }
 
     /**

@@ -153,7 +153,7 @@ public class OrderServiceTest {
         TEST_ORDER.changeOrderItems(List.of(TEST_ORDER_CLOTHES));
         Page<Order> TEST_PAGE_RESPONSE = new PageImpl<>(List.of(TEST_ORDER));
 
-        given(orderRepository.getOrderListByAuthId(any(), any()))
+        given(orderRepository.getOrderListByAuthId(any(), any(), any()))
                 .willReturn(TEST_PAGE_RESPONSE);
 
         PageRequest TEST_PAGE_REQUEST = PageRequest.of(1, 10);
@@ -162,7 +162,7 @@ public class OrderServiceTest {
         Page<Order> page = orderService.getMyOrderSummaryList("testAuthId", TEST_PAGE_REQUEST);
 
         //then
-        verify(orderRepository, atLeastOnce()).getOrderListByAuthId(any(), any());
+        verify(orderRepository, atLeastOnce()).getOrderListByAuthId(any(), any(), any());
     }
 
     @Test

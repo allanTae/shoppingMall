@@ -14,7 +14,7 @@
     <section class="page-section" id="services">
         <div class="container">
             <div class="text-center">
-                <h2 class="section-heading text-uppercase">Winter Season Collection!</h2>
+                <h2 class="section-heading text-uppercase">Winter Season Inspiration!</h2>
                 <h3 class="section-subheading text-muted">2021 winter season items by designer SiHyeon.</h3>
             </div>
             <div class="container text-center my-3">
@@ -112,7 +112,7 @@
         <div class="container">
             <div class="text-center">
                 <h2 class="section-heading text-uppercase">New Arrival</h2>
-                <h3 class="section-subheading text-muted">Today Updated Clothes.</h3>
+                <h3 class="section-subheading text-muted">Recently Updated Clothes.</h3>
             </div>
             <c:choose>
                 <c:when test="${empty ClothesSummaryList }" >
@@ -145,8 +145,17 @@
     <!-- Footer-->
     <footer class="footer py-4">
         <div class="container">
+            <div class="row col-md-8 text-start" id="companyInfoWrap">
+                <p class="mb-0"><b>Company</b></p>
+                <p class="mb-0">Company : TAETAE OFFICIAL | Owner : TAETAE</p>
+                <p class="mb-0">[000-00-00000] On-Line Register : 2021-광주남문로-0000 | [사업자정보확인]</p>
+                <p class="mb-0">Tel : 000-0000-0000 | E-mail : taetae@taetaeofficial.com</p>
+                <p class="mb-0">Address : 00000 주소</p>
+                <p class="mb-0">개인정보관리책임자 : TAETAE</p>
+            </div>
+            <br />
             <div class="row align-items-center">
-                <div class="col-lg-4 text-lg-start">Copyright &copy; Your Website 2021</div>
+                <div class="col-lg-4 text-lg-start">Copyright &copy; 2021 TaeTaeOfficial | 태태 All right reserved.</div>
                 <div class="col-lg-4 my-3 my-lg-0">
                     <a class="btn btn-dark btn-social mx-2" href="#!"><i class="fab fa-twitter"></i></a>
                     <a class="btn btn-dark btn-social mx-2" href="#!"><i class="fab fa-facebook-f"></i></a>

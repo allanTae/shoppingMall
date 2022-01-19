@@ -1,7 +1,6 @@
 package com.allan.shoppingMall.common.config.security;
 
 import com.allan.shoppingMall.common.exception.ErrorCode;
-import com.allan.shoppingMall.common.exception.MemberNotFoundException;
 import com.allan.shoppingMall.domains.member.domain.Member;
 import com.allan.shoppingMall.domains.member.domain.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +27,7 @@ public class DatabaseUserDetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.info("security authentication");
         // test 용 계정. (추후에 데이터베이스 연동으로 테스트 필요.)
-        Member findMember = memberRepository.findByAuthIdLike(username).orElseThrow(() -> new MemberNotFoundException("회원이 존재하지 않습니다.", ErrorCode.ENTITY_NOT_FOUND));
+        Member findMember = memberRepository.findByAuthIdLike(username).orElseThrow(() -> new UsernameNotFoundException(ErrorCode.LOGIN_FAIL.getMessage()));
         return new User(findMember.getAuthId(), passwordEncoder.encode(findMember.getPwd()), List.of(new SimpleGrantedAuthority(findMember.getRole().getSecurityKey())));
     }
 }

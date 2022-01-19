@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 
 <style>
     html{
@@ -60,9 +62,12 @@
     .social-sign-in_btnWrap .btnKakao{
         background-image: url("${pageContext.request.contextPath}/resources/common/img/oauth2/btnKakao.png");
     }
+    h1 > a:link { color: black; text-decoration: none;}
+    h1 > a:visited { color: black; text-decoration: none;}
+    h1 > a:hover { color: orange;}
 </style>
 <script>
-    var errorMessage = "${errorMessage}";
+    var errorMessage = "<c:out value="${param.errorMsg}" />"
     if(errorMessage){
         alert(errorMessage);
     }
@@ -98,7 +103,7 @@
         <form:form class="form-login" name="form" id="form" role="form"
                    modelAttribute="loginForm" method="post" action="${pageContext.request.contextPath}/auth/login">
             <div class="text-center mb-4">
-                <h1 class="h3 mb-3 font-weight-normal">TaeTae.Official</h1>
+                <h1 class="h3 mb-3 font-weight-normal"><a href="${pageContext.request.contextPath}/index">TaeTae.Official</a></h1>
             </div>
             <div class="form-label-group">
                 <form:input path="userId" id="id" class="form-control" placeholder="User ID" required="" autofocus="" />
@@ -106,7 +111,7 @@
                 <label for="id" class="sr-only">User ID</label>
             </div>
             <div class="form-label-group">
-                <form:password path="userPwd" id="pwd" class="form-control" placeholder="User Password" required="" />
+                <form:password path="userPwd" id="pwd" class="form-control" placeholder="User Password" required="" autoComplete="on" />
                 <form:errors path="userPwd"/>
                 <label for="pwd" class="sr-only">User Password</label>
             </div>

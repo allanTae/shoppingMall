@@ -51,11 +51,12 @@ public enum ErrorCode {
     REQUEST_METHOD_NOT_SUPPORTED(500, "SC001", "Request method not supoorted"),
 
     // Spring-Security
+    LOGIN_FAIL(400, "SECURITY1", "잘못된 아이디 또는, 비밀번호입니다."),
     LOGIN_INPUT_INVALID(400, "M002", "입력하신 아이디가 유효하지 않습니다."),
     INPUT_ID_NOT_MATCH(500, "SC002", "입력하신 아이디와 비밀번호가 일치하지 않습니다."),
 
     // Iamport
-    IAMPORT_ERROR(400, "IAMPORT001", "");
+    IAMPORT_ERROR(400, "IAMPORT001", "Iamport 관련 에러입니다.");
 
     private final int status; // server status code;
     private final String code; // error 종류를 나타내는 코드.
