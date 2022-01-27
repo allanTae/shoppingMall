@@ -141,7 +141,7 @@
                 <p class="m-0"><br /></p>
                 <div class="buyBtns">
                     <button type="button" class="btn btn-secondary btn-lg" id="btnOrder">구매하기</button>
-                    <button type="button" class="btn btn-secondary btn-lg" id="cart">장바구니</button>
+                    <button type="button" class="btn btn-secondary btn-lg" id="btnCart">장바구니</button>
                 </div>
             </div>
             <!-- end of goodsForm -->
@@ -457,8 +457,41 @@
           return commaValue;
       }
 
-      $(document).on('click', "#cart", function(){
-        alert('업데이트 준비중 입니다.');
-      });
+      // 장바구니 버튼.
+    $(document).on('click', "#btnCart", function(){
+      if(quantityMapBySize.size < 1){
+          alert("필수 옵션을 입력 해 주세요.");
+          return;
+      }else{
+          var cartItemList = [];
+          var orderItems = getOrderQuantities();
+          for(var i = 0; i<orderItems.length; i++){
+              cartItemList.push({
+                  "itemId": ${clothesInfo.clothesId},
+                  "cartQuantity": orderItems[i].quantity,
+                  "size": orderItems[i].size
+              });
+          }
+
+          var paramData = JSON.stringify({"cartItems": cartItemList});
+          var headers = {"Content-Type" : "application/json; charset=UTF-8;"
+                  , "X-HTTP-Method-Override" : "POST"};
+          $.ajax({
+              url: "${pageContext.request.contextPath}/cart"
+              , headers : headers
+              , data : paramData
+              , type : 'POST'
+              , dataType : 'json'
+              , success: function(result){
+                  console.log(result);
+                  console.log(result.cartResultMessage);
+                  alert(result.cartResultMessage);
+              }
+              , error:function(request,status,error){
+                  alert("장바구니에 상품을 추가하지 못했습니다.");
+              }
+          });
+      }
+    });
 
     </script>

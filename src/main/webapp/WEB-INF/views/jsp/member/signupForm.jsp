@@ -58,14 +58,7 @@
                 , type : 'POST'
                 , dataType : 'text'
                 , success: function(result){
-                    var htmls = '';
-                    var response = JSON.parse(result);
-                    if(response.status === "in_not_use"){
-                        htmls = htmls + '<div style="color: green; font-size: 10pt">' + response.message + '</div>';
-                    }else{
-                        htmls = htmls + '<div style="color: red; font-size: 10pt">' + response.message + '</div>';
-                    }
-                    $("#checkId").html(htmls);
+
                 }
                 , error:function(request,status,error){
                     if(request.status === 400 && request.responseText.indexOf("inputInvalidException")){

@@ -1,5 +1,6 @@
 package com.allan.shoppingMall;
 
+import com.allan.shoppingMall.domains.cart.service.CartService;
 import com.allan.shoppingMall.domains.infra.AuthenticationConverter;
 import com.allan.shoppingMall.domains.item.domain.clothes.ClothesRepository;
 import com.allan.shoppingMall.domains.item.domain.model.ClothesSummaryDTO;
@@ -38,6 +39,10 @@ public class IndexControllerTest {
 
     @Autowired
     MockMvc mvc;
+
+    // securityConfig.class 의 SignInSuccessHandler 에서 사용 할 cartService.
+    @MockBean
+    CartService cartService;
 
     @Test
     public void 홈페이지_테스트() throws Exception {

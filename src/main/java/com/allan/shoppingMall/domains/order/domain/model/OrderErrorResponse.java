@@ -6,7 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * server api response, 에러 내용을 담고 있는 클래스 입니다.
+ * server order api response,
+ * response 중 에러 내용을 담고 있는 클래스 입니다.
  */
 @Getter
 @Setter
@@ -29,6 +30,5 @@ public class OrderErrorResponse {
     public static OrderErrorResponse of(final String errMsg, final ErrorCode errorCode){
         return new OrderErrorResponse(errorCode.getCode(), errorCode.getStatus(), errMsg);
     }
-
 
 }

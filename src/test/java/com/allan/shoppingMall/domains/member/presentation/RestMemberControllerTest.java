@@ -2,6 +2,7 @@ package com.allan.shoppingMall.domains.member.presentation;
 
 import com.allan.shoppingMall.common.api.status.MemberResponse;
 import com.allan.shoppingMall.common.value.Address;
+import com.allan.shoppingMall.domains.cart.service.CartService;
 import com.allan.shoppingMall.domains.member.domain.Gender;
 import com.allan.shoppingMall.domains.member.domain.Member;
 import com.allan.shoppingMall.domains.member.domain.MemberRepository;
@@ -39,6 +40,10 @@ public class RestMemberControllerTest {
 
     @MockBean
     MemberRepository memberRepository;
+
+    // securityConfig.class 의 SignInSuccessHandler 에서 사용 할 cartService.
+    @MockBean
+    CartService cartService;
 
     @Test
     public void 중복아이디_확인_테스트() throws Exception {

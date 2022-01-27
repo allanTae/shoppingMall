@@ -1,6 +1,7 @@
 package com.allan.shoppingMall.domains.member.presentation;
 
 import com.allan.shoppingMall.common.config.security.SecurityConfig;
+import com.allan.shoppingMall.domains.cart.service.CartService;
 import com.allan.shoppingMall.domains.member.domain.model.MemberForm;
 import com.allan.shoppingMall.domains.member.service.MemberService;
 import org.junit.jupiter.api.Test;
@@ -35,6 +36,10 @@ public class MemberControllerTest {
 
     @Autowired
     MockMvc mvc;
+
+    // securityConfig.class 의 SignInSuccessHandler 에서 사용 할 cartService.
+    @MockBean
+    CartService cartService;
 
     @Test
     public void 회원가입폼_테스트() throws Exception {

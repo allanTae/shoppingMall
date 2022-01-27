@@ -45,6 +45,18 @@ dependencies {
 	// 배포시 제거 요망.
 	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.6' // database logging 용.
 
+	// random string
+	implementation 'org.apache.commons:commons-lang3:3.12.0'
+
+	// Querydsl
+	implementation 'com.querydsl:querydsl-jpa'
+	// Querydsl JPAAnnotationProcessor 사용 지정
+	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa"
+	// java.lang.NoClassDefFoundError(javax.annotation.Entity) 발생 대응
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+	// java.lang.NoClassDefFoundError(javax.annotation.Generated) 발생 대응
+	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.h2database:h2'
@@ -56,4 +68,9 @@ dependencies {
 
 test {
 	useJUnitPlatform()
+}
+
+// clean task 실행시 QClass 삭제
+clean {
+	delete file('src/main/generated') // 인텔리제이 Annotation processor 생성물 생성 위치
 }

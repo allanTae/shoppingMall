@@ -33,7 +33,7 @@ spring:
   profiles:
     include:
       - iamport
-    active: devDB
+    active: devel
 
   http:
     encoding:
@@ -66,9 +66,9 @@ spring:
       maxRequestSize: 20MB
 
 ---
-# dev 용 설정.
+# development 용 설정.
 spring:
-  config.activate.on-profile: devDB
+  config.activate.on-profile: devel
 
   # database 설정.
   datasource:

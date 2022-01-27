@@ -1,10 +1,13 @@
 package com.allan.shoppingMall.domains.order.presentation;
 
+import com.allan.shoppingMall.common.config.security.SecurityConfig;
 import com.allan.shoppingMall.common.exception.ErrorCode;
 import com.allan.shoppingMall.common.exception.order.payment.PaymentFailByValidatedAmountException;
 import com.allan.shoppingMall.common.exception.order.payment.PaymentFailByValidatedOrderStatusException;
 import com.allan.shoppingMall.common.exception.order.payment.PaymentFailException;
 import com.allan.shoppingMall.common.exception.order.RefundFailException;
+import com.allan.shoppingMall.domains.cart.domain.CartRepository;
+import com.allan.shoppingMall.domains.cart.service.CartService;
 import com.allan.shoppingMall.domains.infra.AuthenticationConverter;
 import com.allan.shoppingMall.domains.member.domain.Member;
 import com.allan.shoppingMall.domains.order.domain.model.OrderRequest;
@@ -20,6 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -58,6 +64,10 @@ public class RestOrderControllerTest {
 
     @Autowired
     MockMvc mvc;
+
+    // securityConfig.class 의 SignInSuccessHandler 에서 사용 할 cartService.
+    @MockBean
+    CartService cartService;
 
     @Test
     public void 주문_성공_테스트() throws Exception {

@@ -1,5 +1,6 @@
 package com.allan.shoppingMall.domains.item.controller;
 
+import com.allan.shoppingMall.domains.cart.service.CartService;
 import com.allan.shoppingMall.domains.item.domain.ItemImage;
 import com.allan.shoppingMall.domains.item.domain.ItemImageRepository;
 import com.allan.shoppingMall.domains.item.presentation.ItemImageController;
@@ -34,6 +35,10 @@ public class ItemImageControllerTest {
 
     @MockBean
     ItemImageRepository itemImageRepository;
+
+    // securityConfig.class 의 SignInSuccessHandler 에서 사용 할 cartService.
+    @MockBean
+    CartService cartService;
 
     @Test
     public void 상품_이미지_테스트() throws Exception {

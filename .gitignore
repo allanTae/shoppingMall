@@ -38,3 +38,6 @@ images/item/**/**
 
 ### iamport ###
 application-iamport.yml
+
+### queryDSL q domain ###
+src/main/generated/

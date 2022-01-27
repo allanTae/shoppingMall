@@ -1,6 +1,7 @@
 package com.allan.shoppingMall.domains.item.controller;
 
 import com.allan.shoppingMall.common.TestUserDetailsService;
+import com.allan.shoppingMall.domains.cart.service.CartService;
 import com.allan.shoppingMall.domains.item.domain.model.ClothesDTO;
 import com.allan.shoppingMall.domains.item.domain.model.ClothesForm;
 import com.allan.shoppingMall.domains.item.presentation.ClothesController;
@@ -41,6 +42,10 @@ public class ClothesControllerTest {
 
     @Autowired
     MockMvc mvc;
+
+    // securityConfig.class 의 SignInSuccessHandler 에서 사용 할 cartService.
+    @MockBean
+    CartService cartService;
 
     @Test
     public void 의류상품_추가_테스트() throws Exception {

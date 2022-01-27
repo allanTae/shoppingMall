@@ -4,8 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * order domain api 응답 object
- * 결제 프로세스 전 주문 도메인을 생성하는 api 에 반환 내용을 담고 있습니다.
+ * server order api response
+ * order rest api 응답 클래스입니다.
  */
 @Getter
 @Setter

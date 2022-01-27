@@ -1,5 +1,6 @@
 package com.allan.shoppingMall.domains.order.presentation;
 
+import com.allan.shoppingMall.domains.cart.service.CartService;
 import com.allan.shoppingMall.domains.infra.AuthenticationConverter;
 import com.allan.shoppingMall.domains.member.domain.Member;
 import com.allan.shoppingMall.domains.order.domain.Order;
@@ -38,6 +39,10 @@ public class MyOrderControllerTest {
 
     @Autowired
     MockMvc mvc;
+
+    // securityConfig.class 의 SignInSuccessHandler 에서 사용 할 cartService.
+    @MockBean
+    CartService cartService;
 
     @Test
     public void 자신의_주문_목록_테스트() throws Exception {

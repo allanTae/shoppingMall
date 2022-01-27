@@ -1,5 +1,6 @@
 package com.allan.shoppingMall.domains.order.presentation;
 
+import com.allan.shoppingMall.domains.cart.service.CartService;
 import com.allan.shoppingMall.domains.infra.AuthenticationConverter;
 import com.allan.shoppingMall.domains.member.domain.Member;
 import com.allan.shoppingMall.domains.mileage.service.MileageService;
@@ -49,6 +50,10 @@ public class OrderControllerTest {
 
     @Autowired
     MockMvc mvc;
+
+    // securityConfig.class 의 SignInSuccessHandler 에서 사용 할 cartService.
+    @MockBean
+    CartService cartService;
 
     @Test
     public void 주문_폼_테스트() throws Exception {
@@ -118,7 +123,8 @@ public class OrderControllerTest {
 
         //then
         resultActions
-                .andExpect(view().name("order/orderResult"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/order/orderResult"));
     }
 
     @Test
