@@ -4,13 +4,14 @@ import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
 import lombok.*;
 
 /**
- * 사용자로부터 전달 받은 장바구니 상품 정보 오브젝트.
+ * 장바구니 상품 정보 클래스입니다.
+ * (프론트단에서 벡단으로 장바구니 상품 정보를 전달 할 때 사용합니다.)
  */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CartItemSummary {
+public class CartLineRequest {
 
     private Long itemId;
     private Long cartQuantity;

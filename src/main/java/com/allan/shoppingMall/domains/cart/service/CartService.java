@@ -7,7 +7,10 @@ import com.allan.shoppingMall.common.exception.cart.CartNotFoundException;
 import com.allan.shoppingMall.domains.cart.domain.Cart;
 import com.allan.shoppingMall.domains.cart.domain.CartItem;
 import com.allan.shoppingMall.domains.cart.domain.CartRepository;
+import com.allan.shoppingMall.domains.cart.domain.model.CartDTO;
+import com.allan.shoppingMall.domains.cart.domain.model.CartItemDTO;
 import com.allan.shoppingMall.domains.cart.domain.model.CartRequest;
+import com.allan.shoppingMall.domains.cart.domain.model.RequiredOption;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
 import com.allan.shoppingMall.domains.item.domain.clothes.ClothesRepository;
 import com.allan.shoppingMall.domains.member.domain.Member;
@@ -113,4 +116,37 @@ public class CartService {
         }
     }
 
+    /**
+     * 회원 장바구니 DTO 를 반환하는 메소드 입니다.
+     * @param authId 로그인한 회원 아이디
+     * @return CartDTO
+     */
+    public CartDTO getMemberCart(String authId){
+        CartDTO cartDTO = null;
+        try {
+            Cart cart = cartRepository.findByAuthId(authId).orElseThrow(()
+                    -> new CartNotFoundException(ErrorCode.MEMBER_CART_NOT_FOUND));
+            cartDTO = new CartDTO(cart.getCartId());
+
+            for(CartItem cartItem : cart.getCartItems()){
+                // cartDTO에 cartItemDTO가 존재하지 않는다면, cartItemDTO 를 추가.
+                if(!cartDTO.getCartItems().contains(cartItem)){
+                    cartDTO.getCartItems().add(CartItemDTO.builder()
+                            .itemId(cartItem.getItem().getItemId())
+                            .itemPrice(cartItem.getItem().getPrice())
+                            .itemName(cartItem.getItem().getName())
+                            .itemProfileImg(cartItem.getItem().getItemImages().get(0).getItemImageId())
+                            .requiredOption(new RequiredOption(cartItem.getSize(), cartItem.getCartQuantity()))
+                            .build());
+                }else{
+                    // 이미 cartDTO에 cartItemDTO가 존재한다면, 기존에 cartItemDTO 에 필수 정보만 추가.
+                    int index = cartDTO.getCartItems().indexOf(cartItem);
+                    cartDTO.getCartItems().get(index).addRequiredOption(cartItem.getSize(), cartItem.getCartQuantity());
+                }
+            }
+        }catch (CartNotFoundException e){
+            return null;
+        }
+        return cartDTO;
+    }
 }

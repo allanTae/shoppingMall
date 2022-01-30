@@ -16,7 +16,8 @@ import java.time.format.DateTimeFormatter;
 @Setter
 @Getter
 public class OrderSummaryDTO {
-    private Long orderId; // 주문 번호.
+    private Long orderId; // 주문도메인 식별자.
+    private String orderNum; // 주문번호.
     private Long orderTotalAmount; // 주문 총 가격.
     private Long profileImgId; // 주문 프로필 이미지(주문 상품의 프로필 이미지).
     private String orderName; // 메인 상품을 이용한 주문 이름.
@@ -24,13 +25,14 @@ public class OrderSummaryDTO {
     private String createdDate; // 주문 날자.
 
     @Builder
-    public OrderSummaryDTO(Long orderId, Long orderTotalAmount, Long profileImgId, String orderName, String orderStatus, LocalDateTime createdDate) {
+    public OrderSummaryDTO(Long orderId, Long orderTotalAmount, Long profileImgId, String orderName, String orderStatus, LocalDateTime createdDate, String orderNum) {
         this.orderId = orderId;
         this.orderTotalAmount = orderTotalAmount;
         this.profileImgId = profileImgId;
         this.orderName = orderName;
         this.orderStatus = orderStatus;
         setCreatedDate(createdDate);
+        this.orderNum = orderNum;
     }
 
     private void setCreatedDate(LocalDateTime createdDate){
@@ -46,6 +48,7 @@ public class OrderSummaryDTO {
                 ", OrderItemName=" + orderName +
                 ", orderStatus=" + orderStatus +
                 ", createdDate=" + createdDate +
+                ", orderNum=" + orderNum +
                 '}';
     }
 

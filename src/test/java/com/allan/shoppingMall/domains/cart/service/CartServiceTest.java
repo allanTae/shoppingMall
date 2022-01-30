@@ -3,7 +3,7 @@ package com.allan.shoppingMall.domains.cart.service;
 import com.allan.shoppingMall.domains.cart.domain.Cart;
 import com.allan.shoppingMall.domains.cart.domain.CartItem;
 import com.allan.shoppingMall.domains.cart.domain.CartRepository;
-import com.allan.shoppingMall.domains.cart.domain.model.CartItemSummary;
+import com.allan.shoppingMall.domains.cart.domain.model.CartLineRequest;
 import com.allan.shoppingMall.domains.cart.domain.model.CartRequest;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
 import com.allan.shoppingMall.domains.item.domain.clothes.ClothesRepository;
@@ -57,8 +57,8 @@ public class CartServiceTest {
         CartRequest TEST_CARTREQUEST = CartRequest.builder()
                 .cartCkId("testCkId")
                 .cartItems(List.of(
-                        new CartItemSummary(1l, 1l, SizeLabel.S),
-                        new CartItemSummary(2l, 2l, SizeLabel.M)
+                        new CartLineRequest(1l, 1l, SizeLabel.S),
+                        new CartLineRequest(2l, 2l, SizeLabel.M)
 
                 ))
                 .build();
@@ -94,8 +94,8 @@ public class CartServiceTest {
         CartRequest TEST_CARTREQUEST = CartRequest.builder()
                 .cartCkId("testCkId")
                 .cartItems(List.of(
-                        new CartItemSummary(1l, 1l, SizeLabel.S),
-                        new CartItemSummary(2l, 2l, SizeLabel.M)
+                        new CartLineRequest(1l, 1l, SizeLabel.S),
+                        new CartLineRequest(2l, 2l, SizeLabel.M)
 
                 ))
                 .build();
@@ -128,8 +128,8 @@ public class CartServiceTest {
         CartRequest TEST_CARTREQUEST = CartRequest.builder()
                 .cartCkId("testCkId")
                 .cartItems(List.of(
-                        new CartItemSummary(1l, 1l, SizeLabel.S),
-                        new CartItemSummary(2l, 2l, SizeLabel.M)
+                        new CartLineRequest(1l, 1l, SizeLabel.S),
+                        new CartLineRequest(2l, 2l, SizeLabel.M)
 
                 ))
                 .build();
@@ -192,6 +192,15 @@ public class CartServiceTest {
         verify(cartRepository, atLeastOnce()).delete(any(Cart.class));
     }
 
+    @Test
+    public void 회원_장바구니_조회_테스트() throws Exception {
+        //given
+
+        //when
+
+        //then
+    }
+
     private Cart createCookieCart(){
         // 테스트 의상 상품.
         Clothes TEST_CLOTHES = Clothes.builder().build();
@@ -240,6 +249,25 @@ public class CartServiceTest {
         );
 
         TEST_MEMBER_CART.addCartItems(TEST_CART_ITEM_LIST);
+
+        return TEST_MEMBER_CART;
+    }
+
+    private Cart createMemberCart(List<CartItem> cartItems){
+        // 테스트 의상 상품.
+        Clothes TEST_CLOTHES = Clothes.builder().build();
+        ReflectionTestUtils.setField(TEST_CLOTHES, "itemId", 1l);
+
+        ClothesSize TEST_CLOTHES_SIZE_M = ClothesSize.builder()
+                .stockQuantity(2l)
+                .sizeLabel(SizeLabel.M)
+                .build();
+
+        TEST_CLOTHES.changeClothesSizes(List.of(TEST_CLOTHES_SIZE_M));
+
+        // 장바구니.
+        Cart TEST_MEMBER_CART = Cart.builder().build();
+        TEST_MEMBER_CART.addCartItems(cartItems);
 
         return TEST_MEMBER_CART;
     }

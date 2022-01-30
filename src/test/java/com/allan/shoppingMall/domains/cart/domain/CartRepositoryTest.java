@@ -2,6 +2,10 @@ package com.allan.shoppingMall.domains.cart.domain;
 
 import com.allan.shoppingMall.common.config.jpa.auditing.JpaAuditingConfig;
 import com.allan.shoppingMall.common.value.Address;
+import com.allan.shoppingMall.domains.item.domain.Color;
+import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
+import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSize;
+import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
 import com.allan.shoppingMall.domains.member.domain.Gender;
 import com.allan.shoppingMall.domains.member.domain.Member;
 import com.allan.shoppingMall.domains.member.domain.MemberRole;
@@ -11,7 +15,12 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.test.context.support.WithMockUser;
+
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -49,22 +58,7 @@ public class CartRepositoryTest {
     @Test
     public void 회원아이디로_장바구니_조회테스트() throws Exception {
         //given
-        Member TEST_MEMBER = Member.builder()
-                .name("testMemberName")
-                .age(10)
-                .gender(Gender.MAN)
-                .email("testEmail")
-                .address(Address.builder()
-                        .postCode("65044")
-                        .detailAddress("testDetailAddress")
-                        .roadAddress("testRoadAddress")
-                        .build())
-                .authId("testAuthId")
-                .pwd("testPwd")
-                .role(MemberRole.ACTIVATED_USER)
-                .phone("000-0000-0000")
-                .dateOfBirth("20020204")
-                .build();
+        Member TEST_MEMBER = createMember();
 
         Cart TEST_CART = Cart.builder()
                 .member(TEST_MEMBER)
@@ -80,4 +74,24 @@ public class CartRepositoryTest {
         //then
         assertThat(cart.getCartId(), is(TEST_CART.getCartId()));
     }
+
+    private Member createMember() {
+        return Member.builder()
+                .name("testMemberName")
+                .age(10)
+                .gender(Gender.MAN)
+                .email("testEmail")
+                .address(Address.builder()
+                        .postCode("65044")
+                        .detailAddress("testDetailAddress")
+                        .roadAddress("testRoadAddress")
+                        .build())
+                .authId("testAuthId")
+                .pwd("testPwd")
+                .role(MemberRole.ACTIVATED_USER)
+                .phone("000-0000-0000")
+                .dateOfBirth("20020204")
+                .build();
+    }
+
 }

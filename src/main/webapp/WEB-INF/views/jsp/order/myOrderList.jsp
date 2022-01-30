@@ -77,7 +77,7 @@
                                 <div class="orderInfoWrap col-md-6 text-start mt-1">
                                     <div class="orderInfo_by_orderName_orderNumWrap">
                                         <div class="col-md-8 orderName">주문: <c:out value="${list.orderName}" /></div>
-                                        <div class="col-md-4 orderNum">주문번호: <c:out value="${list.orderId}" /></div>
+                                        <div class="col-md-4 orderNum">주문번호: <c:out value="${list.orderNum}" /></div>
                                     </div>
                                     <div class="orderInfo_by_orderStatusWrap">
                                         <div class="col-md-12 orderStatus">주문상태: <c:out value="${list.orderStatus}" /></div>

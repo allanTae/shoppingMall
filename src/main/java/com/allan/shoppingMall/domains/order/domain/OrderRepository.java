@@ -13,11 +13,12 @@ import java.util.Optional;
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
     /**
-     * 현재 로그인 한 회원의 주문 리스트 페이징 정보를 반환하는 메소드
+     * 현재 로그인 한 회원의 주문 리스트 페이징 정보를 반환하는 메소드.
      * @param authId 로그인 한 회원 아이디.
+     * @param orderStatusList 조회 할 주문의 주문상태 정보.
      * @param pageable 페이징 정보.
      */
-    @Query("select distinct o from Order o join o.orderItems where o.orderer.authId like :authId and o.orderStatus in :orderStatusList")
+    @Query("select o from Order o where o.orderer.authId like :authId and o.orderStatus in :orderStatusList")
     public Page<Order> getOrderListByAuthId(@Param("authId") String authId, @Param("orderStatusList") List<OrderStatus> orderStatusList, Pageable pageable);
 
     /**

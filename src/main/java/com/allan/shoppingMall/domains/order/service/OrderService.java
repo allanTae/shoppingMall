@@ -164,6 +164,7 @@ public class OrderService {
 
                             return OrderSummaryDTO.builder()
                                     .orderId(order.getOrderId())
+                                    .orderNum(order.getOrderNum())
                                     .orderStatus(order.getOrderStatus().getDesc())
                                     .orderName(orderItemsName)
                                     .profileImgId(order.getOrderItems().get(0).getItem().getItemImages().get(0).getItemImageId())

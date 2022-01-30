@@ -1,5 +1,9 @@
 package com.allan.shoppingMall.domains.cart.domain;
 
+import com.allan.shoppingMall.domains.order.domain.Order;
+import com.allan.shoppingMall.domains.order.domain.OrderStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,4 +26,5 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
      */
     @Query("select c from Cart c where c.member.authId like :authId")
     Optional<Cart> findByAuthId(@Param("authId") String authId);
+
 }
