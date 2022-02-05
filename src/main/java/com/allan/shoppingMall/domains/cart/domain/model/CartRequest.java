@@ -18,7 +18,7 @@ public class CartRequest {
     private String cartCkId;
 
     // 장바구니 상품 정보(프론트단에서 전달 한 상품 정보).
-    private List<CartItemSummary> cartItems;
+    private List<CartLineRequest> cartItems;
 
     @Override
     public String toString() {
@@ -29,8 +29,10 @@ public class CartRequest {
     }
 
     @Builder
-    public CartRequest(String cartCkId, List<CartItemSummary> cartItems) {
+    public CartRequest(String cartCkId, List<CartLineRequest> cartItems) {
         this.cartCkId = cartCkId;
         this.cartItems = cartItems;
     }
+
+
 }

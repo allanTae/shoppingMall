@@ -48,8 +48,25 @@ public class CartRepositoryTest {
 
     @Test
     public void 회원아이디로_장바구니_조회테스트() throws Exception {
-        //given
-        Member TEST_MEMBER = Member.builder()
+        Member TEST_MEMBER = createMember();
+
+        Cart TEST_CART = Cart.builder()
+                .member(TEST_MEMBER)
+                .build();
+
+        testEntityManager.persist(TEST_MEMBER);
+        testEntityManager.persist(TEST_CART);
+        testEntityManager.clear();
+
+        //when
+        Cart cart = cartRepository.findByAuthId(TEST_MEMBER.getAuthId()).get();
+
+        //then
+        assertThat(cart.getCartId(), is(TEST_CART.getCartId()));
+    }
+
+    private Member createMember() {
+        return Member.builder()
                 .name("testMemberName")
                 .age(10)
                 .gender(Gender.MAN)
@@ -65,19 +82,5 @@ public class CartRepositoryTest {
                 .phone("000-0000-0000")
                 .dateOfBirth("20020204")
                 .build();
-
-        Cart TEST_CART = Cart.builder()
-                .member(TEST_MEMBER)
-                .build();
-
-        testEntityManager.persist(TEST_MEMBER);
-        testEntityManager.persist(TEST_CART);
-        testEntityManager.clear();
-
-        //when
-        Cart cart = cartRepository.findByAuthId(TEST_MEMBER.getAuthId()).get();
-
-        //then
-        assertThat(cart.getCartId(), is(TEST_CART.getCartId()));
     }
 }

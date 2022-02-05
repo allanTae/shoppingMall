@@ -43,6 +43,7 @@ public class CartItem extends BaseTimeEntity {
     private Long cartQuantity;
 
     @Column(name = "item_size")
+    @Enumerated(value = EnumType.STRING)
     private SizeLabel size;
 
     @Column(name = "created_by", nullable = false, updatable = false)
@@ -121,7 +122,6 @@ public class CartItem extends BaseTimeEntity {
 
     @Override
     public boolean equals(Object obj) {
-        log.info("CartItem equals() call!!!");
         if(obj == null){
             log.error("CartItem equals()'s parameter is null");
             return false;
@@ -135,8 +135,9 @@ public class CartItem extends BaseTimeEntity {
 
         // clothes 상품의 경우 id, size 정보로 카트 상품의 동일비교를 확인한다.
         if(this.item instanceof Clothes && inputCartItem.item instanceof Clothes){
-            Clothes clothes = (Clothes) this.item;
-            boolean result = clothes.getItemId() == ((CartItem) obj).getItem().getItemId() && this.size.getDesc().equals(inputCartItem.size.getDesc());
+//            Clothes clothes = (Clothes) this.item;
+//            boolean result = clothes.getItemId() == ((CartItem) obj).getItem().getItemId() && this.size.getDesc().equals(inputCartItem.size.getDesc());
+            boolean result = this.item.getItemId() == inputCartItem.getItem().getItemId() && this.size.getDesc().equals(inputCartItem.size.getDesc());
             return result;
         }
         return this.item.getItemId() == ((CartItem) obj).getItem().getItemId();

@@ -47,4 +47,12 @@
         <put-attribute name="tile_body" value="/WEB-INF/views/jsp/member/{1}.jsp" />
     </definition>
 
+    <!-- cart -->
+    <definition name="cart-layout" template="/WEB-INF/tiles/layouts/cart/cart_layout.jsp">
+        <put-attribute name="tile_nav" value="/WEB-INF/tiles/layouts/common/nav.jsp" />
+    </definition>
+    <definition name="cart/*" extends="cart-layout">
+        <put-attribute name="tile_body" value="/WEB-INF/views/jsp/cart/{1}.jsp" />
+    </definition>
+
 </tiles-definitions>

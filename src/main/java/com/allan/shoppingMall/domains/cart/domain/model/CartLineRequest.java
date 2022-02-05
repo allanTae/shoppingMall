@@ -10,7 +10,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CartItemSummary {
+public class CartLineRequest {
 
     private Long itemId;
     private Long cartQuantity;

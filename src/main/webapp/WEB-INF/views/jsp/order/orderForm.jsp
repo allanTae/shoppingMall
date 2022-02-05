@@ -12,9 +12,9 @@
 			<div class="card-body row p-0 m-0">
 				<div class="orderInfoleftWrap col-md-7">
                     <div class="orderItemsWrap p-3 row mb-3">
+                        <p class="text-start">주문 상품 정보</p>
                         <c:forEach var="orderItem" items="${orderInfo.orderItems}" varStatus="index">
                             <div class="row col-md-12 p-0">
-                                <p class="text-start">주문 상품 정보</p>
                                 <div class="col-md-4 item_img_wrap p-0">
                                     <img class="orderItemImg" src="${pageContext.request.contextPath}/image/${orderItem.previewImg}" width="90" height="90" />
                                 </div>
