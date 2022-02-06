@@ -3,6 +3,7 @@ package com.allan.shoppingMall.domains.cart.domain.model;
 import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -11,7 +12,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class RequiredOption {
-    private Long cartItemQuantity; // 장바구니 상품 수량.
+    private Long itemQuantity; // 장바구니 상품 수량.
     private SizeLabel itemSize; // 장바구니 상품 크기.
 }

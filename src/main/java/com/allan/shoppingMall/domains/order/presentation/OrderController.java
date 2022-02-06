@@ -72,7 +72,7 @@ public class OrderController {
         // 임시 주문 삭제.
         orderService.deleteAllTempOrder(authentication.getName());
 
-        return "redirect:/order/orderResult";
+        return "order/orderResult";
     }
 
     /**

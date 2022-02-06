@@ -210,18 +210,18 @@ public class CartServiceTest {
         // 회원 장바구니 첫번째 상품.
         assertThat(memberCartDTO.getCartItems().size(), is(2));
         assertThat(memberCartDTO.getCartItems().get(TEST_ITEM_ID_1).getRequiredOptions().size(), is(3));
-        assertThat(memberCartDTO.getCartItems().get(TEST_ITEM_ID_1).getRequiredOptions().get(0).getCartItemQuantity(),
+        assertThat(memberCartDTO.getCartItems().get(TEST_ITEM_ID_1).getRequiredOptions().get(0).getItemQuantity(),
                 is(TEST_MEMBER_CART.getCartItems().get(0).getCartQuantity()));
-        assertThat(memberCartDTO.getCartItems().get(TEST_ITEM_ID_1).getRequiredOptions().get(1).getCartItemQuantity(),
+        assertThat(memberCartDTO.getCartItems().get(TEST_ITEM_ID_1).getRequiredOptions().get(1).getItemQuantity(),
                 is(TEST_MEMBER_CART.getCartItems().get(1).getCartQuantity()));
-        assertThat(memberCartDTO.getCartItems().get(TEST_ITEM_ID_1).getRequiredOptions().get(2).getCartItemQuantity(),
+        assertThat(memberCartDTO.getCartItems().get(TEST_ITEM_ID_1).getRequiredOptions().get(2).getItemQuantity(),
                 is(TEST_MEMBER_CART.getCartItems().get(2).getCartQuantity()));
 
         // 회원 장바구니 첫번째 상품.
         assertThat(memberCartDTO.getCartItems().get(TEST_ITEM_ID_2).getRequiredOptions().size(), is(2));
-        assertThat(memberCartDTO.getCartItems().get(TEST_ITEM_ID_2).getRequiredOptions().get(0).getCartItemQuantity(),
+        assertThat(memberCartDTO.getCartItems().get(TEST_ITEM_ID_2).getRequiredOptions().get(0).getItemQuantity(),
                 is(TEST_MEMBER_CART.getCartItems().get(3).getCartQuantity()));
-        assertThat(memberCartDTO.getCartItems().get(TEST_ITEM_ID_2).getRequiredOptions().get(1).getCartItemQuantity(),
+        assertThat(memberCartDTO.getCartItems().get(TEST_ITEM_ID_2).getRequiredOptions().get(1).getItemQuantity(),
                 is(TEST_MEMBER_CART.getCartItems().get(4).getCartQuantity()));
     }
 
@@ -239,18 +239,18 @@ public class CartServiceTest {
         // 비회원 장바구니 첫번째 상품.
         assertThat(cookieCartDTO.getCartItems().size(), is(2));
         assertThat(cookieCartDTO.getCartItems().get(TEST_ITEM_ID_3).getRequiredOptions().size(), is(3));
-        assertThat(cookieCartDTO.getCartItems().get(TEST_ITEM_ID_3).getRequiredOptions().get(0).getCartItemQuantity(),
+        assertThat(cookieCartDTO.getCartItems().get(TEST_ITEM_ID_3).getRequiredOptions().get(0).getItemQuantity(),
                 is(TEST_COOKIE_CART.getCartItems().get(0).getCartQuantity()));
-        assertThat(cookieCartDTO.getCartItems().get(TEST_ITEM_ID_3).getRequiredOptions().get(1).getCartItemQuantity(),
+        assertThat(cookieCartDTO.getCartItems().get(TEST_ITEM_ID_3).getRequiredOptions().get(1).getItemQuantity(),
                 is(TEST_COOKIE_CART.getCartItems().get(1).getCartQuantity()));
-        assertThat(cookieCartDTO.getCartItems().get(TEST_ITEM_ID_3).getRequiredOptions().get(2).getCartItemQuantity(),
+        assertThat(cookieCartDTO.getCartItems().get(TEST_ITEM_ID_3).getRequiredOptions().get(2).getItemQuantity(),
                 is(TEST_COOKIE_CART.getCartItems().get(2).getCartQuantity()));
 
         // 비회원 장바구니 두번째 상품.
         assertThat(cookieCartDTO.getCartItems().get(TEST_ITEM_ID_4).getRequiredOptions().size(), is(2));
-        assertThat(cookieCartDTO.getCartItems().get(TEST_ITEM_ID_4).getRequiredOptions().get(0).getCartItemQuantity(),
+        assertThat(cookieCartDTO.getCartItems().get(TEST_ITEM_ID_4).getRequiredOptions().get(0).getItemQuantity(),
                 is(TEST_COOKIE_CART.getCartItems().get(3).getCartQuantity()));
-        assertThat(cookieCartDTO.getCartItems().get(TEST_ITEM_ID_4).getRequiredOptions().get(1).getCartItemQuantity(),
+        assertThat(cookieCartDTO.getCartItems().get(TEST_ITEM_ID_4).getRequiredOptions().get(1).getItemQuantity(),
                 is(TEST_COOKIE_CART.getCartItems().get(4).getCartQuantity()));
     }
 

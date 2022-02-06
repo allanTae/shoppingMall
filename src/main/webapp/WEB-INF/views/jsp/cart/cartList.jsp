@@ -39,7 +39,7 @@
         var expectedPoint = 0;       // 적립 포인트.
         var totalPrice = 0;          // 총결제금액.
 
-        // 장바구니 상품 수량 Map(상품별 수량 정보를 저장하는 map(key: cartItem + itekId, value:cartItemQuantity).
+        // 장바구니 상품 수량 Map(상품별 수량 정보를 저장하는 map(key: cartItem + itekId, value:itemQuantity).
         var cartQuantityMap = new Map();
         // 장바구니 수량 Map 초기화.
         <c:if test= "${!empty cartInfo.cartItems}">
@@ -49,7 +49,7 @@
         </c:if>
 
         // 장바구니 상품 수량 설정.
-        $('.cartItemQuantity').each(function(index, item){
+        $('.itemQuantity').each(function(index, item){
             var cartQuantityMapKey = $(item).attr('class').split(/\s+/)[1]; // cartQuantity 장바구니 상품의 두번째 클래스 속성으로 조회.(두번째 클래스는 cartItem + itemId 입니다.)
             cartQuantityMap.set(cartQuantityMapKey, Number(cartQuantityMap.get(cartQuantityMapKey)) + Number($(item).text()));
         });
@@ -111,7 +111,7 @@
                            <div class="col-sm-7 py-3 text-start">
                             <div>상품이름: <c:out value="${cartItem.value.itemName}" /></div>
                             <c:forEach var="requiredOption" items="${cartItem.value.requiredOptions}">
-                                <div class="mt-1">- ${requiredOption.itemSize} / <span class="cartItemQuantity cartItem${cartItem.value.itemId}">${requiredOption.cartItemQuantity}</span>개</div>
+                                <div class="mt-1">- ${requiredOption.itemSize} / <span class="itemQuantity cartItem${cartItem.value.itemId}">${requiredOption.itemQuantity}</span>개</div>
                             </c:forEach>
                            </div>
                        </div>

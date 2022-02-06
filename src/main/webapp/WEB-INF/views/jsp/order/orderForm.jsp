@@ -20,8 +20,10 @@
                                 </div>
                                 <div class="col-md-8 item_info_wrap p-0">
                                     <div class="text-start"><span>${orderItem.itemName}</span></div>
-                                    <div class="text-start"><p>Size: ${orderItem.size}-${orderItem.orderQuantity}개</p></div>
-                                    <div class="text-start"><p><fmt:formatNumber type="number" maxFractionDigits="3" value="${orderItem.price}" />원</p></div>
+                                    <c:forEach var="requiredOption" items="${orderItem.requiredOptions}" varStatus="index">
+                                        <div class="text-start"><p class="m-0">${requiredOption.itemSize}-${requiredOption.itemQuantity}개</p></div>
+                                    </c:forEach>
+                                    <div class="text-start mt-1"><p><fmt:formatNumber type="number" maxFractionDigits="3" value="${orderItem.price}" />원</p></div>
                                 </div>
                             </div>
                         </c:forEach>
@@ -135,12 +137,12 @@
             cancel: "계속해서 주문",
             orderResult: {
                 text: "주문결과 창으로 이동하시겠습니까.?",
-                value: "orderResult",
+                value: 1,
             },
           },
         })
         .then((value) => {
-          if(value === "orderResult"){
+          if(value === 1){
             swal("주문결과창으로 이동합니다.", {
               icon: "success",
             });
@@ -294,12 +296,15 @@
         }
 
         var orderItemList = [];
+        let itemId, orderQuantity, size;
         <c:forEach var="orderItem" items="${orderInfo.orderItems}" varStatus="index">
-            orderItemList.push({
-                "itemId": ${orderItem.itemId},
-                "orderQuantity": ${orderItem.orderQuantity},
-                "size": "${orderItem.size}"
-            });
+            <c:forEach var="requiredOption" items="${orderItem.requiredOptions}" varStatus="index">
+                orderItemList.push({
+                    "itemId": ${orderItem.itemId},
+                    "orderQuantity": ${requiredOption.itemQuantity},
+                    "size": "${requiredOption.itemSize}"
+                });
+            </c:forEach>
         </c:forEach>
 
         var usedMileage = Number($('#mileagePoint').val());
@@ -429,11 +434,9 @@
         orderFormInfo += '<input type="text" name="orderResult" value="' + orderResponse.orderResult + '" />';
         orderFormInfo += '<input type="text" name="orderNum" value="' + orderResponse.orderNum + '" />';
         if(orderResponse.errorResponse !== null){
-            console.log("getOrderForm() orderResponse.errorResponse: " + orderResponse.errorResponse);
             orderFormInfo += '<input type="text" name="orderErrorResponse.errorCode" value="' + orderResponse.errorResponse.errorCode + '" />';
             orderFormInfo += '<input type="text" name="orderErrorResponse.errMsg" value="' + orderResponse.errorResponse.errMsg + '" />';
         }
-        console.log(orderFormInfo);
         return orderFormInfo;
     }
 

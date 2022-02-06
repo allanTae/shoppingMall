@@ -2,7 +2,6 @@ package com.allan.shoppingMall.domains.cart.service;
 
 import com.allan.shoppingMall.common.exception.ErrorCode;
 import com.allan.shoppingMall.common.exception.ItemNotFoundException;
-import com.allan.shoppingMall.common.exception.MemberNotFoundException;
 import com.allan.shoppingMall.common.exception.cart.CartNotFoundException;
 import com.allan.shoppingMall.domains.cart.domain.Cart;
 import com.allan.shoppingMall.domains.cart.domain.CartItem;
@@ -14,10 +13,8 @@ import com.allan.shoppingMall.domains.cart.domain.model.RequiredOption;
 import com.allan.shoppingMall.domains.item.domain.Item;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
 import com.allan.shoppingMall.domains.item.domain.clothes.ClothesRepository;
-import com.allan.shoppingMall.domains.member.domain.Member;
 import com.allan.shoppingMall.domains.member.domain.MemberRepository;
 import com.allan.shoppingMall.domains.order.domain.model.OrderItemSummaryRequest;
-import com.allan.shoppingMall.domains.order.domain.model.OrderLineRequest;
 import com.allan.shoppingMall.domains.order.domain.model.OrderSummaryRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -193,17 +190,31 @@ public class CartService {
         List<OrderItemSummaryRequest> orderItemSummaryRequestList = new ArrayList<>();
 
         for(int i=0; i < cartItemDTO.getRequiredOptions().size(); i++){
-            totalAmount += cartItemDTO.getRequiredOptions().get(i).getCartItemQuantity() * cartItemDTO.getItemPrice();
-            totalQuantity += cartItemDTO.getRequiredOptions().get(i).getCartItemQuantity();
+            totalAmount += cartItemDTO.getRequiredOptions().get(i).getItemQuantity() * cartItemDTO.getItemPrice();
+            totalQuantity += cartItemDTO.getRequiredOptions().get(i).getItemQuantity();
 
-            orderItemSummaryRequestList.add(OrderItemSummaryRequest.builder()
+            List<RequiredOption> requiredOptions = new ArrayList<>();
+            requiredOptions.add(new RequiredOption(cartItemDTO.getRequiredOptions().get(i).getItemQuantity(),
+                    cartItemDTO.getRequiredOptions().get(i).getItemSize()));
+
+            OrderItemSummaryRequest orderItemSummaryRequest = OrderItemSummaryRequest.builder()
                     .itemId(cartItemDTO.getItemId())
                     .itemName(cartItemDTO.getItemName())
-                    .orderQunatity(cartItemDTO.getRequiredOptions().get(i).getCartItemQuantity())
                     .previewImg(cartItemDTO.getItemProfileImg())
                     .price(cartItemDTO.getItemPrice())
-                    .size(cartItemDTO.getRequiredOptions().get(i).getItemSize())
-                    .build());
+                    .requiredOptionList(requiredOptions)
+                    .build();
+
+            if(orderItemSummaryRequestList.contains(orderItemSummaryRequest)){
+                int index = orderItemSummaryRequestList.indexOf(orderItemSummaryRequest);
+                orderItemSummaryRequestList.get(index).getRequiredOptions()
+                        .add(new RequiredOption(
+                                cartItemDTO.getRequiredOptions().get(i).getItemQuantity(),
+                                cartItemDTO.getRequiredOptions().get(i).getItemSize()));
+            }else{
+                orderItemSummaryRequestList.add(orderItemSummaryRequest);
+            }
+
         }
 
         return new OrderSummaryRequest(totalAmount, totalQuantity, orderItemSummaryRequestList);

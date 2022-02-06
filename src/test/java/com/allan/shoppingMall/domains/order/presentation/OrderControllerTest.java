@@ -123,8 +123,8 @@ public class OrderControllerTest {
 
         //then
         resultActions
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/order/orderResult"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("order/orderResult"));
     }
 
     @Test

@@ -425,7 +425,7 @@
             return;
         }else{
             let form =$('<form action="${pageContext.request.contextPath}/order/orderForm" method="post">' +
-                getOrderForm() +
+                getOrderForm2() +
                 '</form>');
             $("body").append(form);
             form.submit();
@@ -435,7 +435,6 @@
 
       function getOrderForm(){
         var orderItems = getOrderQuantities();
-
         var orderFormInfo = "";
         orderFormInfo += '<input type="text" name="totalQuantity" value="' + totalOrderQuantity + '" />';
         orderFormInfo += '<input type="text" name="totalAmount" value="' + totalAmount + '" />';
@@ -449,6 +448,24 @@
         }
         console.log(orderFormInfo);
         return orderFormInfo;
+      }
+
+      function getOrderForm2(){
+          var orderItems = getOrderQuantities();
+          var orderFormInfo = "";
+          orderFormInfo += '<input type="text" name="totalQuantity" value="' + totalOrderQuantity + '" />';
+          orderFormInfo += '<input type="text" name="totalAmount" value="' + totalAmount + '" />';
+          orderFormInfo += '<input type="text" name="orderItems[0].itemId" value="${clothesInfo.clothesId}" />';
+          orderFormInfo += '<input type="text" name="orderItems[0].itemName" value="${clothesInfo.clothesName}" />';
+          orderFormInfo += '<input type="text" name="orderItems[0].previewImg" value="${clothesInfo.previewImages[0]}" />';
+          orderFormInfo += '<input type="text" name="orderItems[0].price" value="${clothesInfo.price}" />';
+
+          for(var i = 0; i<orderItems.length; i++){
+              orderFormInfo += '<input type="text" name="orderItems[0].requiredOptions[' + i + '].itemSize" value="' + orderItems[i].size + '" />';
+              orderFormInfo += '<input type="text" name="orderItems[0].requiredOptions[' + i + '].itemQuantity" value="' + orderItems[i].quantity + '" />';
+          }
+          console.log(orderFormInfo);
+          return orderFormInfo;
       }
 
       //천단위 콤마 펑션
