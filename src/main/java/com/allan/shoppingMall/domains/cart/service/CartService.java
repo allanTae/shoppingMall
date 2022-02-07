@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -153,6 +154,11 @@ public class CartService {
         }
     }
 
+    /**
+     * 장바구니 도메인을 DTO 로 변환하는 메소드.
+     * @param cart
+     * @return CartDTO
+     */
     private CartDTO transferDTO(Cart cart){
         CartDTO cartDTO = new CartDTO(cart.getCartId());
 
@@ -193,6 +199,7 @@ public class CartService {
             totalAmount += cartItemDTO.getRequiredOptions().get(i).getItemQuantity() * cartItemDTO.getItemPrice();
             totalQuantity += cartItemDTO.getRequiredOptions().get(i).getItemQuantity();
 
+            //장바구니 상품 필수 정보.
             List<RequiredOption> requiredOptions = new ArrayList<>();
             requiredOptions.add(new RequiredOption(cartItemDTO.getRequiredOptions().get(i).getItemQuantity(),
                     cartItemDTO.getRequiredOptions().get(i).getItemSize()));
@@ -214,10 +221,56 @@ public class CartService {
             }else{
                 orderItemSummaryRequestList.add(orderItemSummaryRequest);
             }
-
         }
 
         return new OrderSummaryRequest(totalAmount, totalQuantity, orderItemSummaryRequestList);
     }
 
+    /**
+     * 조회한 장바구니DTO 내에 하나의 상품만 주문 요약정보로 변환하는 함수.
+     * @param cartDTO
+     * @return
+     */
+    public OrderSummaryRequest transferOrderSummary(CartDTO cartDTO){
+        Long totalQuantity = 0l;
+        Long totalAmount = 0l;
+        List<OrderItemSummaryRequest> orderItemSummaryRequestList = new ArrayList<>();
+
+        HashMap<Long, CartItemDTO> map = cartDTO.getCartItems();
+
+        for(Long cartItemKey : map.keySet()){
+            CartItemDTO cartItemDTO = map.get(cartItemKey);
+
+            for(int i=0; i < cartItemDTO.getRequiredOptions().size(); i++){
+                totalAmount += cartItemDTO.getRequiredOptions().get(i).getItemQuantity() * cartItemDTO.getItemPrice();
+                totalQuantity += cartItemDTO.getRequiredOptions().get(i).getItemQuantity();
+
+                //장바구니 상품 필수 정보.
+                List<RequiredOption> requiredOptions = new ArrayList<>();
+                requiredOptions.add(new RequiredOption(cartItemDTO.getRequiredOptions().get(i).getItemQuantity(),
+                        cartItemDTO.getRequiredOptions().get(i).getItemSize()));
+
+                // 장바구니 상품 주문 정보.
+                OrderItemSummaryRequest orderItemSummaryRequest = OrderItemSummaryRequest.builder()
+                        .itemId(cartItemDTO.getItemId())
+                        .itemName(cartItemDTO.getItemName())
+                        .previewImg(cartItemDTO.getItemProfileImg())
+                        .price(cartItemDTO.getItemPrice())
+                        .requiredOptionList(requiredOptions)
+                        .build();
+
+                if(orderItemSummaryRequestList.contains(orderItemSummaryRequest)){
+                    int index = orderItemSummaryRequestList.indexOf(orderItemSummaryRequest);
+                    orderItemSummaryRequestList.get(index).getRequiredOptions()
+                            .add(new RequiredOption(
+                                    cartItemDTO.getRequiredOptions().get(i).getItemQuantity(),
+                                    cartItemDTO.getRequiredOptions().get(i).getItemSize()));
+                }else{
+                    orderItemSummaryRequestList.add(orderItemSummaryRequest);
+                }
+            }
+        }
+
+        return new OrderSummaryRequest(totalAmount, totalQuantity, orderItemSummaryRequestList);
+    }
 }

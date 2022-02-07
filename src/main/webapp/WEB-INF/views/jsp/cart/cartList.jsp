@@ -94,6 +94,12 @@
         location.href = url;
     }
 
+    // 전체 상품 주문 함수.
+    function orderCartItems(){
+        var url= "${pageContext.request.contextPath}/cart/order";
+        location.href = url;
+    }
+
 </script>
 <div class="cartContainerWraps">
     <div class="cartContainer">
@@ -138,7 +144,7 @@
                         <div class="totalPriceWrap">결제금액: <span id="totalPrice"></span>원</div>
                     </div>
                     <div>
-                        <button class="btn btn-secondary">전체 주문</button>
+                        <button class="btn btn-secondary" onclick="orderCartItems()">전체 주문</button>
                     </div>
                 </div>
            </c:if>

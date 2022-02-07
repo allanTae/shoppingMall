@@ -89,7 +89,7 @@
                             <p class="col-md-3 mb-0"> </p>
                             <p class="col-md-5 mb-0 text-end"><fmt:formatNumber type="number" maxFractionDigits="3" value="${orderInfo.totalAmount}" />원</p>
                         </div>
-                        <c:if test="${orderInfo.deliveryAmount > 0}">
+                        <c:if test="${orderInfo.deliveryAmount >= 0}">
                              <div class="row col-md-12 mb-0" id="deliveryAmountWrap">
                                <p class="col-md-4 mb-0 text-start">배송비</p>
                                <p class="col-md-3 mb-0"> </p>

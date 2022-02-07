@@ -3,9 +3,7 @@ package com.allan.shoppingMall.domains.cart.service;
 import com.allan.shoppingMall.domains.cart.domain.Cart;
 import com.allan.shoppingMall.domains.cart.domain.CartItem;
 import com.allan.shoppingMall.domains.cart.domain.CartRepository;
-import com.allan.shoppingMall.domains.cart.domain.model.CartDTO;
-import com.allan.shoppingMall.domains.cart.domain.model.CartLineRequest;
-import com.allan.shoppingMall.domains.cart.domain.model.CartRequest;
+import com.allan.shoppingMall.domains.cart.domain.model.*;
 import com.allan.shoppingMall.domains.item.domain.ItemImage;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
 import com.allan.shoppingMall.domains.item.domain.clothes.ClothesRepository;
@@ -13,6 +11,7 @@ import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSize;
 import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
 import com.allan.shoppingMall.domains.member.domain.Member;
 import com.allan.shoppingMall.domains.member.domain.MemberRepository;
+import com.allan.shoppingMall.domains.order.domain.model.OrderSummaryRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -174,6 +173,9 @@ public class CartServiceTest {
         assertThat(TEST_CART.getCartItems().get(1).getItem().getName(), is(TEST_CLOTHES_2.getName()));
     }
 
+    /**
+     * 비회원 장바구니에 상품들을 회원 장바구니로 추가 기능을 테스트합니다.
+     */
     @Test
     public void 비회원장바구니_상품들을_회원장바구니로_추가_테스트() throws Exception {
         //given
@@ -252,6 +254,89 @@ public class CartServiceTest {
                 is(TEST_COOKIE_CART.getCartItems().get(3).getCartQuantity()));
         assertThat(cookieCartDTO.getCartItems().get(TEST_ITEM_ID_4).getRequiredOptions().get(1).getItemQuantity(),
                 is(TEST_COOKIE_CART.getCartItems().get(4).getCartQuantity()));
+    }
+
+    /**
+     * 장바구니 상품들 중 단일 상품을 주문 요청 정보 DTO로 변환하는 테스트입니다.
+     * (테스트하는 필드 정보들은 OrderSummaryRequest 를 참고하세요.)
+     */
+    @Test
+    public void 장바구니_단일상품_주문정보_생성테스트() throws Exception {
+        //given
+        Long TEST_CART_ID =1l;
+        Long TEST_ITEM_ID =1l;
+        Long TEST_ITEM_ID_2 =2l;
+        CartDTO TEST_CART_DTO = new CartDTO(1l);
+
+        // 장바구니에 들어간 itemId가 1l 인 상품.
+        TEST_CART_DTO.getCartItems().put(TEST_ITEM_ID, new CartItemDTO(TEST_ITEM_ID, 1l, "testItemName", 1000l, 1l, SizeLabel.S));
+        TEST_CART_DTO.getCartItems().get(TEST_ITEM_ID).getRequiredOptions().add(new RequiredOption(2l, SizeLabel.M));
+        TEST_CART_DTO.getCartItems().get(TEST_ITEM_ID).getRequiredOptions().add(new RequiredOption(3l, SizeLabel.L));
+
+        // 장바구니에 들어간 itemId가 2l인 상품.
+        TEST_CART_DTO.getCartItems().put(TEST_ITEM_ID_2, new CartItemDTO(TEST_ITEM_ID_2, 2l, "testItemName2", 2000l, 4l, SizeLabel.S));
+        TEST_CART_DTO.getCartItems().get(TEST_ITEM_ID_2).getRequiredOptions().add(new RequiredOption(5l, SizeLabel.M));
+        TEST_CART_DTO.getCartItems().get(TEST_ITEM_ID_2).getRequiredOptions().add(new RequiredOption(6l, SizeLabel.L));
+        //when
+        OrderSummaryRequest orderSummaryRequest = cartService.transferOrderSummary(TEST_CART_DTO, TEST_CART_ID);
+
+        //then
+        assertThat(orderSummaryRequest.getOrderItems().size(), is(1)); // 장바구니 내 상품의 갯수.
+        assertThat(orderSummaryRequest.getOrderItems().get(0).getRequiredOptions().size(), is(3)); // 장바구니 내 상품의 필수정보(사이즈, 수량) 갯수.
+        assertThat(orderSummaryRequest.getTotalQuantity(), is(6l)); // 장바구니 내 상품의 총 갯수.
+        assertThat(orderSummaryRequest.getTotalAmount(), is(6000l)); // 장바구니 내 상품의 총 금액.
+        // 장바구니 내 상품의 사이즈, 수량 정보.
+        assertThat(orderSummaryRequest.getOrderItems().get(0).getRequiredOptions().get(0).getItemQuantity(), is(1l));
+        assertThat(orderSummaryRequest.getOrderItems().get(0).getRequiredOptions().get(0).getItemSize(), is(SizeLabel.S));
+        assertThat(orderSummaryRequest.getOrderItems().get(0).getRequiredOptions().get(1).getItemQuantity(), is(2l));
+        assertThat(orderSummaryRequest.getOrderItems().get(0).getRequiredOptions().get(1).getItemSize(), is(SizeLabel.M));
+        assertThat(orderSummaryRequest.getOrderItems().get(0).getRequiredOptions().get(2).getItemQuantity(), is(3l));
+        assertThat(orderSummaryRequest.getOrderItems().get(0).getRequiredOptions().get(2).getItemSize(), is(SizeLabel.L));
+    }
+
+    /**
+     * 장바구니 상품들 중 모든 상품을 주문 요청 정보 DTO로 변환하는 테스트입니다.
+     */
+    @Test
+    public void 장바구니_모든상품_주문정보_생성테스트() throws Exception {
+        //given
+        Long TEST_CART_ID =1l;
+        Long TEST_ITEM_ID =1l;
+        Long TEST_ITEM_ID_2 =2l;
+        CartDTO TEST_CART_DTO = new CartDTO(1l);
+
+        // 장바구니에 들어간 itemId가 1l 인 상품.
+        TEST_CART_DTO.getCartItems().put(TEST_ITEM_ID, new CartItemDTO(TEST_ITEM_ID, 1l, "testItemName", 1000l, 1l, SizeLabel.S));
+        TEST_CART_DTO.getCartItems().get(TEST_ITEM_ID).getRequiredOptions().add(new RequiredOption(2l, SizeLabel.M));
+        TEST_CART_DTO.getCartItems().get(TEST_ITEM_ID).getRequiredOptions().add(new RequiredOption(3l, SizeLabel.L));
+
+        // 장바구니에 들어간 itemId가 2l인 상품.
+        TEST_CART_DTO.getCartItems().put(TEST_ITEM_ID_2, new CartItemDTO(TEST_ITEM_ID_2, 2l, "testItemName2", 2000l, 4l, SizeLabel.S));
+        TEST_CART_DTO.getCartItems().get(TEST_ITEM_ID_2).getRequiredOptions().add(new RequiredOption(5l, SizeLabel.M));
+        //when
+        OrderSummaryRequest orderSummaryRequest = cartService.transferOrderSummary(TEST_CART_DTO);
+
+        //then
+        assertThat(orderSummaryRequest.getOrderItems().size(), is(2)); // 장바구니 내 상품의 갯수.
+
+        // 장바구니 내 상품의 필수정보(사이즈, 수량) 갯수.
+        assertThat(orderSummaryRequest.getOrderItems().get(0).getRequiredOptions().size(), is(3));
+        assertThat(orderSummaryRequest.getOrderItems().get(1).getRequiredOptions().size(), is(2));
+        assertThat(orderSummaryRequest.getTotalQuantity(), is(15l)); // 장바구니 내 상품의 총 갯수.
+        assertThat(orderSummaryRequest.getTotalAmount(), is(24000l)); // 장바구니 내 상품의 총 금액.
+
+        // 장바구니 내 상품의 사이즈, 수량 정보.
+        assertThat(orderSummaryRequest.getOrderItems().get(0).getRequiredOptions().get(0).getItemQuantity(), is(1l));
+        assertThat(orderSummaryRequest.getOrderItems().get(0).getRequiredOptions().get(0).getItemSize(), is(SizeLabel.S));
+        assertThat(orderSummaryRequest.getOrderItems().get(0).getRequiredOptions().get(1).getItemQuantity(), is(2l));
+        assertThat(orderSummaryRequest.getOrderItems().get(0).getRequiredOptions().get(1).getItemSize(), is(SizeLabel.M));
+        assertThat(orderSummaryRequest.getOrderItems().get(0).getRequiredOptions().get(2).getItemQuantity(), is(3l));
+        assertThat(orderSummaryRequest.getOrderItems().get(0).getRequiredOptions().get(2).getItemSize(), is(SizeLabel.L));
+
+        assertThat(orderSummaryRequest.getOrderItems().get(1).getRequiredOptions().get(0).getItemQuantity(), is(4l));
+        assertThat(orderSummaryRequest.getOrderItems().get(1).getRequiredOptions().get(0).getItemSize(), is(SizeLabel.S));
+        assertThat(orderSummaryRequest.getOrderItems().get(1).getRequiredOptions().get(1).getItemQuantity(), is(5l));
+        assertThat(orderSummaryRequest.getOrderItems().get(1).getRequiredOptions().get(1).getItemSize(), is(SizeLabel.M));
     }
 
     private Cart createCookieCart(){

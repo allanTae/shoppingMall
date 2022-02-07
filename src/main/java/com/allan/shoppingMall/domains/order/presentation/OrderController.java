@@ -27,6 +27,8 @@ public class OrderController {
     @RequestMapping("/orderForm")
     public String orderForm(@ModelAttribute OrderSummaryRequest request, Authentication authentication, Model model){
 
+        log.info("orderRequest: " + request);
+
         // 주문 정보
         model.addAttribute("orderInfo", request);
         setUserInfo(model, authentication);

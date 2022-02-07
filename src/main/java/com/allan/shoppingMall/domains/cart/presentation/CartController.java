@@ -6,6 +6,7 @@ import com.allan.shoppingMall.domains.cart.service.CartService;
 import com.allan.shoppingMall.domains.infra.AuthenticationConverter;
 import com.allan.shoppingMall.domains.member.domain.Member;
 import com.allan.shoppingMall.domains.mileage.service.MileageService;
+import com.allan.shoppingMall.domains.order.domain.Order;
 import com.allan.shoppingMall.domains.order.domain.model.OrderSummaryRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,51 +30,75 @@ public class CartController {
     @GetMapping("/list")
     public String cartList(@CookieValue(value = "cartCookie", required = false) Cookie cartCookie, Model model, Authentication authentication){
         // 비회원 장바구니
-        CartDTO cartDTO = new CartDTO();
-        if(authentication == null){
-            if(cartCookie != null){
-                String ckId = cartCookie.getValue();
-                cartDTO = cartService.getCookieCart(ckId);
-            }
-
-        }
-        // 회원 장바구니
-        else if(authentication != null){
-            cartDTO = cartService.getMemberCart(authentication.getName());
-        }
+        CartDTO cartDTO = getCartDTO(authentication, cartCookie);
         model.addAttribute("cartInfo", cartDTO);
         return "cart/cartList";
     }
 
     /**
-     * 상품 아이디를 통해 장바구니 도메인으로 주문페이지에 전달 할 주문정보로 변환하여 요청하는 메소드.
-     * @param itemId
+     * 장바구니 정보를 조회하여 사용자가 요청한 하나의 상품만 주문정보(OrderSummaryRequest)로 반환하여 주문페이지로 전달하는 메소드.
+     * 주문정보는 (OrderSummaryRequest)를 참고하시길 바랍니다.
+     * (현재는 주문페이지는 회원만 처리되도록 웹애플리케이션을 구성하였습니다. 추후에 비회원 결제도 추가하게 되면 테스트 코드 추가 해주세요.)
+     * @param cartCookie 장바구니 쿠키 정보.
+     * @param itemId 상품 도메인 아이디.
      * @return
      */
     @GetMapping("/{itemId}/order")
-    public String cartOrder(@CookieValue(value = "cartCookie", required = false) Cookie cartCookie, Model model, Authentication authentication, @PathVariable("itemId") Long itemId){
-        OrderSummaryRequest orderSummaryRequest = new OrderSummaryRequest();
-        if(authentication == null){
-            if(cartCookie != null){
-                String ckId = cartCookie.getValue();
-                orderSummaryRequest = cartService.transferOrderSummary(cartService.getCookieCart(ckId), itemId);
-            }
-
-        }
-        // 회원 장바구니
-        else if(authentication != null){
-            orderSummaryRequest = cartService.transferOrderSummary(cartService.getMemberCart(authentication.getName()), itemId);
-        }
-
-        // 주문요청 정보 및 사용자 정보.
+    public String orderCartItem(@CookieValue(value = "cartCookie", required = false) Cookie cartCookie, Model model, Authentication authentication, @PathVariable("itemId") Long itemId){
+        // 주문 요청 정보.
+        OrderSummaryRequest orderSummaryRequest = cartService.transferOrderSummary(getCartDTO(authentication, cartCookie), itemId);
         model.addAttribute("orderInfo", orderSummaryRequest);
+
+        //사용자 정보.
         setUserInfo(model, authentication);
 
         // 마일리지 정보.
-        long availableMileagePoint = mileageService.getAvailableMileagePoint(authentication.getName());
-        model.addAttribute("availableMileage", availableMileagePoint);
+        model.addAttribute("availableMileage", mileageService.getAvailableMileagePoint(authentication.getName()));
 
         return "order/orderForm";
+    }
+
+    /**
+     * 장바구니에 들어간 모든 상품들을 주문정보(OrderSummaryRequest)로 변환하여 주문페이지로 전달하는 메소드.
+     * 주문정보는 (OrderSummaryRequest)를 참고 하시길 바랍니다.
+     * (현재는 주문페이지는 회원만 처리되도록 웹애플리케이션을 구성하였습니다. 추후에 비회원 결제도 추가하게 되면 테스트 코드 추가 해주세요.)
+     * @param cartCookie 장바구니 쿠키 정보.
+     * @return
+     */
+    @GetMapping("/order")
+    public String orderCartItems(@CookieValue(value = "cartCookie", required = false) Cookie cartCookie, Model model, Authentication authentication){
+        // 주문 요청 정보.
+        OrderSummaryRequest orderSummaryRequest = cartService.transferOrderSummary(getCartDTO(authentication, cartCookie));
+        model.addAttribute("orderInfo", orderSummaryRequest);
+
+        // 사용자 정보.
+        setUserInfo(model, authentication);
+
+        // 마일리지 정보.
+        model.addAttribute("availableMileage", mileageService.getAvailableMileagePoint(authentication.getName()));
+
+        return "order/orderForm";
+    }
+
+    /**
+     * 장바구니를 조회하여 CartDTO 를 조회하는 메소드.
+     * @param authentication
+     * @param cartCookie 비회원 장바구니 쿠키 정보.
+     * @return
+     */
+    private CartDTO getCartDTO(Authentication authentication, Cookie cartCookie){
+        // 비회원 장바구니.
+        if(authentication == null){
+            if(cartCookie != null){
+                String ckId = cartCookie.getValue();
+                return cartService.getCookieCart(ckId);
+            }
+        }
+        // 회원 장바구니.
+        else if(authentication != null){
+            return cartService.getMemberCart(authentication.getName());
+        }
+        return null;
     }
 
     /**

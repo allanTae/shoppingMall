@@ -32,4 +32,13 @@ public class OrderSummaryRequest {
         if(totalAmount > 50000)
             this.deliveryAmount = 0l;
     }
+
+    @Override
+    public String toString() {
+        return "OrderSummaryRequest{" +
+                "totalQuantity=" + totalQuantity +
+                ", totalAmount=" + totalAmount +
+                ", deliveryAmount=" + deliveryAmount +
+                '}';
+    }
 }
