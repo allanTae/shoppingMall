@@ -1,5 +1,6 @@
 package com.allan.shoppingMall.domains.member.service;
 
+import com.allan.shoppingMall.common.config.aop.MemberJoinedEventPublishAop;
 import com.allan.shoppingMall.domains.member.domain.MemberRepository;
 import com.allan.shoppingMall.domains.member.domain.model.MemberForm;
 import com.allan.shoppingMall.domains.mileage.domain.model.MileageContent;
@@ -10,10 +11,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @Rollback(value = true)

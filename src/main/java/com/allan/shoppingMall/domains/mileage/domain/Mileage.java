@@ -1,11 +1,17 @@
 package com.allan.shoppingMall.domains.mileage.domain;
 
 import com.allan.shoppingMall.common.domain.BaseEntity;
+import com.allan.shoppingMall.common.domain.BaseTimeEntity;
+import com.allan.shoppingMall.domains.member.domain.JoinType;
 import com.allan.shoppingMall.domains.mileage.domain.model.MileageContent;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 
@@ -15,13 +21,16 @@ import javax.persistence.*;
  * 회원 도메인과 주문 도메인 연관관계를 맺지 않고, 구분자(사용자 아이디, 주문번호)만 값을 연관되도록 처리.
  * 1) 사용자아이디는 어떠한 회원과 관련된 마일리지인지 구분하기 위한 요소.
  * 2) 주문번호는 어떠한 주문과 관련된 마일리지인지 구분하기 위한 요소.
+ *
+ * 추가)
+ * 마일리지는 사용자가 제어하는 개념이 아닌, 시스템에 의해 만들어지고, 수정되기 때문에 jpa Auditing 에 의해 동작하지 않고,
+ * 별도로 @PrePersist, @PreUpdate에 의해 관리 됩니다.
  */
-
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "mileages")
-public class Mileage extends BaseEntity {
+public class Mileage extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long mileageId;
@@ -43,12 +52,20 @@ public class Mileage extends BaseEntity {
     @Column(nullable = false)
     private Long point;
 
+    @Column(name = "created_by", nullable = false, updatable = false)
+    private String createdBy;
+
+    @Column(name = "updated_by", nullable = false)
+    private String updatedBy;
+
     /**
      * 회원가입시, 적립 되는 마일리지는 주문번호가 존재하지 않습니다.
      * 회원가입시, 적립 마일리지 주문번호는 'joinMember' 값으로 저장합니다.
      */
     @PrePersist
     public void setUp(){
+        this.createdBy = "system";
+        this.updatedBy = "system";
         if(this.mileageContent == MileageContent.JOIN_MILEAGE_ACCUMULATE){
             if(this.getOrderNum() == null || this.getOrderNum().equals(""))
                 this.orderNum = "joinMember";
@@ -63,5 +80,12 @@ public class Mileage extends BaseEntity {
         this.point = point;
     }
 
+    /**
+     * 등록자, 수정자 수정을 위한 메소드입니다.
+     */
+    @PreUpdate
+    public void preUpdate(){
+        this.updatedBy = "system";
+    }
 
 }

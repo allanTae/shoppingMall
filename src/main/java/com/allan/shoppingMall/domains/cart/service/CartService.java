@@ -18,6 +18,7 @@ import com.allan.shoppingMall.domains.order.domain.model.OrderItemSummaryRequest
 import com.allan.shoppingMall.domains.order.domain.model.OrderSummaryRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +38,7 @@ public class CartService {
 
     /**
      * 회원 장바구니 생성 메소드.
-     * @param cartRequest
+     * @param cartRequest 프론트단에서 전달받은 장바구니 정보 DTO.
      */
     @Transactional
     public void addMemberCart(CartRequest cartRequest, String authId){
@@ -59,7 +60,7 @@ public class CartService {
 
     /**
      * 비회원 장바구니 생성 메소드.
-     * @param cartRequest
+     * @param cartRequest 프론트단에서 전달받은 장바구니 정보 DTO.
      */
     @Transactional
     public void addTempCart(CartRequest cartRequest){
@@ -273,4 +274,5 @@ public class CartService {
 
         return new OrderSummaryRequest(totalAmount, totalQuantity, orderItemSummaryRequestList);
     }
+
 }

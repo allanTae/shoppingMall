@@ -56,11 +56,21 @@
                 , headers : headers
                 , data : paramData
                 , type : 'POST'
-                , dataType : 'text'
+                , dataType : 'json'
                 , success: function(result){
+                  var htmls = '';
+                  if(result.status === 'in_use')
+                    htmls = '<div style="color: red; font-size: 10pt">' + result.message + '</div>';
+                  else
+                    htmls = '<div style="color: green; font-size: 10pt">' + result.message + '</div>';
 
+                  $("#checkId").html(htmls);
                 }
                 , error:function(request,status,error){
+                    console.log(request.status);
+                    console.log(request);
+                    console.log(status);
+                    console.log(error);
                     if(request.status === 400 && request.responseText.indexOf("inputInvalidException")){
                         alert("아이디는 영대소문자, 숫자로 10자~16자까지만 입력이 가능합니다.");
                     }
@@ -250,7 +260,7 @@
 					<div class="form-group row">
 						<label for="pwd" class="col-md-3 col-form-label text-md-right">비밀번호</label>
 						<div class="col-md-5">
-							<form:password path="pwd" id="pwd" class="form-control" placeholder="비밀번호를 입력해 주세요" />
+							<form:password path="pwd" id="pwd" class="form-control" placeholder="비밀번호를 입력해 주세요" autoComplete="on"/>
 						</div>
 					</div>
 					<div class="row">
@@ -261,7 +271,7 @@
 					<div class="form-group row">
 						<label for="rePwd" class="col-md-3 col-form-label text-md-right">비밀번호 확인</label>
 						<div class="col-md-5">
-							<form:password path="rePwd" id="rePwd" class="form-control" placeholder="입력하신 비밀번호와 동일하게 입력해 주세요" />
+							<form:password path="rePwd" id="rePwd" class="form-control" placeholder="입력하신 비밀번호와 동일하게 입력해 주세요" autoComplete="on" />
 						</div>
 					</div>
 					<div class="row">
