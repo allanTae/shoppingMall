@@ -38,10 +38,8 @@ public class MemberServiceTest {
         TEST_MEMBER_FORM.setAuthId("testAuthId");
         TEST_MEMBER_FORM.setPwd("testPwd12!!");
         TEST_MEMBER_FORM.setRePwd("testPwd12!!");
+        TEST_MEMBER_FORM.setAddress("testAddr");
         TEST_MEMBER_FORM.setDetailAddress("testDetailAddr");
-        TEST_MEMBER_FORM.setJibunAddress("testJibunAddr");
-        TEST_MEMBER_FORM.setRoadAddress("testRoadAddr");
-        TEST_MEMBER_FORM.setExtraAddress("testExtraAddr");
         TEST_MEMBER_FORM.setPostCode("testPostCode");
         TEST_MEMBER_FORM.setEmail("testEmail");
         TEST_MEMBER_FORM.setGender("1");

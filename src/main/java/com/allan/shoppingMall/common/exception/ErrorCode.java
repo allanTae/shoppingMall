@@ -31,6 +31,7 @@ public enum ErrorCode {
     ORDER_CANCEL_NOT_ALLOWED(400, "OR001", "주문 취소 가능한 상태가 아닙니다."),
     ORDER_REFUND_NOT_ALLOWED(400, "OR002", "환불 가능한 주문 상태가 아닙니다."),
     ORDER_NOT_FOUND(400, "OR003", "조회 된 주문이 없습니다."),
+    INVALID_ORDER_REQUEST_INPUT_VALUE(400, "OR004", "요청에 알맞지 않은 정보입니다."),
 
     // Payment
     PAYMENT_AMOUNT_IS_NOT_EQUAL_BY_ORDER_AMOUNT(400, "PAY001", "결제금액과 주문금액이 일치하지 않습니다."),

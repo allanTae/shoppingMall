@@ -1,12 +1,16 @@
 package com.allan.shoppingMall.domains.order.presentation;
 
 import com.allan.shoppingMall.common.domain.model.UserInfo;
+import com.allan.shoppingMall.common.util.FormatUtil;
 import com.allan.shoppingMall.domains.infra.AuthenticationConverter;
 import com.allan.shoppingMall.domains.member.domain.Member;
 import com.allan.shoppingMall.domains.mileage.service.MileageService;
 import com.allan.shoppingMall.domains.order.domain.model.*;
 import com.allan.shoppingMall.domains.order.service.OrderService;
 import com.allan.shoppingMall.domains.payment.service.PaymentService;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -65,7 +69,6 @@ public class OrderController {
     /**
      * 주문 후, 주문 결과 페이지를 출력하는 메소드.
      * 주문페이지(orderForm.jsp)에서 Iamport api 결제 요청 실패시, 생성 된 '임시저장' 주문를 삭제 합니다.
-     * (모바일 환경 결제 실패시 호출 되는 핸들러 메소드이기도 합니다.)
      * @param orderResultRequest 주문 결과 정보를 담고 있는 request object.
      * @return
      */
@@ -102,17 +105,29 @@ public class OrderController {
     }
 
     @GetMapping("/order/error")
-    public String getOrderFailResult(@RequestParam("imp_uid") String impUid,
-                                     @RequestParam("merchant_uid") String merchantUid,
-                                     @RequestParam("imp_success") boolean impSuccess,
-                                     @RequestParam("error_msg") String errorMsg,
+    public String getOrderFailResult(@ModelAttribute IamportError iamportError,
                                      Model model){
 
-        model.addAttribute("imp_uid", impUid);
-        model.addAttribute("merchant_uid", merchantUid);
-        model.addAttribute("imp_success", impSuccess);
-        model.addAttribute("error_msg", errorMsg);
+        model.addAttribute("imp_uid", iamportError.getImp_uid());
+        model.addAttribute("merchant_uid", iamportError.getMerchant_uid());
+        model.addAttribute("imp_success", iamportError.getImp_success());
+        model.addAttribute("error_msg", iamportError.getError_msg());
         return "order/orderFailResult";
+    }
+
+    /**
+     * 주문 후, 주문 결과 페이지를 출력하는 메소드.
+     * 주문페이지(orderForm.jsp)에서 Iamport api 결제 요청 실패시, 생성 된 '임시저장' 주문를 삭제 합니다.
+     * (모바일 환경 결제 실패시 호출 되는 핸들러 메소드이기도 합니다.)
+     * @param iamportError
+     * @return
+     */
+    @PostMapping("/orderMResult")
+    public String getOrderMResult(@ModelAttribute("iamportError") IamportError iamportError, Authentication authentication){
+        // 임시 주문 삭제.
+        orderService.deleteAllTempOrder(authentication.getName());
+
+        return "order/orderResult";
     }
 
     /**
@@ -126,8 +141,22 @@ public class OrderController {
                                                         .memberId(findMember.getMemberId())
                                                         .name(findMember.getName())
                                                         .email(findMember.getEmail())
-                                                        .phone(findMember.getPhone())
+                                                        .phone(FormatUtil.phoneFormat(findMember.getPhone()))
                                                         .build());
     }
 
+    /**
+     * mobile 환경으로 전달받은 iamport 결제 실패내용을 전달 받기 위한 DTO 클래스.
+     * @param
+     * @return
+     */
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class IamportError {
+        private String imp_uid;
+        private String merchant_uid;
+        private Boolean imp_success;
+        private String error_msg;
+
+    }
 }

@@ -88,6 +88,15 @@ public class RestOrderControllerTest {
                 .willReturn(TEST_ORDER_NUM);
 
         OrderRequest TEST_ORDER_REQUEST = new OrderRequest();
+        TEST_ORDER_REQUEST.setOrdererName("테스터");
+        TEST_ORDER_REQUEST.setOrdererPhone("01000000000");
+        TEST_ORDER_REQUEST.setOrdererEmail("test@test.com");
+        TEST_ORDER_REQUEST.setRecipientName("테스터");
+        TEST_ORDER_REQUEST.setRecipientPhone("01011112222");
+        TEST_ORDER_REQUEST.setPostcode("65044");
+        TEST_ORDER_REQUEST.setAddress("testAddress");
+        TEST_ORDER_REQUEST.setDetailAddress("testDetailAddress");
+
 
         //when
         ResultActions resultActions = mvc.perform(post("/order")

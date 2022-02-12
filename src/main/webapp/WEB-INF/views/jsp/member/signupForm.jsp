@@ -63,7 +63,6 @@
                     htmls = '<div style="color: red; font-size: 10pt">' + result.message + '</div>';
                   else
                     htmls = '<div style="color: green; font-size: 10pt">' + result.message + '</div>';
-
                   $("#checkId").html(htmls);
                 }
                 , error:function(request,status,error){
@@ -147,6 +146,7 @@
         }
         return true;
     }
+
     // 날자 출력하는 메소드.
     function setDateBox() {
         var dt = new Date();
@@ -173,55 +173,54 @@
       var n = n + '';
       return n.length >= width ? n : new Array(width - n.length + 1).join('0') + n;
     }
-    // 우편번호 검색창 메소드
-    function execDaumPostcode() {
-            new daum.Postcode({
-                oncomplete: function(data) {
-                    // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
-                    // 도로명 주소의 노출 규칙에 따라 주소를 표시한다.
-                    // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
-                    var roadAddr = data.roadAddress; // 도로명 주소 변수
-                    var extraRoadAddr = ''; // 참고 항목 변수
+
+    function getAddress() {
+        new daum.Postcode({
+            oncomplete: function(data) {
+                // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+                // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+                // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                var addr = ''; // 주소 변수
+                var extraAddr = ''; // 참고항목 변수
+
+                //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+                if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+                    addr = data.roadAddress;
+                } else { // 사용자가 지번 주소를 선택했을 경우(J)
+                    addr = data.jibunAddress;
+                }
+
+                // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
+                if(data.userSelectedType === 'R'){
                     // 법정동명이 있을 경우 추가한다. (법정리는 제외)
                     // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
                     if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
-                        extraRoadAddr += data.bname;
+                        extraAddr += data.bname;
                     }
                     // 건물명이 있고, 공동주택일 경우 추가한다.
                     if(data.buildingName !== '' && data.apartment === 'Y'){
-                       extraRoadAddr += (extraRoadAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                        extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
                     }
                     // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
-                    if(extraRoadAddr !== ''){
-                        extraRoadAddr = ' (' + extraRoadAddr + ')';
+                    if(extraAddr !== ''){
+                        extraAddr = ' (' + extraAddr + ')';
                     }
-                    // 우편번호와 주소 정보를 해당 필드에 넣는다.
-                    document.getElementById('postCode').value = data.zonecode;
-                    document.getElementById('roadAddress').value = roadAddr;
-                    document.getElementById('jibunAddress').value = data.jibunAddress;
-                    // 참고항목 문자열이 있을 경우 해당 필드에 넣는다.
-                    if(roadAddr !== ''){
-                        document.getElementById('extraAddress').value = extraRoadAddr;
-                    } else {
-                        document.getElementById('extraAddress').value = '';
-                    }
-                    var guideTextBox = document.getElementById("guide");
-                    // 사용자가 '선택 안함'을 클릭한 경우, 예상 주소라는 표시를 해준다.
-                    if(data.autoRoadAddress) {
-                        var expRoadAddr = data.autoRoadAddress + extraRoadAddr;
-                        guideTextBox.innerHTML = '(예상 도로명 주소 : ' + expRoadAddr + ')';
-                        guideTextBox.style.display = 'block';
-                    } else if(data.autoJibunAddress) {
-                        var expJibunAddr = data.autoJibunAddress;
-                        guideTextBox.innerHTML = '(예상 지번 주소 : ' + expJibunAddr + ')';
-                        guideTextBox.style.display = 'block';
-                    } else {
-                        guideTextBox.innerHTML = '';
-                        guideTextBox.style.display = 'none';
-                    }
+                    // 조합된 참고항목을 해당 필드에 넣는다.
+                    addr += " 참고 주소: " + extraAddr;
+
+                } else {
+                    addr += '';
                 }
-            }).open();
-        }
+                // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                document.getElementById('postCode').value = data.zonecode;
+                document.getElementById("address").value = addr;
+                // 커서를 상세주소 필드로 이동한다.
+                document.getElementById("detailAddress").focus();
+            }
+        }).open();
+    }
+
 </script>
 <article>
 	<div class="container col-md-6" role="main">
@@ -317,7 +316,7 @@
                             <form:input path="postCode" id="postCode" class="form-control" placeholder="우편번호" />
                         </div>
                         <div class="input-group col-md-3">
-                            <input type="button" onclick="execDaumPostcode()" value="우편번호 찾기">
+                            <input type="button" onclick="getAddress()" value="우편번호 찾기">
                         </div>
                     </div>
                     <div class="row">
@@ -325,36 +324,18 @@
                         <form:errors path="postCode" id="postCodeError" class="col-md-6 form-group text-left" style="font-size:15px; color:red; width=100px;"/>
                     </div>
 
-					<div class="form-group row">
-						<label for="roadAddress" class="col-md-3 col-form-label text-md-right">도로명 주소</label>
-						<div class="input-group col-md-7">
-							<div class="input-group-prepend">
-								<span class="input-group-text">@</span>
-							</div>
-							<form:input path="roadAddress" id="roadAddress" class="form-control" placeholder="도로명 주소" />
-						</div>
-					</div>
-					<div class="row">
-						<label for="roadAddressError" class="col-md-3" text-md-right></label>
-						<form:errors path="roadAddress" id="roadAddressError" class="col-md-6 form-group text-left" style="font-size:15px; color:red; width=100px;"/>
-					</div>
-
-					<div class="form-group row">
-						<label for="jibunAddress" class="col-md-3 col-form-label text-md-right">지번 주소</label>
-						<div class="input-group col-md-7">
-							<div class="input-group-prepend">
-								<span class="input-group-text">@</span>
-							</div>
-							<form:input path="jibunAddress" id="jibunAddress" class="form-control" placeholder="지번 주소" />
-						</div>
-					</div>
-					<div class="row">
-						<label for="jibunAddressError" class="col-md-3" text-md-right></label>
-						<form:errors path="jibunAddress" id="jibunAddressError" class="col-md-6 form-group text-left" style="font-size:15px; color:red; width=100px;"/>
-					</div>
-
-					<div class="row">
-                        <span id="guide" style="color:#999;display:none"></span>
+                    <div class="form-group row">
+                        <label for="address" class="col-md-3 col-form-label text-md-right">주소</label>
+                        <div class="input-group col-md-7">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">@</span>
+                            </div>
+                            <form:input path="address" id="address" class="form-control" placeholder="주소" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="addressError" class="col-md-3" text-md-right></label>
+                        <form:errors path="address" id="addressError" class="col-md-6 form-group text-left" style="font-size:15px; color:red; width=100px;"/>
                     </div>
 
 					<div class="form-group row">
@@ -369,20 +350,6 @@
                     <div class="row">
                         <label for="detailAddressError" class="col-md-3" text-md-right></label>
                         <form:errors path="detailAddress" id="detailAddressError" class="col-md-6 form-group text-left" style="font-size:15px; color:red; width=100px;"/>
-                    </div>
-
-                    <div class="form-group row">
-                        <label for="extraAddress" class="col-md-3 col-form-label text-md-right">참고 항목</label>
-                        <div class="input-group col-md-7">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">@</span>
-                            </div>
-                            <form:input path="extraAddress" id="extraAddress" class="form-control" placeholder="참고 항목" />
-                        </div>
-                    </div>
-                    <div class="row">
-                        <label for="extraAddressError" class="col-md-3" text-md-right></label>
-                        <form:errors path="extraAddress" id="extraAddressError" class="col-md-6 form-group text-left" style="font-size:15px; color:red; width=100px;"/>
                     </div>
 
 					<div class="form-group row">

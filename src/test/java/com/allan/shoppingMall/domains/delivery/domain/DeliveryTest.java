@@ -30,7 +30,11 @@ public class DeliveryTest {
         //given
         Delivery TEST_DELIVERY = Delivery.builder()
                 .deliveryStatus(DeliveryStatus.DELIVERY_READY)
-                .address(new Address("",  "",  "65040", "", ""))
+                .address(Address.builder()
+                        .address("testAddress")
+                        .detailAddress("testDetailAddress")
+                        .postCode("65000")
+                        .build())
                 .build();
 
         //when
@@ -45,7 +49,11 @@ public class DeliveryTest {
         //given
         Delivery TEST_DELIVERY = Delivery.builder()
                 .deliveryStatus(DeliveryStatus.SHIPPING)
-                .address(new Address("",  "",  "65040", "", ""))
+                .address(Address.builder()
+                        .address("testAddress")
+                        .detailAddress("testDetailAddress")
+                        .postCode("65000")
+                        .build())
                 .build();
 
         //when, then
@@ -62,7 +70,11 @@ public class DeliveryTest {
         Delivery TEST_DELIVERY = Delivery.builder()
                 .deliveryMemo("testDeliveryMemo")
                 .deliveryStatus(DeliveryStatus.DELIVERY_READY)
-                .address(new Address("", "", "63450", "", ""))
+                .address(Address.builder()
+                        .address("testAddress")
+                        .detailAddress("testDetailAddress")
+                        .postCode("63000")
+                        .build())
                 .build();
 
         //then
@@ -78,7 +90,11 @@ public class DeliveryTest {
         Delivery TEST_DELIVERY = Delivery.builder()
                 .deliveryMemo("testDeliveryMemo")
                 .deliveryStatus(DeliveryStatus.DELIVERY_READY)
-                .address(new Address("", "", "45450", "", ""))
+                .address(Address.builder()
+                        .address("testAddress")
+                        .detailAddress("testDetailAddress")
+                        .postCode("65000")
+                        .build())
                 .build();
 
         //then

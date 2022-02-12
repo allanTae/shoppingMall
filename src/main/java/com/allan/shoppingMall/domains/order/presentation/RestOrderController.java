@@ -4,9 +4,9 @@ import com.allan.shoppingMall.common.exception.BusinessException;
 import com.allan.shoppingMall.common.exception.ErrorCode;
 import com.allan.shoppingMall.common.exception.order.payment.PaymentFailException;
 import com.allan.shoppingMall.common.exception.order.RefundFailException;
+import com.allan.shoppingMall.common.util.FormatUtil;
 import com.allan.shoppingMall.domains.infra.AuthenticationConverter;
 import com.allan.shoppingMall.domains.member.domain.Member;
-import com.allan.shoppingMall.domains.order.domain.Order;
 import com.allan.shoppingMall.domains.order.domain.model.OrderErrorResponse;
 import com.allan.shoppingMall.domains.order.domain.model.OrderRequest;
 import com.allan.shoppingMall.domains.order.domain.model.OrderResponse;
@@ -23,10 +23,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
+import javax.validation.Valid;
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 
 @RestController
@@ -77,7 +81,55 @@ public class RestOrderController {
      * @param request
      */
     @PostMapping("/order")
-    public ResponseEntity<OrderResponse> order(@RequestBody OrderRequest request, Authentication authentication){
+    public ResponseEntity<OrderResponse> order(@RequestBody @Valid OrderRequest request, BindingResult bindingResult, Authentication authentication){
+
+        // 유효성 검사를 위한 표현식.
+        String NAME_PATTERN = "^[가-힣]{2,16}$";
+        String EMAIL_PATTERN = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$";
+        String PHONE_PATTERN = "^0\\d{1,2}[ -]\\d{3,4}[ -]?\\d{3,4}$";
+        String POSTCODE_PATTERN = "^(\\d{3}\\d{3}|\\d{5})$";
+        String ROAD_ADDRESS_PATTERN = "";
+        String JIBUN_ADDRESS_PATTERN = "";
+        String DETAIL_ADDRESS_PATTERN = "";
+
+        if(!Pattern.compile(NAME_PATTERN).matcher(request.getOrdererName().trim()).find()){
+            log.error("restOrderController's order() fail ordererName validation check!!");
+            bindingResult.rejectValue("ordererName", "ordererName.invalidatedVal", "주문자 이름은 한글 2~16자로 작성하셔야 합니다.");
+        }
+        if(!Pattern.compile(PHONE_PATTERN).matcher(FormatUtil.phoneFormat(request.getOrdererPhone().trim())).find()){
+            log.error("restOrderController's order() fail ordererPhone validation check!!");
+            bindingResult.rejectValue("ordererPhone", "ordererPhone.invalidatedVal", "주문자 휴대전화를 올바르게 입력 해 주세요.");
+        }
+        if(!Pattern.compile(EMAIL_PATTERN).matcher(request.getOrdererEmail().trim()).find()){
+            log.error("restOrderController's order() fail ordererEmail validation check!!");
+            bindingResult.rejectValue("ordererEmail", "ordererEmail.invalidatedVal", "주문자 이메일을 올바르게 입력 해 주세요.");
+        }
+
+        if(!Pattern.compile(NAME_PATTERN).matcher(request.getRecipientName().trim()).find()){
+            log.error("restOrderController's order() fail recipient validation check!!");
+            bindingResult.rejectValue("recipientName", "recipientName.invalidatedVal", "배송 수령자 이름은 한글 2~16자로 작성하셔야 합니다.");
+        }
+        if(!Pattern.compile(PHONE_PATTERN).matcher(FormatUtil.phoneFormat(request.getRecipientPhone().trim())).find()){
+            log.error("restOrderController's order() fail recipientPhone validation check!!");
+            bindingResult.rejectValue("recipientPhone", "recipientPhone.invalidatedVal", "배송 수령자는 휴대전화를 올바르게 입력 해 주세요.");
+        }
+        if(!Pattern.compile(POSTCODE_PATTERN).matcher(request.getPostcode().trim()).find()){
+            log.error("restOrderController's order() fail postcode validation check!!");
+            bindingResult.rejectValue("postcode", "postcode.invalidatedVal", "우편번호를 올바르게 입력 해 주세요.");
+        }
+
+        if(bindingResult.hasErrors()){
+            log.error("========biningFilerError List========");
+            for(FieldError error: bindingResult.getFieldErrors()){
+                log.error(error.getDefaultMessage());
+            }
+            log.error("======================================");
+            return new ResponseEntity<OrderResponse>(new OrderResponse("주문도메인 생성실패", "empty", OrderErrorResponse.of(ErrorCode.INVALID_ORDER_REQUEST_INPUT_VALUE, bindingResult)),
+                    HttpStatus.OK);
+        }
+
+        request.setAddress(request.getRoadAddress() + " " + request.getJibunAddress());
+
         Member findMember = authenticationConverter.getMemberFromAuthentication(authentication);
 
         if(null == request.getOrdererName() || request.getOrdererName().equals("")){
@@ -100,8 +152,8 @@ public class RestOrderController {
             String orderNum = orderService.order(request, findMember);
             return new ResponseEntity<OrderResponse>(new OrderResponse("주문도메인 생성성공", orderNum), HttpStatus.OK);
         }catch (BusinessException e){
-            return new ResponseEntity<OrderResponse>(new OrderResponse("주문도메인 생성실패", "empty", OrderErrorResponse.of(e.getMessage(), e.getErrorCode())),
-                    HttpStatus.valueOf(e.getErrorCode().getCode()));
+            return new ResponseEntity<OrderResponse>(new OrderResponse("주문도메인 생성실패", "empty", OrderErrorResponse.of(e.getErrorCode())),
+                    HttpStatus.OK);
         }
     }
 
@@ -142,11 +194,11 @@ public class RestOrderController {
                 }
             }catch (RefundFailException refundEx){
                 // 환불 실패.
-                return new ResponseEntity<OrderResponse>(new OrderResponse("결제 및 환불 실패", "empty", OrderErrorResponse.of(refundEx.getMessage(), refundEx.getErrorCode())),
+                return new ResponseEntity<OrderResponse>(new OrderResponse("결제 및 환불 실패", "empty", OrderErrorResponse.of(refundEx.getErrorCode())),
                         HttpStatus.OK);
             }
             // 결제 실패.
-            return new ResponseEntity<OrderResponse>(new OrderResponse("결제 실패", "empty", OrderErrorResponse.of(paymentEx.getMessage(), paymentEx.getErrorCode())),
+            return new ResponseEntity<OrderResponse>(new OrderResponse("결제 실패", "empty", OrderErrorResponse.of(paymentEx.getErrorCode())),
                     HttpStatus.OK);
         }
     }

@@ -3,6 +3,9 @@ package com.allan.shoppingMall.domains.order.domain.model;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Positive;
 import java.util.List;
 
 /**
@@ -21,14 +24,21 @@ public class OrderRequest {
     private String ordererEmail;
 
     // 배송 정보.
-    private String recipient;
+    private String recipientName;
     private String recipientPhone;
     private String postcode;
-    private String address;
+    private String roadAddress;
+    private String jibunAddress;
+
+    @NotEmpty(message = "상세 주소를 입력 해 주세요.")
     private String detailAddress;
     private String deliveryMemo;
 
+    @NotEmpty(message = "주소를 입력 해 주세요.")
+    private String address;
+
     // 마일리지 정보.
+    @Min(message = "나이를 제대로 입력 해 주세요.", value = 0)
     private Long usedMileage;
 
     @Override
@@ -38,10 +48,11 @@ public class OrderRequest {
                 ", ordererName='" + ordererName + '\'' +
                 ", ordererPhone='" + ordererPhone + '\'' +
                 ", ordererEmail='" + ordererEmail + '\'' +
-                ", recipient='" + recipient + '\'' +
+                ", recipientName='" + recipientName + '\'' +
                 ", recipientPhone='" + recipientPhone + '\'' +
                 ", postcode='" + postcode + '\'' +
-                ", address='" + address + '\'' +
+                ", roadAddress='" + roadAddress + '\'' +
+                ", jibunAddress='" + jibunAddress + '\'' +
                 ", detailAddress='" + detailAddress + '\'' +
                 ", deliveryMemo='" + deliveryMemo + '\'' +
                 ", usedMileage='" + usedMileage + '\'' +

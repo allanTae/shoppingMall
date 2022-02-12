@@ -94,7 +94,7 @@ public class OrderServiceTest {
         TEST_ORDER_REQUEST.setAddress("testAddress");
         TEST_ORDER_REQUEST.setDetailAddress("testDetailAddress");
         TEST_ORDER_REQUEST.setDeliveryMemo("testMemo");
-        TEST_ORDER_REQUEST.setRecipient("testRecipient");
+        TEST_ORDER_REQUEST.setRecipientName("testRecipient");
         TEST_ORDER_REQUEST.setRecipientPhone("1111111111");
         TEST_ORDER_REQUEST.setUsedMileage(1000l);
 
@@ -186,7 +186,9 @@ public class OrderServiceTest {
         Order TEST_ORDER = Order.builder()
                 .orderNum("testOrderNum")
                 .delivery(Delivery.builder()
-                        .address(new Address("testJibun", "testRoad", "560-110", "testDetail", "testExtra"))
+                        .address(Address.builder()
+                                .postCode("65000")
+                                .build())
                         .recipient("testRecipient")
                         .recipientPhone("000-0000-0000")
                         .deliveryMemo("testDeliveryMemo")
@@ -428,7 +430,9 @@ public class OrderServiceTest {
         Order TEST_TEMP_ORDER = Order.builder()
                 .delivery(Delivery.builder()
                         .deliveryStatus(DeliveryStatus.DELIVERY_READY)
-                        .address(new Address("jibunAddress", "roadAddress", "34500", "detailAddress", "extraAddress"))
+                        .address(Address.builder()
+                                .postCode("63400")
+                                .build())
                         .build())
                 .build();
 
@@ -473,7 +477,9 @@ public class OrderServiceTest {
                 .orderer(TEST_ORDERER)
                 .delivery(Delivery.builder()
                         .deliveryStatus(DeliveryStatus.DELIVERY_READY)
-                        .address(new Address("jibunAddress", "roadAddress", "34500", "detailAddress", "extraAddress"))
+                        .address(Address.builder()
+                                .postCode("65000")
+                                .build())
                         .build())
                 .build();
 

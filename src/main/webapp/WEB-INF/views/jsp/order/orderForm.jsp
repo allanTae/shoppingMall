@@ -13,17 +13,26 @@
 				<div class="orderInfoleftWrap col-md-7">
                     <div class="orderItemsWrap p-3 row mb-3">
                         <p class="text-start">주문 상품 정보</p>
-                        <c:forEach var="orderItem" items="${orderInfo.orderItems}" varStatus="index">
-                            <div class="row col-md-12 p-0">
-                                <div class="col-md-4 item_img_wrap p-0">
+                        <c:forEach var="orderItem" items="${orderInfo.orderItems}" varStatus="status">
+                            <c:if test="${status.index != 0}">
+                                <hr class="m-0" />
+                            </c:if>
+                            <div class="row col-md-12 p-3">
+                                <div class="col-md-3 item_img_wrap p-0">
                                     <img class="orderItemImg" src="${pageContext.request.contextPath}/image/${orderItem.previewImg}" width="90" height="90" />
                                 </div>
                                 <div class="col-md-8 item_info_wrap p-0">
-                                    <div class="text-start"><span>${orderItem.itemName}</span></div>
-                                    <c:forEach var="requiredOption" items="${orderItem.requiredOptions}" varStatus="index">
-                                        <div class="text-start"><p class="m-0">${requiredOption.itemSize}-${requiredOption.itemQuantity}개</p></div>
-                                    </c:forEach>
-                                    <div class="text-start mt-1"><p><fmt:formatNumber type="number" maxFractionDigits="3" value="${orderItem.price}" />원</p></div>
+                                    <div class="text-start" style="font-size:16px;"><span>${orderItem.itemName}</span></div>
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                           <c:forEach var="requiredOption" items="${orderItem.requiredOptions}" varStatus="index">
+                                               <div class="text-start" style="font-size:14px;"><p class="m-0">- ${requiredOption.itemSize} / ${requiredOption.itemQuantity}개</p></div>
+                                           </c:forEach>
+                                        </div>
+                                    </div>
+                                    <div class="text-start" style="font-size:14px;"><p class="m-0"><fmt:formatNumber type="number" maxFractionDigits="3" value="${orderItem.price}" />원</p></div>
+                                </div>
+                                <div class="col-md-1">
                                 </div>
                             </div>
                         </c:forEach>
@@ -32,9 +41,18 @@
                         <p class="text-start">주문자 정보</p>
                         <span><button class="btn btn-secondary" style="float:right;" onclick="getOrdererInputForm()">수정</button></span>
                         <div class="userInfoWrap col-md-12 pe-1">
-                            <div class="p-0 text-start" id="userInfo_name">${userInfo.name}</div>
-                            <div class="p-0 text-start" id="userInfo_phone">${userInfo.phone}</div>
-                            <div class="p-0 text-start" id="userInfo_email">${userInfo.email}</div>
+                            <div class="p-0 text-start" id="userInfo_name">
+                                ${userInfo.name}
+                                <p class="text-danger fs-6 text-start fieldError" style="display:none;" role="error" id="ordererNameError"></p>
+                            </div>
+                            <div class="p-0 text-start" id="userInfo_phone">
+                                ${userInfo.phone}
+                                <p class="text-danger fs-6 text-start fieldError" style="display:none;" role="error" id="ordererPhoneError"></p>
+                            </div>
+                            <div class="p-0 text-start" id="userInfo_email">
+                                ${userInfo.email}
+                                <p class="text-danger fs-6 text-start fieldError" style="display:none;" role="error" id="ordererEmailError"></p>
+                            </div>
                         </div>
                     </div>
                     <div class="deliveryInfoWrap row p-3 mb-3">
@@ -46,26 +64,31 @@
                         <div class="recipientInfoWrap row col-md-12 pe-1">
                             <div class="col-md-5 p-0 mb-1">
                                 <input type="text" placeholder="수령인" class="form-control" id="recipientName" />
+                                <p class="text-danger fs-6 text-start fieldError" style="display:none;" role="error" id="recipientNameError"></p>
                             </div>
                             <div class="col-md-1">
                             </div>
                             <div class="col-md-5 p-0 ">
-                                <input type="text" placeholder="연락처" class="form-control" id="recipientPhone" />
+                                <input type="text" placeholder="연락처 Ex) 01012123434" class="form-control" id="recipientPhone" />
+                                <p class="text-danger fs-6 text-start fieldError" style="display:none;" role="error" id="recipientPhoneError"></p>
                             </div>
                         </div>
                         <div class="postcodeWrap row col-md-12 pe-1 mb-1">
                             <div class="col-md-3 p-0 me-1">
-                                <input type="text" name="postcode" placeholder="우편번호" class="form-control" id="postcode" />
+                                <input type="text" name="postcode" placeholder="우편번호" class="form-control" id="postcode" disabled/>
+                                <p class="text-danger fs-6 text-start fieldError" style="display:none;" role="error" id="postcodeError"></p>
                             </div>
                             <div class="col-md-3 p-0">
                                 <button class="btn btn-secondary" onclick="getPostcode()">주소찾기</button>
                             </div>
                         </div>
                         <div class="row col-md-11 pe-1 mb-1">
-                            <input type="text" placeholder="주소" class="form-control" id="address" />
+                            <input type="text" placeholder="주소" class="form-control" id="address" disabled/>
+                            <p class="text-danger fs-6 text-start fieldError" style="display:none;" role="error" id="addressError"></p>
                         </div>
                         <div class="row col-md-11 pe-1 mb-5">
                             <input type="text" placeholder="상세주소" class="form-control" id="detailAddress" />
+                            <p class="text-danger fs-6 text-start fieldError" style="display:none;" role="error" id="detailAddressError"></p>
                         </div>
 
                         <p class="text-start">배송메모.</p>
@@ -163,6 +186,9 @@
 
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
+    let roadAddr = '';
+    let jibunAddr = '';
+
     // daum postcode api.
     function getPostcode() {
         new daum.Postcode({
@@ -177,8 +203,10 @@
                 //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
                 if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
                     addr = data.roadAddress;
+                    roadAddr = data.roadAddress;
                 } else { // 사용자가 지번 주소를 선택했을 경우(J)
                     addr = data.jibunAddress;
+                    jibunAddr = data.jibunAddress;
                 }
 
                 // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
@@ -202,10 +230,8 @@
                 } else {
                     addr += '';
                 }
-
                 // 우편번호와 주소 정보를 해당 필드에 넣는다.
                 document.getElementById('postcode').value = data.zonecode;
-
                 document.getElementById("address").value = addr;
                 // 커서를 상세주소 필드로 이동한다.
                 document.getElementById("detailAddress").focus();
@@ -232,8 +258,10 @@
   // checkbox click event.
   $(document).on("click", "#checkOrdererInfo", function(){
     if($('#checkOrdererInfo').is(':checked')){
-        $('#recipientName').val($('#userInfo_name').text());
-        $('#recipientPhone').val($('#userInfo_phone').text());
+        var recipientName = $('#userInfo_name').val() === '' ? $('#userInfo_name').text() : $('#userInfo_name').val();
+        var recipientPhone = $('#userInfo_phone').val() === '' ? $('#userInfo_phone').text() : $('#userInfo_phone').val();
+        $('#recipientName').val(recipientName.trim());
+        $('#recipientPhone').val(recipientPhone.trim());
     }else{
         $('#recipientName').val("");
         $('#recipientPhone').val("");
@@ -247,15 +275,18 @@
     htmls += '<div class="ordererNamePhoneWrap row col-md-12 pe-1">';
     htmls += '    <div class="col-md-5 p-0 mb-1">';
     htmls += '        <input type="text" name="ordererName" placeholder="이름" value="${userInfo.name}" class="form-control" id="userInfo_name" />';
+    htmls += '        <p class="text-danger fs-6 text-start fieldError" style="display:none;" role="error" id="ordererNameError"></p>';
     htmls += '    </div>';
     htmls += '    <div class="col-md-1">';
     htmls += '    </div>';
     htmls += '    <div class="col-md-5 p-0 ">';
     htmls += '        <input type="text" name="ordererPhone" placeholder="연락처" value="${userInfo.phone}" class="form-control" id="userInfo_phone" />';
+    htmls += '        <p class="text-danger fs-6 text-start fieldError" style="display:none;" role="error" id="ordererPhoneError"></p>';
     htmls += '    </div>';
     htmls += '</div>';
     htmls += '<div class="row col-md-11 pe-1">';
     htmls += '    <input type="text" name="ordererEmail" placeholder="이메일" value="${userInfo.email}" class="form-control" id="userInfo_email" />';
+    htmls += '    <p class="text-danger fs-6 text-start fieldError" style="display:none;" role="error" id="ordererEmailError"></p>';
     htmls += '</div>';
 
     $(".ordererInfoWrap").html(htmls);
@@ -278,12 +309,14 @@
   		if(checkValidation() === false)
   		    return;
 
-        var ordererName = $('#userInfo_name').val();
-        var ordererPhone = $('#userInfo_phone').val();
-        var ordererEmail = $('#userInfo_email').val();
+  		// errorFiled 안보이게 초기화.
+        $('.fieldError').css("display", "none");
 
-        var recipient = $('#recipientName').val();
-        var recipientPhone = $('#recipientPhone').val();
+        var ordererName = $('#userInfo_name').val() === '' ? $('#userInfo_name').text() : $('#userInfo_name').val();
+        var ordererPhone = $('#userInfo_phone').val() === '' ? $('#userInfo_phone').text().replace(/-/gi, "") : $('#userInfo_phone').val().replace(/-/gi, "");
+        var ordererEmail = $('#userInfo_email').val() === '' ? $('#userInfo_email').text() : $('#userInfo_email').val();
+        var recipientName = $('#recipientName').val();
+        var recipientPhone = $('#recipientPhone').val().replace(/-/gi, "");
         var postcode = $('#postcode').val();
         var address = $('#address').val();
         var detailAddress = $('#detailAddress').val();
@@ -313,14 +346,19 @@
                                         "ordererName": ordererName,
                                         "ordererPhone": ordererPhone,
                                         "ordererEmail": ordererEmail,
-                                        "recipient": recipient,
+                                        "recipientName": recipientName,
                                         "recipientPhone": recipientPhone,
                                         "postcode": postcode,
                                         "address": address,
+                                        "roadAddress": roadAddr,
+                                        "jibunAddress": jibunAddr,
                                         "detailAddress": detailAddress,
                                         "deliveryMemo": deliveryMemo,
                                         "usedMileage": usedMileage
         });
+
+        console.log(paramData);
+
         var headers = {"Content-Type" : "application/json; charset=UTF-8;"
               , "X-HTTP-Method-Override" : "POST"};
         $.ajax({
@@ -330,10 +368,28 @@
           , type : 'POST'
           , dataType : 'json'
           , success: function(result){
-              // order domain create success
-              console.log("message: " + result.message);
-              console.log("orderNum: " + result.orderNum);
-              requestPay(result.orderNum);
+              if(result.orderResult === "주문도메인 생성성공"){
+                // order domain create success
+                console.log("message: " + result.message);
+                console.log("orderNum: " + result.orderNum);
+                requestPay(result.orderNum);
+              }else{
+                // order domain create fail
+                console.log("order fail");
+                console.log(result.errorResponse.fieldErrors.length);
+                if(result.errorResponse.fieldErrors.length < 1){
+                    console.log("fieldError 가 없습니다.");
+                }
+                else {
+                    $(result.errorResponse.fieldErrors).each(function(){
+                        console.log("field: " + this.field);
+                        console.log("value: " + this.value);
+                        console.log("reason: " + this.reason);
+                        $('#' + this.field + 'Error').text(this.reason);
+                        $('#' + this.field + 'Error').css("display", "block");
+                    });	//each end
+                }
+              }
           }
           , error:function(request,status,error){
             console.log("error: " + error);
@@ -373,7 +429,7 @@
               buyer_postcode: $('#postcode').val(),
 
               // confirm_url : "${pageContext.request.contextPath}/order/validate", // iamport 측에서 제공하는 검증 url(단, 사용하기전 iamport사측에 요청해야 함)
-              m_redirect_url : '${pageContext.request.contextPath}/order/orderResult' // 모바일버전을 위한 리다이렉트 url.
+              m_redirect_url : '${pageContext.request.contextPath}/order/error' // 모바일버전을 위한 리다이렉트 url.
           }, function (rsp) { // callback
               // iamport 결제 응답 성공.
               if (rsp.success) {
@@ -480,5 +536,58 @@
 
         $(this).blur(); // enter시 blur.
     });
+
+    // 전화번호 하이픈 추가 함수.
+    function formatPhone(number){
+         if (phoneNumber.length() == 8) {
+            return phoneNumber.replace("^([0-9]{4})([0-9]{4})$", "$1-$2");
+         } else if (phoneNumber.length() == 12) {
+            return phoneNumber.replace("(^[0-9]{4})([0-9]{4})([0-9]{4})$", "$1-$2-$3");
+         }
+         return phoneNumber.replace("(^02|[0-9]{3})([0-9]{3,4})([0-9]{4})$", "$1-$2-$3");
+    }
+
+     // 배송 받는사람 전화 번호 키 입력시 이벤트.
+     $("#recipientPhone").on("keyup", function(){
+        $(this).val(phoneNumber($(this).val()));
+     });
+
+     function phoneNumber(value) {
+       if (!value) {
+         return "";
+       }
+
+       value = value.replace(/[^0-9]/g, "");
+
+       let result = [];
+       let restNumber = "";
+
+       // 지역번호와 나머지 번호로 나누기
+       if (value.startsWith("02")) {
+         // 서울 02 지역번호
+         result.push(value.substr(0, 2));
+         restNumber = value.substring(2);
+       } else if (value.startsWith("1")) {
+         // 지역 번호가 없는 경우
+         // 1xxx-yyyy
+         restNumber = value;
+       } else {
+         // 나머지 3자리 지역번호
+         // 0xx-yyyy-zzzz
+         result.push(value.substr(0, 3));
+         restNumber = value.substring(3);
+       }
+
+       if (restNumber.length === 7) {
+         // 7자리만 남았을 때는 xxx-yyyy
+         result.push(restNumber.substring(0, 3));
+         result.push(restNumber.substring(3));
+       } else {
+         result.push(restNumber.substring(0, 4));
+         result.push(restNumber.substring(4));
+       }
+
+       return result.filter((val) => val).join("-");
+     }
 
 </script>

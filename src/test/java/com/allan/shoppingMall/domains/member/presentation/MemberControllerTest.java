@@ -77,15 +77,13 @@ public class MemberControllerTest {
         TEST_MEMBER_FORM.setAuthId("testAuthId");
         TEST_MEMBER_FORM.setPwd("testPwd12!!");
         TEST_MEMBER_FORM.setRePwd("testPwd12!!");
-        TEST_MEMBER_FORM.setDetailAddress("testDetailAddr");
-        TEST_MEMBER_FORM.setJibunAddress("testJibunAddr");
-        TEST_MEMBER_FORM.setRoadAddress("testRoadAddr");
-        TEST_MEMBER_FORM.setExtraAddress("testExtraAddr");
         TEST_MEMBER_FORM.setPostCode("testPostCode");
+        TEST_MEMBER_FORM.setAddress("testAddress");
+        TEST_MEMBER_FORM.setDetailAddress("testDetailAddress");
         TEST_MEMBER_FORM.setEmail("testEmail@test.tae");
         TEST_MEMBER_FORM.setGender("1");
         TEST_MEMBER_FORM.setDateOfBirth("20000202");
-        TEST_MEMBER_FORM.setPhone("23232323");
+        TEST_MEMBER_FORM.setPhone("010-1111-2222");
         TEST_MEMBER_FORM.setYear("2021");
         TEST_MEMBER_FORM.setMonth("04");
         TEST_MEMBER_FORM.setDay("29");

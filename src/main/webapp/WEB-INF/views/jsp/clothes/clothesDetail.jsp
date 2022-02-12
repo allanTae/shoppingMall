@@ -20,9 +20,6 @@
                 </header>
                 <div class="goodsSummary">
                     <div class="pt-3">
-                        <p class="m-0"><c:out value="${clothesInfo.clothesName}(${clothesInfo.color})" /></p>
-                        <p class="m-0"><c:out value="${clothesInfo.engName}" /></p>
-                        <p class="m-0"><br /></p>
                         <div class="form-group row m-0">
                             <table class="table col-md-12" id="fabricTable" style="border: 1px solid black;">
                               <thead>
@@ -40,7 +37,6 @@
                               </tbody>
                             </table>
                         </div>
-                        <p class="m-0"><br /></p>
                         <div class="form-group row m-0">
                             <table class="table col-md-12" id="detailTable" style="border: 1px solid black;">
                               <thead>
@@ -57,7 +53,6 @@
                               </tbody>
                             </table>
                         </div>
-                        <p class="m-0"><br /></p>
                         <div class="form-group row m-0">
                             <table class="table col-md-12" id="sizeTable" style="border: 1px solid black;">
                               <thead>
@@ -91,7 +86,6 @@
                               </tbody>
                             </table>
                         </div>
-                        <p class="m-0"><br /></p>
                         <div class="form-group row m-0">
                             <table class="table col-md-12" id="modelSizeTable" style="border: 1px solid black;">
                               <thead>

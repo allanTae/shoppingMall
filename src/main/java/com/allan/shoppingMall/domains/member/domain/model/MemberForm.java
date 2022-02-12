@@ -26,19 +26,19 @@ public class MemberForm {
     @NotEmpty(message = "비밀번호 확인을 입력 해 주세요.")
     private String rePwd;
 
-    @NotEmpty(message = "지번주소를 입력 해 주세요.")
     private String jibunAddress;
 
-    @NotEmpty(message = "도로명주소를 입력 해 주세요.")
     private String roadAddress;
 
-    @NotEmpty(message = "우편번호를 입력 해 주세요.")
-    private String postCode;
+    private String extraAddress;
+
+    @NotEmpty(message = "주소를 입력 해 주세요.")
+    private String address;
 
     @NotEmpty(message = "상세 주소를 입력 해 주세요.")
     private String detailAddress;
 
-    private String extraAddress;
+    private String postCode;
 
     @NotEmpty(message = "성별을 선택 해 주세요.")
     private String gender;
