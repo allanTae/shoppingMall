@@ -17,10 +17,7 @@ import com.allan.shoppingMall.domains.mileage.domain.model.MileageContent;
 import com.allan.shoppingMall.domains.mileage.domain.model.MileageDTO;
 import com.allan.shoppingMall.domains.mileage.service.MileageService;
 import com.allan.shoppingMall.domains.order.domain.*;
-import com.allan.shoppingMall.domains.order.domain.model.OrderDetailDTO;
-import com.allan.shoppingMall.domains.order.domain.model.OrderItemDTO;
-import com.allan.shoppingMall.domains.order.domain.model.OrderRequest;
-import com.allan.shoppingMall.domains.order.domain.model.OrderSummaryDTO;
+import com.allan.shoppingMall.domains.order.domain.model.*;
 import com.allan.shoppingMall.domains.payment.domain.Payment;
 import com.allan.shoppingMall.domains.payment.domain.PaymentRepository;
 import com.allan.shoppingMall.domains.payment.domain.model.PaymentDTO;
@@ -258,10 +255,10 @@ public class OrderService {
      * 2) 주문의 주문상태가 결제 가능한여부, 일치하지 않을 시 PaymentFailByValidatedOrderStatusException throw
      * @param paymentDTO 컨트롤러에서 전달 받은 Iamprot 조회 정보를 가지고 있는 DTO 객체.
      * @param authId 회원 아이디.
-     * @return validate result
+     * @return CompletedOrderInfo 주문 결제 정보 오브젝트.
      */
     @Transactional
-    public void validatePaymentByIamport(PaymentIamportDTO paymentDTO, String authId) {
+    public CompletdOrderInfo validatePaymentByIamport(PaymentIamportDTO paymentDTO, String authId) {
         Order findOrder = orderRepository.findByOrderNumAndAuthId(authId, paymentDTO.getMerchantUid()).orElseThrow(()
                 -> new PaymentFailException(ErrorCode.ORDER_NOT_FOUND));
 
@@ -281,9 +278,11 @@ public class OrderService {
 
         // 주문 금액과 결제 총금액 확인
         if(paymentDTO.getPaymentAmount() != orderTotalAmount){
+            log.info("주문금액: " + orderTotalAmount);
+            log.info("결제금액: " + paymentDTO.getPaymentAmount());
             throw new PaymentFailByValidatedAmountException(ErrorCode.PAYMENT_AMOUNT_IS_NOT_EQUAL_BY_ORDER_AMOUNT);
         }else{
-            completeOrder(paymentDTO, authId);
+            return new CompletdOrderInfo(completeOrder(paymentDTO, authId), authId);
         }
     }
 
@@ -292,10 +291,11 @@ public class OrderService {
      * 주문 도메인의 주문상태를 '임시주문' -> '상품준비중(결제완료)' 으로 변경하는 메소드.
      * @param paymentDTO 컨트롤러에서 전달 받은 Iamprot 조회 정보를 가지고 있는 DTO 객체.
      * @param authId 로그인한 회원 아이디.
-     * @return paymentId
+     * @return orderId 결제 완료 한 주문 도메인 id.
      */
     @Transactional
     private Long completeOrder(PaymentIamportDTO paymentDTO, String authId) {
+        log.info("orderService completeOrder!!!");
         Order findOrder = orderRepository.findByOrderNumAndAuthId(authId, paymentDTO.getMerchantUid()).orElseThrow(()
                 -> new PaymentFailException(ErrorCode.ORDER_NOT_FOUND));
 
@@ -318,7 +318,7 @@ public class OrderService {
 
         paymentRepository.save(payment);
 
-        return payment.getPaymentId();
+        return findOrder.getOrderId();
     }
 
     /**

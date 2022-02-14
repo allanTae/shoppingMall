@@ -10,6 +10,7 @@ import com.allan.shoppingMall.domains.cart.domain.CartRepository;
 import com.allan.shoppingMall.domains.cart.service.CartService;
 import com.allan.shoppingMall.domains.infra.AuthenticationConverter;
 import com.allan.shoppingMall.domains.member.domain.Member;
+import com.allan.shoppingMall.domains.order.domain.model.CompletdOrderInfo;
 import com.allan.shoppingMall.domains.order.domain.model.OrderRequest;
 import com.allan.shoppingMall.domains.order.service.OrderService;
 import com.allan.shoppingMall.domains.payment.domain.model.PaymentRequest;
@@ -121,7 +122,8 @@ public class RestOrderControllerTest {
         given(iamportClient.paymentByImpUid(any()))
                 .willReturn(TEST_IAMPORT_RESOURCE);
 
-        doNothing().when(orderService).validatePaymentByIamport(any(), any());
+        given(orderService.validatePaymentByIamport(any(), any()))
+                .willReturn(new CompletdOrderInfo(1l, "testAuthId"));
 
         PaymentRequest TEST_PAYMENT_REQUEST = new PaymentRequest();
         TEST_PAYMENT_REQUEST.setImp_uid("test_imp_uid");

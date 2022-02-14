@@ -54,6 +54,11 @@ public class Cart extends BaseTimeEntity {
         this.updatedBy = "system";
     }
 
+    /**
+     * 장바구니에 상품을 추가하는 메소드입니다.
+     * 이미 장바구니에 추가 된 상품인 경우는 상품의 수량만 추가합니다.
+     * @param cartItems 장바구니 상품
+     */
     public void addCartItems(List<CartItem> cartItems){
         for(CartItem cartItem : cartItems){
             if(this.cartItems.contains(cartItem)){
@@ -65,6 +70,18 @@ public class Cart extends BaseTimeEntity {
                 this.cartItems.add(cartItem);
             }
 
+        }
+    }
+
+    /**
+     * 장바구니에 상품을 제거하는 메소드입니다.
+     * @param cartItems 장바구니 상품
+     */
+    public void substractCartItems(List<CartItem> cartItems){
+        for(CartItem cartItem : cartItems){
+            if(this.cartItems.contains(cartItem)){
+                this.cartItems.remove(cartItem);
+            }
         }
     }
 

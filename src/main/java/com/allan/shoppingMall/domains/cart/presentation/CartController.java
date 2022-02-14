@@ -1,6 +1,7 @@
 package com.allan.shoppingMall.domains.cart.presentation;
 
 import com.allan.shoppingMall.common.domain.model.UserInfo;
+import com.allan.shoppingMall.common.util.FormatUtil;
 import com.allan.shoppingMall.domains.cart.domain.model.CartDTO;
 import com.allan.shoppingMall.domains.cart.service.CartService;
 import com.allan.shoppingMall.domains.infra.AuthenticationConverter;
@@ -112,7 +113,7 @@ public class CartController {
                 .memberId(findMember.getMemberId())
                 .name(findMember.getName())
                 .email(findMember.getEmail())
-                .phone(findMember.getPhone())
+                .phone(FormatUtil.phoneFormat(findMember.getPhone()))
                 .build());
     }
 }

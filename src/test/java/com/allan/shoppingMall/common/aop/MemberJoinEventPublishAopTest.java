@@ -13,6 +13,9 @@ import org.springframework.context.ApplicationContext;
 
 import static org.mockito.Mockito.*;
 
+/**
+ * 회원가입시, 회원가입 이벤트 publish aop 테스트 클래스 입니다.
+ */
 @SpringBootTest
 public class MemberJoinEventPublishAopTest {
 

@@ -9,6 +9,7 @@ import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSize;
 import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
 import com.allan.shoppingMall.domains.member.domain.JoinType;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -69,6 +70,7 @@ public class CartItem extends BaseTimeEntity {
      * @param cartQuantity
      * @param size
      */
+    @Builder
     public CartItem(Item item, Long cartQuantity, SizeLabel size) {
         this.item = item;
         this.cartQuantity =cartQuantity;
@@ -122,6 +124,10 @@ public class CartItem extends BaseTimeEntity {
 
     @Override
     public boolean equals(Object obj) {
+        log.info("CartItem equals() call!!");
+        log.info("this.itemId: " + this.item.getItemId() + " obj.itemId: " + ((CartItem) obj).getItem().getItemId());
+        log.info("this.size: " + this.size.getDesc() + ", obj.size: " + ((CartItem) obj).getSize().getDesc());
+        log.info("");
         if(obj == null){
             log.error("CartItem equals()'s parameter is null");
             return false;
@@ -135,8 +141,6 @@ public class CartItem extends BaseTimeEntity {
 
         // clothes 상품의 경우 id, size 정보로 카트 상품의 동일비교를 확인한다.
         if(this.item instanceof Clothes && inputCartItem.item instanceof Clothes){
-//            Clothes clothes = (Clothes) this.item;
-//            boolean result = clothes.getItemId() == ((CartItem) obj).getItem().getItemId() && this.size.getDesc().equals(inputCartItem.size.getDesc());
             boolean result = this.item.getItemId() == inputCartItem.getItem().getItemId() && this.size.getDesc().equals(inputCartItem.size.getDesc());
             return result;
         }
