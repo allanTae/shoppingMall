@@ -1,6 +1,8 @@
 package com.allan.shoppingMall.domains.cart.domain;
 
 import com.allan.shoppingMall.common.domain.BaseTimeEntity;
+import com.allan.shoppingMall.common.exception.ErrorCode;
+import com.allan.shoppingMall.common.exception.cart.CartModifyFailException;
 import com.allan.shoppingMall.domains.member.domain.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -81,6 +83,36 @@ public class Cart extends BaseTimeEntity {
         for(CartItem cartItem : cartItems){
             if(this.cartItems.contains(cartItem)){
                 this.cartItems.remove(cartItem);
+            }
+        }
+    }
+
+    /**
+     * 장바구니 상품을 수정하는 메소드입니다.
+     * @param cartItems 장바구니 상품 리스트.
+     * @return
+     */
+    public void modifyCartItems(List<CartItem> cartItems){
+        for(CartItem cartItem : cartItems){
+            if(this.cartItems.contains(cartItem)) {
+                int index = this.cartItems.indexOf(cartItem);
+                Long cartItemQuantityRequest = cartItem.getCartQuantity(); // 변경 요청 한 장바구니 상품 수량.
+                CartItem findCartItem = this.cartItems.get(index);
+
+                if (cartItemQuantityRequest < 0) {
+                    throw new CartModifyFailException(ErrorCode.INPUT_CART_ITEM_QUANTITY_LESS_THAN_MINIMUM_VALUE);
+                }
+                // 변경 수량이 0 인경우, 삭제.
+                if (cartItemQuantityRequest == 0) {
+                    this.cartItems.remove(findCartItem);
+                }
+                // 변경 수량이 기존 수량보다 많은경우, 증가.
+                else if(cartItemQuantityRequest - findCartItem.getCartQuantity() > 0){
+                    findCartItem.addCartQuantity(cartItemQuantityRequest - findCartItem.getCartQuantity());
+                // 변경 수량이 기존 수량보다 적은경우, 감소.
+                }else if(cartItemQuantityRequest - findCartItem.getCartQuantity() < 0){
+                    findCartItem.subCartQuantity(findCartItem.getCartQuantity() - cartItemQuantityRequest);
+                }
             }
         }
     }

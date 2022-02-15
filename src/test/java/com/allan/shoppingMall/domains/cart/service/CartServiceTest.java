@@ -27,8 +27,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -497,6 +496,32 @@ public class CartServiceTest {
         TEST_MEMBER_CART.addCartItems(TEST_CART_ITEM_LIST);
 
         return TEST_MEMBER_CART;
+    }
+
+    @Test
+    public void 장바구니_수정_테스트() throws Exception {
+        //given
+        Cart TEST_CART = mock(Cart.class);
+        doNothing().when(TEST_CART).modifyCartItems(any());
+        given(cartRepository.findById(any()))
+                .willReturn(Optional.of(TEST_CART));
+
+        Clothes TEST_CLOTHES = Clothes.builder().build();
+        given(clothesRepository.findById(any()))
+                .willReturn(Optional.of(TEST_CLOTHES));
+
+        CartRequest TEST_CART_REQUEST = new CartRequest();
+        TEST_CART_REQUEST.setCartItems(List.of(
+                new CartLineRequest(1l, 10l, SizeLabel.S)
+        ));
+
+        //when
+        cartService.modifyCart(TEST_CART_REQUEST, any());
+
+        //then
+        verify(cartRepository,atLeastOnce()).findById(any());
+        verify(clothesRepository, atLeastOnce()).findById(any());
+        verify(TEST_CART, atLeastOnce()).modifyCartItems(any());
     }
 
 }

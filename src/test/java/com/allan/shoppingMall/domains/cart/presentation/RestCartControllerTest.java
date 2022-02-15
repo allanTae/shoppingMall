@@ -1,5 +1,6 @@
 package com.allan.shoppingMall.domains.cart.presentation;
 
+import com.allan.shoppingMall.domains.cart.domain.Cart;
 import com.allan.shoppingMall.domains.cart.domain.model.CartRequest;
 import com.allan.shoppingMall.domains.cart.domain.model.CartResult;
 import com.allan.shoppingMall.domains.cart.service.CartService;
@@ -18,6 +19,7 @@ import javax.servlet.http.Cookie;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(
@@ -55,8 +57,8 @@ public class RestCartControllerTest {
                 .andExpect(cookie().exists("cartCookie"))
                 .andExpect(cookie().maxAge("cartCookie", 60 * 60 * 24 *1))
                 .andExpect(cookie().path("cartCookie", "/"))
-                .andExpect(jsonPath("cartResultMessage").value(CartResult.ADD_CART_SUCCESS.getMessage()))
-                .andExpect(jsonPath("cartResult").value(CartResult.ADD_CART_SUCCESS.getResult()));
+                .andExpect(jsonPath("apiResultMessage").value(CartResult.ADD_CART_SUCCESS.getMessage()))
+                .andExpect(jsonPath("apiResult").value(CartResult.ADD_CART_SUCCESS.getResult()));
     }
 
     /**
@@ -87,8 +89,8 @@ public class RestCartControllerTest {
                 .andExpect(cookie().exists("cartCookie"))
                 .andExpect(cookie().maxAge("cartCookie", 60 * 60 * 24 *1))
                 .andExpect(cookie().path("cartCookie", "/"))
-                .andExpect(jsonPath("cartResultMessage").value(CartResult.ADD_CART_SUCCESS.getMessage()))
-                .andExpect(jsonPath("cartResult").value(CartResult.ADD_CART_SUCCESS.getResult()));
+                .andExpect(jsonPath("apiResultMessage").value(CartResult.ADD_CART_SUCCESS.getMessage()))
+                .andExpect(jsonPath("apiResult").value(CartResult.ADD_CART_SUCCESS.getResult()));
     }
 
     /**
@@ -111,8 +113,31 @@ public class RestCartControllerTest {
         verify(cartService, atLeastOnce()).addMemberCart(any(), any());
         resultActions
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("cartResultMessage").value(CartResult.ADD_CART_SUCCESS.getMessage()))
-                .andExpect(jsonPath("cartResult").value(CartResult.ADD_CART_SUCCESS.getResult()));
+                .andExpect(jsonPath("apiResultMessage").value(CartResult.ADD_CART_SUCCESS.getMessage()))
+                .andExpect(jsonPath("apiResult").value(CartResult.ADD_CART_SUCCESS.getResult()));
+    }
+
+    /**
+     * 장바구니 상품을 수정하는 메소드 입니다.
+     */
+    @Test
+    public void 장바구니_상품_수정테스트() throws Exception {
+        //given
+        CartRequest TEST_CART_REQUEST = new CartRequest();
+
+        doNothing().when(cartService).modifyCart(any(), any());
+
+        //when
+        ResultActions resultActions = mvc.perform(put("/cart/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(TEST_CART_REQUEST)));
+
+        //then
+        verify(cartService, atLeastOnce()).modifyCart(any(), any());
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("apiResultMessage").value(CartResult.MODIFY_CART_SUCCESS.getMessage()))
+                .andExpect(jsonPath("apiResult").value(CartResult.MODIFY_CART_SUCCESS.getResult()));
     }
 
     private static String asJsonString(final Object obj) {

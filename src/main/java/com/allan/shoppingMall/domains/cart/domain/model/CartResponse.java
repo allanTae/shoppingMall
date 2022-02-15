@@ -9,30 +9,29 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CartResponse {
-    private String cartResultMessage; // 결과 메시지.
-    private Long cartResult; // api 결과 값. 사용자단에서 결과를 확인하기 위해 사용합니다.
+    private String apiResultMessage; // 결과 메시지.
+    private Boolean apiResult; // api 결과 값. 사용자단에서 결과를 확인하기 위해 사용합니다.
 
     private CartErrorResponse cartErrorResponse;
 
-    public CartResponse(String orderResult, Long cartResult) {
-        this.cartResultMessage = orderResult;
-        this.cartResult = cartResult;
-    }
-
+    /**
+     * @param cartResult api 결과정보 오브젝트
+     * @return
+     */
     public CartResponse(CartResult cartResult){
-        this.cartResultMessage = cartResult.getMessage();
-        this.cartResult = cartResult.getResult();
+        this.apiResultMessage = cartResult.getMessage();
+        this.apiResult = cartResult.getResult();
     }
 
+    /**
+     * @param cartResult api 결과정보 오브젝트
+     * @param cartErrorResponse api 에러정보 오브젝트
+     * @return
+     */
     public CartResponse(CartResult cartResult, CartErrorResponse cartErrorResponse){
-        this.cartResultMessage = cartResult.getMessage();
-        this.cartResult = cartResult.getResult();
+        this.apiResultMessage = cartResult.getMessage();
+        this.apiResult = cartResult.getResult();
         this.cartErrorResponse = cartErrorResponse;
     }
 
-    public CartResponse(String orderResult, Long cartResult, CartErrorResponse cartErrorResponse) {
-        this.cartResultMessage = orderResult;
-        this.cartResult = cartResult;
-        this.cartErrorResponse = cartErrorResponse;
-    }
 }

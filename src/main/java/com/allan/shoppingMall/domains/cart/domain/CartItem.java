@@ -112,6 +112,7 @@ public class CartItem extends BaseTimeEntity {
     public void subCartQuantity(Long cartQuantity){
         if(this.cartQuantity - cartQuantity < 0){
             log.error("0 보다 작은 수량은 담을 수 없습니다.");
+            throw new CartAddItemFailException(ErrorCode.INPUT_CART_ITEM_QUANTITY_LESS_THAN_MINIMUM_VALUE);
         }else{
             this.cartQuantity -= cartQuantity;
         }

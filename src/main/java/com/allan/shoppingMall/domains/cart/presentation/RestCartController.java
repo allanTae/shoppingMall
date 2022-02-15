@@ -1,6 +1,7 @@
 package com.allan.shoppingMall.domains.cart.presentation;
 
 import com.allan.shoppingMall.common.exception.ItemNotFoundException;
+import com.allan.shoppingMall.common.exception.cart.CartModifyFailException;
 import com.allan.shoppingMall.common.exception.cart.CartNotFoundException;
 import com.allan.shoppingMall.domains.cart.domain.model.CartErrorResponse;
 import com.allan.shoppingMall.domains.cart.domain.model.CartRequest;
@@ -72,7 +73,23 @@ public class RestCartController {
                     HttpStatus.OK);
         }
 
-        return new ResponseEntity<CartResponse>(new CartResponse(CartResult.ADD_CART_SUCCESS),
-            HttpStatus.OK);
+        return new ResponseEntity<CartResponse>(new CartResponse(CartResult.ADD_CART_SUCCESS),HttpStatus.OK);
+    }
+
+    /**
+     * @param cartId 장바구니 도메인 id.
+     * @param cartRequest 장바구니 요청 정보.
+     * @return
+     */
+    @ResponseBody
+    @PutMapping( value = "/cart/{cartId}")
+    public ResponseEntity<CartResponse> modifyCart(@PathVariable("cartId") Long cartId, @RequestBody CartRequest cartRequest){
+        try {
+            cartService.modifyCart(cartRequest, cartId);
+        }catch (CartModifyFailException exception){
+            return new ResponseEntity<CartResponse>(new CartResponse(CartResult.MODIFY_CART_FAIL, CartErrorResponse.of(exception.getErrorCode())),
+                    HttpStatus.OK);
+        }
+        return new ResponseEntity<CartResponse>(new CartResponse(CartResult.MODIFY_CART_SUCCESS), HttpStatus.OK);
     }
 }

@@ -275,4 +275,22 @@ public class CartService {
         return new OrderSummaryRequest(totalAmount, totalQuantity, orderItemSummaryRequestList);
     }
 
+    /**
+     * 장바구니를 조회하여 장바구니 상품 정보를 수정하는 메소드 입니다.
+     * @param cartRequest 장바구니 요청 정보.
+     */
+    @Transactional
+    public void modifyCart(CartRequest cartRequest, Long cartId){
+        Cart findCart = cartRepository.findById(cartId).orElseThrow(()
+                -> new CartNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+
+        List<CartItem> cartItemList = cartRequest.getCartItems().stream()
+                .map(cartLineRequest -> {
+                    Clothes findClothes = clothesRepository.findById(cartLineRequest.getItemId()).orElseThrow(()
+                            -> new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+                    return new CartItem(findClothes, cartLineRequest.getCartQuantity(), cartLineRequest.getSize());
+                }).collect(Collectors.toList());
+
+        findCart.modifyCartItems(cartItemList);
+    }
 }
