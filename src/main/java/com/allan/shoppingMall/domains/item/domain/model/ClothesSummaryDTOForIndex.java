@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
-public class ClothesSummaryDTO {
+public class ClothesSummaryDTOForIndex {
 
     private Long clothesId;
     private String clothesName;
@@ -26,7 +26,7 @@ public class ClothesSummaryDTO {
     private String clothesColor;
 
     @Builder
-    public ClothesSummaryDTO(Long clothesId, String clothesName, Long price, List<Long> profileImageIds, String clothesColor) {
+    public ClothesSummaryDTOForIndex(Long clothesId, String clothesName, Long price, List<Long> profileImageIds, String clothesColor) {
         this.clothesId = clothesId;
         this.clothesName = clothesName;
         this.price = price;

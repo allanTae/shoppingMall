@@ -20,6 +20,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
+                .antMatchers("/cart/**/order", "/cart/order")
+                    .authenticated()
                 .antMatchers("/clothes/save", "/clothes/clothesForm")
                     .hasAnyRole("ADMIN")
                 .antMatchers("/resources/**", "/auth/**", "/member/signupForm",

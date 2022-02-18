@@ -50,8 +50,6 @@ public class CartService {
                 .map(cartItemSummary -> {
                     Clothes clothes = clothesRepository.findById(cartItemSummary.getItemId()).orElseThrow(()
                             -> new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
-                    log.info("cartItemSummary.quantity: " + cartItemSummary.getCartQuantity());
-                    log.info("cartItemSummary.size: " + cartItemSummary.getSize().getDesc());
                     return new CartItem(clothes, cartItemSummary.getCartQuantity(), cartItemSummary.getSize());
                 }).collect(Collectors.toList());
 
@@ -81,7 +79,7 @@ public class CartService {
     }
 
     /**
-     * 비회원 장바구니에 추가하는 메소드(이미 비회원 장바구니가 존재하는 경우에 비회원 장바구니에 장바구니 상품을 추가하기 위한 메소드).
+     * 비회원 장바구니 상품 추가 메소드(이미 비회원 장바구니가 존재하는 경우에 비회원 장바구니에 장바구니 상품을 추가하기 위한 메소드).
      * @param cartRequest 사용자가 전달 한 장바구니 정보.
      */
     @Transactional
@@ -108,7 +106,8 @@ public class CartService {
     public void updateMemberCartByTempCart(String ckId, String authId){
         try {
             Cart ckCart = cartRepository.findByCkId(ckId).orElseThrow(() -> new CartNotFoundException(ErrorCode.ENTITY_NOT_FOUND)); // 비회원 장바구니.
-            Cart memberCart = cartRepository.findByAuthId(authId).get(); // 회원 장바구니.
+            Cart memberCart = cartRepository.findByAuthId(authId).orElseThrow(() -> new CartNotFoundException(ErrorCode.ENTITY_NOT_FOUND)); // 회원 장바구니.
+
             memberCart.addCartItems(ckCart.getCartItems()); // 비회원 장바구니 -> 회원 장바구니.
             cartRepository.delete(ckCart);
         }catch (CartNotFoundException e){
@@ -293,4 +292,45 @@ public class CartService {
 
         findCart.modifyCartItems(cartItemList);
     }
+
+    /**
+     * 회원 장바구니를 조회하여 장바구니 상품 정보를 수정하는 메소드 입니다.
+     * @param cartRequest 장바구니 요청 정보.
+     * @param authId 로그인한 회원의 아이디.
+     */
+    @Transactional
+    public void modifyMemberCart(CartRequest cartRequest, String authId){
+        Cart findCart = cartRepository.findByAuthId(authId).orElseThrow(()
+                -> new CartNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+
+        List<CartItem> cartItemList = cartRequest.getCartItems().stream()
+                .map(cartLineRequest -> {
+                    Clothes findClothes = clothesRepository.findById(cartLineRequest.getItemId()).orElseThrow(()
+                            -> new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+                    return new CartItem(findClothes, cartLineRequest.getCartQuantity(), cartLineRequest.getSize());
+                }).collect(Collectors.toList());
+
+        findCart.modifyCartItems(cartItemList);
+    }
+
+    /**
+     * 비회원 장바구니를 조회하여 장바구니 상품 정보를 수정하는 메소드 입니다.
+     * @param cartRequest 장바구니 요청 정보.
+     * @param ckId 장바구니 쿠키 아이디.
+     */
+    @Transactional
+    public void modifyTempCart(CartRequest cartRequest, String ckId){
+        Cart findCart = cartRepository.findByCkId(ckId).orElseThrow(()
+                -> new CartNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+
+        List<CartItem> cartItemList = cartRequest.getCartItems().stream()
+                .map(cartLineRequest -> {
+                    Clothes findClothes = clothesRepository.findById(cartLineRequest.getItemId()).orElseThrow(()
+                            -> new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+                    return new CartItem(findClothes, cartLineRequest.getCartQuantity(), cartLineRequest.getSize());
+                }).collect(Collectors.toList());
+
+        findCart.modifyCartItems(cartItemList);
+    }
+
 }

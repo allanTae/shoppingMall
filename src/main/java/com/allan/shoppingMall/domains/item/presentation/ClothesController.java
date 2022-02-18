@@ -17,29 +17,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-@RequestMapping("/clothes")
 @Slf4j
 @RequiredArgsConstructor
 public class ClothesController {
 
     private final ClothesService clothesService;
 
-    @PostMapping("/save")
+    @PostMapping("/clothes/save")
     public String saveClothes(@ModelAttribute("clothesForm") ClothesForm clothesForm){
         clothesService.saveClothes(clothesForm);
 
         return "redirect:/index";
     }
 
-    @GetMapping("/clothesForm")
+    @GetMapping("/clothes/clothesForm")
     public String clothesForm(@ModelAttribute("clothesForm") ClothesForm clothesForm, Model model){
         List<SizeLabel> sizeLabelList = new ArrayList<>();
 
         return "clothes/clothesForm";
     }
 
-    @GetMapping("/{clothesId}")
-    public String getClothes(@PathVariable("clothesId") Long clothesId, Model model){
+    @GetMapping("/clothes")
+    public String getClothes(@RequestParam("clothesId") Long clothesId, Model model){
         ClothesDTO clothes = clothesService.getClothes(clothesId);
         model.addAttribute("clothesInfo", clothes);
 

@@ -293,7 +293,6 @@
   }
 
   function checkValidation(){
-    console.log("checkValidation() call!!!");
      var selectedOptionIndex = $('#deliveryMemo option').index($('#deliveryMemo option:selected'));
      if(selectedOptionIndex === 0){
         paymentAlert("알림", "배송메모를 선택 해 주세요.", "warning");
@@ -357,8 +356,6 @@
                                         "usedMileage": usedMileage
         });
 
-        console.log(paramData);
-
         var headers = {"Content-Type" : "application/json; charset=UTF-8;"
               , "X-HTTP-Method-Override" : "POST"};
         $.ajax({
@@ -370,21 +367,14 @@
           , success: function(result){
               if(result.orderResult === "주문도메인 생성성공"){
                 // order domain create success
-                console.log("message: " + result.message);
-                console.log("orderNum: " + result.orderNum);
                 requestPay(result.orderNum);
               }else{
                 // order domain create fail
-                console.log("order fail");
-                console.log(result.errorResponse.fieldErrors.length);
                 if(result.errorResponse.fieldErrors.length < 1){
                     console.log("fieldError 가 없습니다.");
                 }
                 else {
                     $(result.errorResponse.fieldErrors).each(function(){
-                        console.log("field: " + this.field);
-                        console.log("value: " + this.value);
-                        console.log("reason: " + this.reason);
                         $('#' + this.field + 'Error').text(this.reason);
                         $('#' + this.field + 'Error').css("display", "block");
                     });	//each end
@@ -413,7 +403,6 @@
 
           totalAmount = totalAmount - Number($('#mileagePoint').val());
 
-          console.log("총 결제 금액: " + totalAmount);
           // IMP.request_pay(param, callback) 결제창 호출
           IMP.request_pay({
               // param
@@ -438,7 +427,6 @@
                   var paramData = JSON.stringify({"imp_uid": rsp.imp_uid,
                                                   "merchant_uid": rsp.merchant_uid
                   });
-                  console.log("결제 성공");
                   // 결제 성공 시 결제 유효성 검사
                    $.ajax({
                     url: "${pageContext.request.contextPath}/order/complete"
@@ -499,16 +487,13 @@
     // 마일리지 버튼
     var availableMileage = ${availableMileage};
     $(document).on('click', '#btnMileageUse', function(e){
-        console.log("mileage text: " + availableMileage);
         $('#mileagePoint').val(availableMileage).trigger('change');
     });
 
     // 셀렉트 된 상품의 주문량 change 이벤트.
     $(document).on("change","#mileagePoint",function(){
         var mileage = Number($(this).val());
-        console.log("mileage: " + mileage);
         var orderTotalAmount = ${orderInfo.totalAmount + orderInfo.deliveryAmount} - mileage;
-        console.log("orderTotalAmount: " + orderTotalAmount);
 
         $('#orderTotalAmount').text(orderTotalAmount.toLocaleString('ko-KR') + '원');
 

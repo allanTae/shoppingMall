@@ -217,4 +217,56 @@ public class CartTest {
         assertThat(TEST_CART.getCartItems().get(1).getSize(), is(SizeLabel.L));
 
     }
+
+    @Test
+    @WithMockUser
+    public void 장바구니_상품_등록_테스트2() throws Exception {
+        //given
+        Cart TEST_CART = Cart.builder()
+                .member(TEST_MEMEMBER)
+                .build();
+
+        TEST_CART.addCartItems(List.of(
+                new CartItem(TEST_CLOTHES, 1l, SizeLabel.S),
+                new CartItem(TEST_CLOTHES, 2l, SizeLabel.M),
+                new CartItem(TEST_CLOTHES, 3l, SizeLabel.L)
+        ));
+
+        testEntityManager.persist(TEST_CART);
+        testEntityManager.flush();
+
+        assertThat(TEST_CART.getCartItems().size(), is(3));
+        assertThat(TEST_CART.getCartItems().get(0).getItem().getItemId(), is(TEST_CLOTHES.getItemId()));
+        assertThat(TEST_CART.getCartItems().get(0).getCartQuantity(), is(1l));
+        assertThat(TEST_CART.getCartItems().get(0).getSize(), is(SizeLabel.S));
+
+        assertThat(TEST_CART.getCartItems().get(1).getItem().getItemId(), is(TEST_CLOTHES.getItemId()));
+        assertThat(TEST_CART.getCartItems().get(1).getCartQuantity(), is(2l));
+        assertThat(TEST_CART.getCartItems().get(1).getSize(), is(SizeLabel.M));
+
+        assertThat(TEST_CART.getCartItems().get(2).getItem().getItemId(), is(TEST_CLOTHES.getItemId()));
+        assertThat(TEST_CART.getCartItems().get(2).getCartQuantity(), is(3l));
+        assertThat(TEST_CART.getCartItems().get(2).getSize(), is(SizeLabel.L));
+
+        //when
+        TEST_CART.addCartItems(List.of(
+                new CartItem(TEST_CLOTHES, 3l, SizeLabel.S),
+                new CartItem(TEST_CLOTHES, 2l, SizeLabel.M),
+                new CartItem(TEST_CLOTHES, 1l, SizeLabel.L)
+        ));
+
+        //then
+        assertThat(TEST_CART.getCartItems().size(), is(3));
+        assertThat(TEST_CART.getCartItems().get(0).getItem().getItemId(), is(TEST_CLOTHES.getItemId()));
+        assertThat(TEST_CART.getCartItems().get(0).getCartQuantity(), is(4l));
+        assertThat(TEST_CART.getCartItems().get(0).getSize(), is(SizeLabel.S));
+
+        assertThat(TEST_CART.getCartItems().get(1).getItem().getItemId(), is(TEST_CLOTHES.getItemId()));
+        assertThat(TEST_CART.getCartItems().get(1).getCartQuantity(), is(4l));
+        assertThat(TEST_CART.getCartItems().get(1).getSize(), is(SizeLabel.M));
+
+        assertThat(TEST_CART.getCartItems().get(2).getItem().getItemId(), is(TEST_CLOTHES.getItemId()));
+        assertThat(TEST_CART.getCartItems().get(2).getCartQuantity(), is(4l));
+        assertThat(TEST_CART.getCartItems().get(2).getSize(), is(SizeLabel.L));
+    }
 }

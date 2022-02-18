@@ -2,7 +2,7 @@ package com.allan.shoppingMall.domains.item.service;
 
 import com.allan.shoppingMall.domains.item.domain.*;
 import com.allan.shoppingMall.domains.item.domain.clothes.*;
-import com.allan.shoppingMall.domains.item.domain.model.ClothesSummaryDTO;
+import com.allan.shoppingMall.domains.item.domain.model.ClothesSummaryDTOForIndex;
 import com.allan.shoppingMall.domains.item.domain.model.*;
 import com.allan.shoppingMall.domains.item.infra.ImageFileHandler;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
@@ -65,7 +65,7 @@ public class ClothesServiceTest {
 
 
         //when
-        List<ClothesSummaryDTO> clothes = clothesService.getClothesSummary(PageRequest.of(0, 9, Sort.by(Sort.Direction.DESC, "createdDate")));
+        List<ClothesSummaryDTOForIndex> clothes = clothesService.getClothesSummary(PageRequest.of(0, 9, Sort.by(Sort.Direction.DESC, "createdDate")));
 
         //then
         verify(clothesRepository, atLeastOnce()).findAll(any(Pageable.class));
@@ -173,5 +173,62 @@ public class ClothesServiceTest {
         ));
         clothesRequest.setClothesColor(1);
         return clothesRequest;
+    }
+
+    @Test
+    public void 의류_상품_요약정보_조회_테스트() throws Exception {
+        //given
+        Clothes TEST_CLOTHES = Clothes.builder()
+                .price(1000l)
+                .name("testClothesName")
+                .build();
+
+        ReflectionTestUtils.setField(TEST_CLOTHES, "itemId", 1l);
+
+        TEST_CLOTHES.changeClothesSizes(List.of(
+                ClothesSize.builder()
+                        .sizeLabel(SizeLabel.S)
+                        .stockQuantity(10l)
+                        .build(),
+                ClothesSize.builder()
+                        .sizeLabel(SizeLabel.M)
+                        .stockQuantity(20l)
+                        .build(),
+                ClothesSize.builder()
+                        .sizeLabel(SizeLabel.L)
+                        .stockQuantity(30l)
+                        .build()
+                ));
+
+        ItemImage TEST_ITEM_IMAGE_1 = createItemImage(1l);
+        ItemImage TEST_ITEM_IMAGE_2 = createItemImage(2l);
+        ItemImage TEST_ITEM_IMAGE_3 = createItemImage(3l);
+
+        TEST_CLOTHES.changeItemImages(List.of(
+                TEST_ITEM_IMAGE_1, TEST_ITEM_IMAGE_2, TEST_ITEM_IMAGE_3
+        ));
+
+        given(clothesRepository.findById(any()))
+                .willReturn(Optional.of(TEST_CLOTHES));
+
+        //when
+        ClothesSummeryDTO clothesSummaryDTO = clothesService.getClothesSummaryDTO(any());
+
+        //then
+        verify(clothesRepository, atLeastOnce()).findById(any());
+        assertThat(clothesSummaryDTO.getClothesId(), is(TEST_CLOTHES.getItemId()));
+        assertThat(clothesSummaryDTO.getClothesName(), is(TEST_CLOTHES.getName()));
+        assertThat(clothesSummaryDTO.getProfileImgId(), is(TEST_ITEM_IMAGE_1.getItemImageId()));
+        assertThat(clothesSummaryDTO.getClothesPrice(), is(TEST_CLOTHES.getPrice()));
+        assertThat(clothesSummaryDTO.getSizes().size(), is(3));
+        assertThat(clothesSummaryDTO.getSizes().get(0), is(TEST_CLOTHES.getClothesSizes().get(0).getSizeLabel()));
+        assertThat(clothesSummaryDTO.getSizes().get(1), is(TEST_CLOTHES.getClothesSizes().get(1).getSizeLabel()));
+        assertThat(clothesSummaryDTO.getSizes().get(2), is(TEST_CLOTHES.getClothesSizes().get(2).getSizeLabel()));
+    }
+
+    private ItemImage createItemImage(Long imageId){
+        ItemImage itemImage = ItemImage.builder().build();
+        ReflectionTestUtils.setField(itemImage, "itemImageId", imageId);
+        return itemImage;
     }
 }

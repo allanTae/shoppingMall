@@ -1,7 +1,6 @@
-package com.allan.shoppingMall.domains.cart.domain.model;
+package com.allan.shoppingMall.domains.cart.presentation;
 
 import com.allan.shoppingMall.common.exception.ErrorCode;
-import com.allan.shoppingMall.domains.order.domain.model.OrderErrorResponse;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -64,7 +64,6 @@ public class Cart extends BaseTimeEntity {
     public void addCartItems(List<CartItem> cartItems){
         for(CartItem cartItem : cartItems){
             if(this.cartItems.contains(cartItem)){
-                log.info("cartItem is already existed in cart.");
                 int cartItemIndex = this.cartItems.indexOf(cartItem);
                 this.cartItems.get(cartItemIndex).addCartQuantity(cartItem.getCartQuantity());
             }else{
@@ -94,8 +93,16 @@ public class Cart extends BaseTimeEntity {
      */
     public void modifyCartItems(List<CartItem> cartItems){
         for(CartItem cartItem : cartItems){
+            // 있으면 변경.
             if(this.cartItems.contains(cartItem)) {
+                log.info("이미 존재하는 옵션>>.");
+                log.info("itemId: " + cartItem.getItem().getItemId());
+                log.info("cartQuantity: " + cartItem.getCartQuantity());
+                log.info("size: " + cartItem.getSize().getDesc());
+                log.info("이미 >>");
+
                 int index = this.cartItems.indexOf(cartItem);
+
                 Long cartItemQuantityRequest = cartItem.getCartQuantity(); // 변경 요청 한 장바구니 상품 수량.
                 CartItem findCartItem = this.cartItems.get(index);
 
@@ -113,6 +120,15 @@ public class Cart extends BaseTimeEntity {
                 }else if(cartItemQuantityRequest - findCartItem.getCartQuantity() < 0){
                     findCartItem.subCartQuantity(findCartItem.getCartQuantity() - cartItemQuantityRequest);
                 }
+            }else{
+                // 없으면 추가.
+                log.info("new 옵션>>.");
+                log.info("itemId: " + cartItem.getItem().getItemId());
+                log.info("cartQuantity: " + cartItem.getCartQuantity());
+                log.info("size: " + cartItem.getSize().getDesc());
+                log.info("new >>");
+                cartItem.changeCart(this);
+                this.cartItems.add(cartItem);
             }
         }
     }

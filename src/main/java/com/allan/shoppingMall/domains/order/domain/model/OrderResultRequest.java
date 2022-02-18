@@ -1,5 +1,6 @@
 package com.allan.shoppingMall.domains.order.domain.model;
 
+import com.allan.shoppingMall.domains.order.presentation.OrderErrorResponse;
 import com.allan.shoppingMall.domains.payment.domain.model.iamport.IamportResult;
 import lombok.Getter;
 import lombok.Setter;

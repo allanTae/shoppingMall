@@ -1,4 +1,4 @@
-package com.allan.shoppingMall.domains.order.domain.model;
+package com.allan.shoppingMall.domains.order.presentation;
 
 import com.allan.shoppingMall.common.exception.ErrorCode;
 import lombok.*;

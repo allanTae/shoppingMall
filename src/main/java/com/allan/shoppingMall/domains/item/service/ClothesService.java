@@ -2,13 +2,13 @@ package com.allan.shoppingMall.domains.item.service;
 
 import com.allan.shoppingMall.common.exception.ErrorCode;
 import com.allan.shoppingMall.common.exception.ItemNotFoundException;
+import com.allan.shoppingMall.domains.cart.domain.model.RequiredOption;
 import com.allan.shoppingMall.domains.item.domain.*;
 import com.allan.shoppingMall.domains.item.domain.clothes.*;
 import com.allan.shoppingMall.domains.item.domain.model.*;
 import com.allan.shoppingMall.domains.item.infra.ImageFileHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -195,17 +195,17 @@ public class ClothesService {
      * index.jsp 에서 arraival 에 표시할 상품에 대한 PREVIEW 이미지, 상품이름, 가격 등의 정보를 반환하는 메소드.
      * @return List<ClothesSummaryDTO>
      */
-    public List<ClothesSummaryDTO> getClothesSummary(Pageable pageable){
+    public List<ClothesSummaryDTOForIndex> getClothesSummary(Pageable pageable){
         List<Clothes> clothesList = clothesRepository.findAll(pageable).getContent();
 
-        List<ClothesSummaryDTO> clothesSummaryDTOS = clothesList
+        List<ClothesSummaryDTOForIndex> clothesSummaryDTOS = clothesList
                 .stream()
                 .map(clothes -> {
-                    ClothesSummaryDTO clothesSummary = ClothesSummaryDTO.builder()
+                    ClothesSummaryDTOForIndex clothesSummary = ClothesSummaryDTOForIndex.builder()
                             .clothesId(clothes.getItemId())
                             .clothesName(clothes.getName())
                             .price(clothes.getPrice())
-                            .profileImageIds(ClothesSummaryDTO.toImagePath(clothes.getItemImages()))
+                            .profileImageIds(ClothesSummaryDTOForIndex.toImagePath(clothes.getItemImages()))
                             .clothesColor(clothes.getColor().getDesc())
                             .build();
                     return clothesSummary;
@@ -214,4 +214,26 @@ public class ClothesService {
         return clothesSummaryDTOS;
     }
 
+    /**
+     * 의류 상품 요약정보를 조회하는 메소드.
+     * @param clothesId 의류상품 도메인 id.
+     * @return ClothesSummaryDTO
+     */
+    public ClothesSummeryDTO getClothesSummaryDTO(Long clothesId){
+        Clothes findClothes = clothesRepository.findById(clothesId).orElseThrow(() ->
+                new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+
+        List<SizeLabel> clothesSizes = findClothes.getClothesSizes().stream()
+                .map(clothesSize -> {
+                    return clothesSize.getSizeLabel();
+                }).collect(Collectors.toList());
+
+        return ClothesSummeryDTO.builder()
+                .clothesId(findClothes.getItemId())
+                .clothesName(findClothes.getName())
+                .clothesPrice(findClothes.getPrice())
+                .sizes(clothesSizes)
+                .profileImgId(findClothes.getItemImages().get(0).getItemImageId())
+                .build();
+    }
 }

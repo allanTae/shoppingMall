@@ -125,10 +125,6 @@ public class CartItem extends BaseTimeEntity {
 
     @Override
     public boolean equals(Object obj) {
-        log.info("CartItem equals() call!!");
-        log.info("this.itemId: " + this.item.getItemId() + " obj.itemId: " + ((CartItem) obj).getItem().getItemId());
-        log.info("this.size: " + this.size.getDesc() + ", obj.size: " + ((CartItem) obj).getSize().getDesc());
-        log.info("");
         if(obj == null){
             log.error("CartItem equals()'s parameter is null");
             return false;
@@ -140,11 +136,7 @@ public class CartItem extends BaseTimeEntity {
 
         CartItem inputCartItem = (CartItem) obj;
 
-        // clothes 상품의 경우 id, size 정보로 카트 상품의 동일비교를 확인한다.
-        if(this.item instanceof Clothes && inputCartItem.item instanceof Clothes){
-            boolean result = this.item.getItemId() == inputCartItem.getItem().getItemId() && this.size.getDesc().equals(inputCartItem.size.getDesc());
-            return result;
-        }
-        return this.item.getItemId() == ((CartItem) obj).getItem().getItemId();
+        return this.item.getItemId() == inputCartItem.getItem().getItemId() &&
+                this.size.getDesc().equals(inputCartItem.size.getDesc());
     }
 }

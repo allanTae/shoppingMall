@@ -1,10 +1,9 @@
-package com.allan.shoppingMall.domains.item.controller;
+package com.allan.shoppingMall.domains.item.presentation;
 
 import com.allan.shoppingMall.common.TestUserDetailsService;
 import com.allan.shoppingMall.domains.cart.service.CartService;
 import com.allan.shoppingMall.domains.item.domain.model.ClothesDTO;
 import com.allan.shoppingMall.domains.item.domain.model.ClothesForm;
-import com.allan.shoppingMall.domains.item.presentation.ClothesController;
 import com.allan.shoppingMall.domains.item.service.ClothesService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +12,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -88,7 +85,7 @@ public class ClothesControllerTest {
                 .willReturn(TEST_CLOTHES_DTO);
 
         //when
-        ResultActions resultActions = mvc.perform(get("/clothes/1"));
+        ResultActions resultActions = mvc.perform(get("/clothes?clothesId=1"));
 
         //then
         resultActions

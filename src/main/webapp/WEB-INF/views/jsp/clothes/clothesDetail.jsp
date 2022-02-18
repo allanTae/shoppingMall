@@ -419,7 +419,7 @@
             return;
         }else{
             let form =$('<form action="${pageContext.request.contextPath}/order/orderForm" method="post">' +
-                getOrderForm2() +
+                getOrderForm() +
                 '</form>');
             $("body").append(form);
             form.submit();
@@ -428,23 +428,6 @@
       });
 
       function getOrderForm(){
-        var orderItems = getOrderQuantities();
-        var orderFormInfo = "";
-        orderFormInfo += '<input type="text" name="totalQuantity" value="' + totalOrderQuantity + '" />';
-        orderFormInfo += '<input type="text" name="totalAmount" value="' + totalAmount + '" />';
-        for(var i = 0; i<orderItems.length; i++){
-            orderFormInfo += '<input type="text" name="orderItems[' + i + '].itemId" value="${clothesInfo.clothesId}" />';
-            orderFormInfo += '<input type="text" name="orderItems[' + i + '].itemName" value="${clothesInfo.clothesName}" />';
-            orderFormInfo += '<input type="text" name="orderItems[' + i + '].previewImg" value="${clothesInfo.previewImages[0]}" />';
-            orderFormInfo += '<input type="text" name="orderItems[' + i + '].size" value="' + orderItems[i].size + '" />';
-            orderFormInfo += '<input type="text" name="orderItems[' + i + '].orderQuantity" value="' + orderItems[i].quantity + '" />';
-            orderFormInfo += '<input type="text" name="orderItems[' + i + '].price" value="' + orderItems[i].price + '" />';
-        }
-        console.log(orderFormInfo);
-        return orderFormInfo;
-      }
-
-      function getOrderForm2(){
           var orderItems = getOrderQuantities();
           var orderFormInfo = "";
           orderFormInfo += '<input type="text" name="totalQuantity" value="' + totalOrderQuantity + '" />';
@@ -469,40 +452,40 @@
       }
 
       // 장바구니 버튼.
-    $(document).on('click', "#btnCart", function(){
-      if(quantityMapBySize.size < 1){
-          alert("필수 옵션을 입력 해 주세요.");
-          return;
-      }else{
-          var cartItemList = [];
-          var orderItems = getOrderQuantities();
-          for(var i = 0; i<orderItems.length; i++){
-              cartItemList.push({
-                  "itemId": ${clothesInfo.clothesId},
-                  "cartQuantity": orderItems[i].quantity,
-                  "size": orderItems[i].size
-              });
-          }
+      $(document).on('click', "#btnCart", function(){
+        if(quantityMapBySize.size < 1){
+            alert("필수 옵션을 입력 해 주세요.");
+            return;
+        }else{
+            var cartItemList = [];
+            var orderItems = getOrderQuantities();
+            for(var i = 0; i<orderItems.length; i++){
+                cartItemList.push({
+                    "itemId": ${clothesInfo.clothesId},
+                    "cartQuantity": orderItems[i].quantity,
+                    "size": orderItems[i].size
+                });
+            }
 
-          var paramData = JSON.stringify({"cartItems": cartItemList});
-          var headers = {"Content-Type" : "application/json; charset=UTF-8;"
-                  , "X-HTTP-Method-Override" : "POST"};
-          $.ajax({
-              url: "${pageContext.request.contextPath}/cart"
-              , headers : headers
-              , data : paramData
-              , type : 'POST'
-              , dataType : 'json'
-              , success: function(result){
-                  console.log(result);
-                  console.log(result.cartResultMessage);
-                  alert(result.cartResultMessage);
-              }
-              , error:function(request,status,error){
-                  alert("장바구니에 상품을 추가하지 못했습니다.");
-              }
-          });
-      }
+            var paramData = JSON.stringify({"cartItems": cartItemList});
+            var headers = {"Content-Type" : "application/json; charset=UTF-8;"
+                    , "X-HTTP-Method-Override" : "POST"};
+            $.ajax({
+                url: "${pageContext.request.contextPath}/cart"
+                , headers : headers
+                , data : paramData
+                , type : 'POST'
+                , dataType : 'json'
+                , success: function(result){
+                    console.log(result);
+                    console.log(result.apiResultMessage);
+                    alert(result.apiResultMessage);
+                }
+                , error:function(request,status,error){
+                    alert("장바구니에 상품을 추가하지 못했습니다.");
+                }
+            });
+        }
     });
 
     </script>

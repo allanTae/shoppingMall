@@ -1,4 +1,4 @@
-package com.allan.shoppingMall.domains.cart.domain.model;
+package com.allan.shoppingMall.domains.cart.presentation;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +9,8 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum CartResult {
+    GET_CART_LIST_SUCCESS(true,"장바구니 조회에 성공하였습니다."),
+    GET_CART_LIST_FAILL(false,"장바구니 조회에 실패하였습니다."),
     ADD_CART_SUCCESS(true, "상품을 장바구니에 추가하였습니다."),
     ADD_CART_FAIL(false, "상품을 장바구니에 추가하는데 실패하였습니다."),
     MODIFY_CART_SUCCESS(true, "장바구니 상품 변경에 성공하였습니다."),

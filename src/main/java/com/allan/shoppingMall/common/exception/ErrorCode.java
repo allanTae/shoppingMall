@@ -60,8 +60,9 @@ public enum ErrorCode {
     IAMPORT_ERROR(400, "IAMPORT001", "Iamport 관련 에러입니다."),
 
     // Cart
-    MEMBER_CART_NOT_FOUND(400, "CART001", "현재 로그인한 회원의 장바구니가 생성되어 있지 않습니다."),
-    INPUT_CART_ITEM_QUANTITY_LESS_THAN_MINIMUM_VALUE(400, "CART002", "장바구니에 담는 상품의 최소 수량은 1개입니다.");
+    MEMBER_CART_NOT_FOUND(400, "CART001", "조회 된 회원 장바구니가 없습니다."),
+    INPUT_CART_ITEM_QUANTITY_LESS_THAN_MINIMUM_VALUE(400, "CART002", "장바구니에 담는 상품의 최소 수량은 1개입니다."),
+    TEMP_CART_NOT_FOUND(400, "CART003", "조회 된 비회원 장바구니가 없습니다.");
 
     private final int status; // server status code;
     private final String code; // error 종류를 나타내는 코드.

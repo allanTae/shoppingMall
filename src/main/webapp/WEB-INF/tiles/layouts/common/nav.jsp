@@ -71,7 +71,7 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link" href="#" class="dropdown-toggle" id="dropdownAccount" data-bs-toggle="dropdown" aria-expanded="false">account</a>
                             <ul class="dropdown-menu" aria-labelledby="dropdownAccount">
-                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/cart/list">Cart</a></li>
+                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/cart">Cart</a></li>
                                 <li><a class="dropdown-item" href="${pageContext.request.contextPath}/myOrder/list">OrderList</a></li>
                                 <li><a class="dropdown-item" href="#">MyShop</a></li>
                             </ul>

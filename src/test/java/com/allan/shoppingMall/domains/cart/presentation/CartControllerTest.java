@@ -41,49 +41,18 @@ public class CartControllerTest {
     MockMvc mvc;
 
     @Test
-    public void 비회원_장바구니_조회_테스트() throws Exception {
+    public void 장바구니_페이지_테스트() throws Exception {
         //given
         CartDTO TEST_COOKIE_CART_DTO = new CartDTO();
         given(cartService.getCookieCart(any()))
                 .willReturn(TEST_COOKIE_CART_DTO);
 
-        Cookie TEST_COOKIE = new Cookie("cartCookie", "testCkId");
-        TEST_COOKIE.setPath("/");
-        TEST_COOKIE.setMaxAge(60 * 60 * 24 *1);
-
         //when
-        ResultActions resultActions = mvc.perform(get("/cart/list")
-                                                    .cookie(TEST_COOKIE));
+        ResultActions resultActions = mvc.perform(get("/cart"));
 
         //then
-        verify(cartService, atLeastOnce()).getCookieCart(any());
         resultActions
                 .andExpect(status().isOk())
-                .andExpect(model().attributeExists("cartInfo"))
-                .andExpect(view().name("cart/cartList"));
-    }
-
-    @Test
-    @WithMockUser
-    public void 회원_장바구니_조회테스트() throws Exception {
-        //given
-        CartDTO TEST_MEMBER_CART_DTO = new CartDTO();
-        given(cartService.getMemberCart(any()))
-                .willReturn(TEST_MEMBER_CART_DTO);
-
-        Cookie TEST_COOKIE = new Cookie("cartCookie", "testCkId");
-        TEST_COOKIE.setPath("/");
-        TEST_COOKIE.setMaxAge(60 * 60 * 24 *1);
-
-        //when
-        ResultActions resultActions = mvc.perform(get("/cart/list")
-                .cookie(TEST_COOKIE));
-
-        //then
-        verify(cartService, atLeastOnce()).getMemberCart(any());
-        resultActions
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("cartInfo"))
                 .andExpect(view().name("cart/cartList"));
     }
 

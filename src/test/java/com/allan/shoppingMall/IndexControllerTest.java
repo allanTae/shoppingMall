@@ -2,19 +2,16 @@ package com.allan.shoppingMall;
 
 import com.allan.shoppingMall.domains.cart.service.CartService;
 import com.allan.shoppingMall.domains.infra.AuthenticationConverter;
-import com.allan.shoppingMall.domains.item.domain.clothes.ClothesRepository;
-import com.allan.shoppingMall.domains.item.domain.model.ClothesSummaryDTO;
+import com.allan.shoppingMall.domains.item.domain.model.ClothesSummaryDTOForIndex;
 import com.allan.shoppingMall.domains.item.service.ClothesService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import javax.management.relation.RelationSupport;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -47,7 +44,7 @@ public class IndexControllerTest {
     @Test
     public void 홈페이지_테스트() throws Exception {
         //given
-        List<ClothesSummaryDTO> TEST_CLOTHES_SUMMARY_DTO = List.of();
+        List<ClothesSummaryDTOForIndex> TEST_CLOTHES_SUMMARY_DTO = List.of();
         given(clothesService.getClothesSummary(any()))
                 .willReturn(TEST_CLOTHES_SUMMARY_DTO);
 

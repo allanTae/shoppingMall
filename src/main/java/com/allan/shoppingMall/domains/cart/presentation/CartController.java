@@ -21,18 +21,18 @@ import javax.servlet.http.Cookie;
 @Controller
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/cart")
 public class CartController {
 
     private final CartService cartService;
     private final MileageService mileageService;
     private final AuthenticationConverter authenticationConverter;
 
-    @GetMapping("/list")
-    public String cartList(@CookieValue(value = "cartCookie", required = false) Cookie cartCookie, Model model, Authentication authentication){
-        // 비회원 장바구니
-        CartDTO cartDTO = getCartDTO(authentication, cartCookie);
-        model.addAttribute("cartInfo", cartDTO);
+    /**
+     * 장바구니를 조회하는 메소드.
+     * @return
+     */
+    @GetMapping("/cart")
+    public String cartList(){
         return "cart/cartList";
     }
 
@@ -44,7 +44,7 @@ public class CartController {
      * @param itemId 상품 도메인 아이디.
      * @return
      */
-    @GetMapping("/{itemId}/order")
+    @GetMapping("/cart/{itemId}/order")
     public String orderCartItem(@CookieValue(value = "cartCookie", required = false) Cookie cartCookie, Model model, Authentication authentication, @PathVariable("itemId") Long itemId){
         // 주문 요청 정보.
         OrderSummaryRequest orderSummaryRequest = cartService.transferOrderSummary(getCartDTO(authentication, cartCookie), itemId);
@@ -66,7 +66,7 @@ public class CartController {
      * @param cartCookie 장바구니 쿠키 정보.
      * @return
      */
-    @GetMapping("/order")
+    @GetMapping("/cart/order")
     public String orderCartItems(@CookieValue(value = "cartCookie", required = false) Cookie cartCookie, Model model, Authentication authentication){
         // 주문 요청 정보.
         OrderSummaryRequest orderSummaryRequest = cartService.transferOrderSummary(getCartDTO(authentication, cartCookie));

@@ -1,8 +1,7 @@
 package com.allan.shoppingMall.domains.cart.presentation;
 
-import com.allan.shoppingMall.domains.cart.domain.Cart;
+import com.allan.shoppingMall.domains.cart.domain.model.CartDTO;
 import com.allan.shoppingMall.domains.cart.domain.model.CartRequest;
-import com.allan.shoppingMall.domains.cart.domain.model.CartResult;
 import com.allan.shoppingMall.domains.cart.service.CartService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -17,9 +16,11 @@ import org.springframework.test.web.servlet.ResultActions;
 import javax.servlet.http.Cookie;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(
@@ -121,23 +122,99 @@ public class RestCartControllerTest {
      * 장바구니 상품을 수정하는 메소드 입니다.
      */
     @Test
-    public void 장바구니_상품_수정테스트() throws Exception {
+    public void 비회원장바구니_상품_수정테스트() throws Exception {
         //given
         CartRequest TEST_CART_REQUEST = new CartRequest();
 
-        doNothing().when(cartService).modifyCart(any(), any());
+        doNothing().when(cartService).modifyTempCart(any(), any());
+
+        Cookie TEST_COOKIE = new Cookie("cartCookie", "testCkId");
+        TEST_COOKIE.setPath("/");
+        TEST_COOKIE.setMaxAge(60 * 60 * 24 *1);
 
         //when
-        ResultActions resultActions = mvc.perform(put("/cart/1")
+        ResultActions resultActions = mvc.perform(put("/cart")
                 .contentType(MediaType.APPLICATION_JSON)
+                .cookie(TEST_COOKIE)
                 .content(asJsonString(TEST_CART_REQUEST)));
 
         //then
-        verify(cartService, atLeastOnce()).modifyCart(any(), any());
+        verify(cartService, atLeastOnce()).modifyTempCart(any(), any());
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("apiResultMessage").value(CartResult.MODIFY_CART_SUCCESS.getMessage()))
                 .andExpect(jsonPath("apiResult").value(CartResult.MODIFY_CART_SUCCESS.getResult()));
+    }
+
+    @Test
+    @WithMockUser
+    public void 회원장바구니_상품_수정테스트() throws Exception {
+        //given
+        CartRequest TEST_CART_REQUEST = new CartRequest();
+
+        doNothing().when(cartService).modifyMemberCart(any(), any());
+
+        //when
+        ResultActions resultActions = mvc.perform(put("/cart")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(TEST_CART_REQUEST)));
+
+        //then
+        verify(cartService, atLeastOnce()).modifyMemberCart(any(), any());
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("apiResultMessage").value(CartResult.MODIFY_CART_SUCCESS.getMessage()))
+                .andExpect(jsonPath("apiResult").value(CartResult.MODIFY_CART_SUCCESS.getResult()));
+    }
+
+    @Test
+    public void 비회원장바구니_조회_테스트() throws Exception {
+        //given
+        CartDTO TEST_COOKIE_CART_DTO = new CartDTO();
+        TEST_COOKIE_CART_DTO.setCartId(1l);
+        TEST_COOKIE_CART_DTO.setCkId("testCkId");
+
+        given(cartService.getCookieCart(any()))
+                .willReturn(TEST_COOKIE_CART_DTO);
+
+        Cookie TEST_COOKIE = new Cookie("cartCookie", "testCkId");
+        TEST_COOKIE.setPath("/");
+        TEST_COOKIE.setMaxAge(60 * 60 * 24 *1);
+
+        //when
+        ResultActions resultActions = mvc.perform(get("/cart/list")
+                .cookie(TEST_COOKIE));
+
+        //then
+        verify(cartService, atLeastOnce()).getCookieCart(any());
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("cartInfo.cartId").value(TEST_COOKIE_CART_DTO.getCartId()))
+                .andExpect(jsonPath("cartInfo.ckId").value(TEST_COOKIE_CART_DTO.getCkId()))
+                .andExpect(jsonPath("apiResultMessage").value(CartResult.GET_CART_LIST_SUCCESS.getMessage()))
+                .andExpect(jsonPath("apiResult").value(CartResult.GET_CART_LIST_SUCCESS.getResult()));
+    }
+
+    @Test
+    @WithMockUser
+    public void 회원장바구니_조회_테스트() throws Exception {
+        //given
+        CartDTO TEST_MEMBER_CART_DTO = new CartDTO();
+        TEST_MEMBER_CART_DTO.setCartId(1l);
+
+        given(cartService.getMemberCart(any()))
+                .willReturn(TEST_MEMBER_CART_DTO);
+
+        //when
+        ResultActions resultActions = mvc.perform(get("/cart/list"));
+
+        //then
+        verify(cartService, atLeastOnce()).getMemberCart(any());
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("cartInfo.cartId").value(TEST_MEMBER_CART_DTO.getCartId()))
+                .andExpect(jsonPath("apiResultMessage").value(CartResult.GET_CART_LIST_SUCCESS.getMessage()))
+                .andExpect(jsonPath("apiResult").value(CartResult.GET_CART_LIST_SUCCESS.getResult()));
     }
 
     private static String asJsonString(final Object obj) {
