@@ -346,7 +346,7 @@ public class OrderServiceTest {
         long accumulatePoint = (long) (TEST_PAYMENT_DTO.getPaymentAmount() * 0.1);
         verify(mileageService, atLeastOnce()).accumulateMileage(TEST_PAYMENT_DTO.getMerchantUid(), "testAuthId", accumulatePoint, MileageContent.PAYMENT_MILEAGE_ACCUMULATE);
         verify(paymentRepository, atLeastOnce()).save(any());
-        assertThat(TEST_ORDER.getOrderStatus(), is(OrderStatus.ORDER_ITEM_READY));
+        assertThat(TEST_ORDER.getOrderStatus(), is(OrderStatus.ORDER_COMPLETE));
     }
 
     @Test
@@ -413,7 +413,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void 결제실패시_임시_주문_삭제_테스트() throws Exception {
+    public void 임시_주문_삭제_테스트() throws Exception {
         //given
 
         Clothes TEST_CLOTHES = Clothes.builder()

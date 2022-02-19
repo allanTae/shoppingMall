@@ -108,7 +108,7 @@ public class Order extends BaseEntity {
      */
     public void cancelOrder(){
         // 주문상태 점검.
-        if(this.orderStatus == OrderStatus.ORDER_ITEM_READY || this.orderStatus == OrderStatus.ORDER_TEMP){
+        if(this.orderStatus == OrderStatus.ORDER_COMPLETE || this.orderStatus == OrderStatus.ORDER_ITEM_READY || this.orderStatus == OrderStatus.ORDER_TEMP){
             this.orderStatus = OrderStatus.ORDER_CANCEL;
             // 배송 취소.
             this.delivery.cancelDelivery();
@@ -132,7 +132,7 @@ public class Order extends BaseEntity {
     public void payOrder(String impUid) {
        if(this.orderStatus == OrderStatus.ORDER_TEMP){
            this.paymentNum = impUid;
-           this.orderStatus = OrderStatus.ORDER_ITEM_READY;
+           this.orderStatus = OrderStatus.ORDER_COMPLETE;
        }else{
            throw new PaymentFailByValidatedOrderStatusException(ErrorCode.PAYMENT_INVALID_ORDER_STATUS);
        }

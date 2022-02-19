@@ -95,7 +95,7 @@ public class OrderTest {
 
         // 주문 결제.
         TEST_ORDER.payOrder("testImpUid");
-        assertThat(TEST_ORDER.getOrderStatus(), is(OrderStatus.ORDER_ITEM_READY));
+        assertThat(TEST_ORDER.getOrderStatus(), is(OrderStatus.ORDER_COMPLETE));
         assertThat(TEST_ORDER.getPaymentNum(), is("testImpUid"));
 
         //when
@@ -122,6 +122,7 @@ public class OrderTest {
         Order TEST_ORDER = createOrderByMember(TEST_ORDERER);
         TEST_ORDER.changeOrderItems(List.of(new OrderClothes(2l, TEST_CLOTHES, TEST_CLOTHES_SIZE1),
                 new OrderClothes(2l, TEST_CLOTHES, TEST_CLOTHES_SIZE2)));
+        ReflectionTestUtils.setField(TEST_ORDER, "orderStatus", OrderStatus.ORDER_TEMP);
 
         testEntityManager.persist(TEST_ORDERER);
         testEntityManager.persist(TEST_CLOTHES);
@@ -160,7 +161,7 @@ public class OrderTest {
         testEntityManager.clear();
 
         // 주문취소 불가능한 상태로 주문상태 변경.
-        ReflectionTestUtils.setField(TEST_ORDER, "orderStatus", OrderStatus.ORDER_READY);
+        ReflectionTestUtils.setField(TEST_ORDER, "orderStatus", OrderStatus.ORDER_CANCEL);
 
         //when, then
         assertThrows(OrderCancelFailException.class, () ->{
@@ -187,7 +188,7 @@ public class OrderTest {
         testEntityManager.clear();
 
         // 결제 불가능한 상태로 주문상태 변경.
-        ReflectionTestUtils.setField(TEST_ORDER, "orderStatus", OrderStatus.ORDER_READY);
+        ReflectionTestUtils.setField(TEST_ORDER, "orderStatus", OrderStatus.ORDER_CANCEL);
 
         //when, then
         assertThrows(PaymentFailByValidatedOrderStatusException.class, () ->{

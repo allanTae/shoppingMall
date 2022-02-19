@@ -139,7 +139,7 @@ public class OrderService {
 
         int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);
         pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdDate"));
-        Page<Order> orderPage = orderRepository.getOrderListByAuthId(authId, List.of(OrderStatus.ORDER_ITEM_READY, OrderStatus.ORDER_READY, OrderStatus.ORDER_CANCEL, OrderStatus.ORDER_COMPLETE), pageable);
+        Page<Order> orderPage = orderRepository.getOrderListByAuthId(authId, List.of(OrderStatus.ORDER_ITEM_READY, OrderStatus.ORDER_COMPLETE, OrderStatus.ORDER_CANCEL, OrderStatus.ORDER_COMPLETE), pageable);
 
         return orderPage;
     }

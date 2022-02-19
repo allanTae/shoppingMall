@@ -23,6 +23,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.util.ReflectionTestUtils;
+
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -285,18 +287,14 @@ public class OrderRepositoryTest {
         testEntityManager.persist(TEST_CLOTHES2);
 
         testEntityManager.persist(TEST_ORDER);
-
         testEntityManager.persist(TEST_ORDER_2);
-
         testEntityManager.persist(TEST_ORDER_3);
-
         testEntityManager.persist(TEST_ORDER_4);
-
         testEntityManager.persist(TEST_ORDER_5);
-
         testEntityManager.persist(TEST_ORDER_6);
-
         testEntityManager.persist(TEST_ORDER_7);
+
+        setOrderStatus(List.of(TEST_ORDER, TEST_ORDER_3, TEST_ORDER_4, TEST_ORDER_5));
 
         // TEST_ORDER_2 => 주문자. TEST_MEMBER_2
         // TEST_ORDER_2 를 제외한 모든 주문들 => 주문자. TEST_MEMBER_1
@@ -305,7 +303,7 @@ public class OrderRepositoryTest {
 
         //when
         // TEST_MEMBER_1 이 주문한 주문들만 조회.
-        Page<Order> page = orderRepository.getOrderListByAuthId(TEST_MEMBER_1.getAuthId(), List.of(OrderStatus.ORDER_TEMP)
+        Page<Order> page = orderRepository.getOrderListByAuthId(TEST_MEMBER_1.getAuthId(), List.of(OrderStatus.ORDER_COMPLETE)
                 , PageRequest.of(0, 3,  Sort.by(Sort.Direction.ASC, "createdDate")));
 
         //then
@@ -899,5 +897,11 @@ public class OrderRepositoryTest {
                 .sizeLabel(sizeLabel)
                 .stockQuantity(stockQuantity)
                 .build();
+    }
+
+    private void setOrderStatus(List<Order> orders){
+        for(Order order : orders){
+            ReflectionTestUtils.setField(order, "orderStatus", OrderStatus.ORDER_COMPLETE);
+        }
     }
 }
