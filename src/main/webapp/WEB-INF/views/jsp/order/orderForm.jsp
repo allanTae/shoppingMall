@@ -365,13 +365,13 @@
           , type : 'POST'
           , dataType : 'json'
           , success: function(result){
-              if(result.orderResult === "주문도메인 생성성공"){
-                // order domain create success
+              if(result.apiResultMessage === "주문에 성공하였습니다." && result.apiResult === true){
+                // 결제 요청.
                 requestPay(result.orderNum);
               }else{
                 // order domain create fail
                 if(result.errorResponse.fieldErrors.length < 1){
-                    console.log("fieldError 가 없습니다.");
+                    paymentAlert("알림", result.apiResultMessage + "\n 사유: " + result.errorResponse.errMsg);
                 }
                 else {
                     $(result.errorResponse.fieldErrors).each(function(){
@@ -436,12 +436,12 @@
                     , dataType : 'json'
                     , success: function(result){
                         // 결제 유효성 검사 성공
-                        if(result.orderResult === "결제 성공"){
+                        if(result.apiResultMessage === "결제에 성공하였습니다." && result.apiResult === true){
                             paymentAlert("알림", "주문을 성공하였습니다.", "success");
                             postOrderResultForm(result);
                         }else{
                             // 결제 유효성 검사 실패
-                            paymentConfirm("결제결과 안내", result.orderResult + '하였습니다. \n' + result.errorResponse.errMsg, result);
+                            paymentConfirm("알림", result.apiResultMessage + '\n' + result.errorResponse.errMsg, result);
                         }
                     }
                     , error:function(request,status,error){
@@ -458,7 +458,7 @@
                         errMsg: rsp.error_msg
                     }
                   };
-                  paymentConfirm("결제결과 안내", '결제를 실패 하였습니다. \n' + rsp.error_msg, orderResponse);
+                  paymentConfirm("안내", '결제를 실패 하였습니다. \n' + rsp.error_msg, orderResponse);
               }
           });
     }

@@ -107,7 +107,8 @@ public class RestOrderControllerTest {
         //then
         resultActions
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("orderResult").value("주문도메인 생성성공"))
+                .andExpect(jsonPath("apiResult").value(OrderResult.ORDER_SUCCESS.getResult()))
+                .andExpect(jsonPath("apiResultMessage").value(OrderResult.ORDER_SUCCESS.getMessage()))
                 .andExpect(jsonPath("orderNum").value(TEST_ORDER_NUM));
     }
 
@@ -139,8 +140,9 @@ public class RestOrderControllerTest {
         verify(orderService, atLeastOnce()).validatePaymentByIamport(any(), any());
         resultActions
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("orderResult").value("결제 성공"))
-                .andExpect(jsonPath("orderNum").value("empty"));
+                .andExpect(jsonPath("apiResult").value(OrderResult.PAYMENT_SUCCESS.getResult()))
+                .andExpect(jsonPath("apiResultMessage").value(OrderResult.PAYMENT_SUCCESS.getMessage()))
+                .andExpect(jsonPath("orderNum").value(TEST_PAYMENT.getMerchantUid()));
     }
 
     @Test
@@ -174,7 +176,8 @@ public class RestOrderControllerTest {
         verify(paymentService, atLeastOnce()).refundPaymentAll(any(), any(), any(), any());
         resultActions
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("orderResult").value("결제 및 환불 실패"))
+                .andExpect(jsonPath("apiResult").value(OrderResult.PAYMENT_REFUND_FAIL.getResult()))
+                .andExpect(jsonPath("apiResultMessage").value(OrderResult.PAYMENT_REFUND_FAIL.getMessage()))
                 .andExpect(jsonPath("orderNum").value("empty"))
                 .andExpect(jsonPath("errorResponse.errorCode").value(TEST_REFUND_FAIL_EXCEPTION.getErrorCode().getCode()))
                 .andExpect(jsonPath("errorResponse.status").value(TEST_REFUND_FAIL_EXCEPTION.getErrorCode().getStatus()))
@@ -214,7 +217,8 @@ public class RestOrderControllerTest {
         verify(orderService, atLeastOnce()).deleteTempOrder(TEST_PAYMENT.getMerchantUid(), "user");
         resultActions
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("orderResult").value("결제 실패"))
+                .andExpect(jsonPath("apiResult").value(OrderResult.PAYMENT_FAIL.getResult()))
+                .andExpect(jsonPath("apiResultMessage").value(OrderResult.PAYMENT_FAIL.getMessage()))
                 .andExpect(jsonPath("orderNum").value("empty"))
                 .andExpect(jsonPath("errorResponse.errorCode").value(TEST_PAYMENT_FAIL_EXCEPTION.getErrorCode().getCode()))
                 .andExpect(jsonPath("errorResponse.status").value(TEST_PAYMENT_FAIL_EXCEPTION.getErrorCode().getStatus()))
@@ -255,7 +259,8 @@ public class RestOrderControllerTest {
         verify(orderService, atLeastOnce()).deleteTempOrder(TEST_PAYMENT.getMerchantUid(), "user");
         resultActions
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("orderResult").value("결제 실패"))
+                .andExpect(jsonPath("apiResult").value(OrderResult.PAYMENT_FAIL.getResult()))
+                .andExpect(jsonPath("apiResultMessage").value(OrderResult.PAYMENT_FAIL.getMessage()))
                 .andExpect(jsonPath("orderNum").value("empty"))
                 .andExpect(jsonPath("errorResponse.errorCode").value(TEST_PAYMENT_FAIL_EXCEPTION.getErrorCode().getCode()))
                 .andExpect(jsonPath("errorResponse.status").value(TEST_PAYMENT_FAIL_EXCEPTION.getErrorCode().getStatus()))

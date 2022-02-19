@@ -142,6 +142,9 @@ public class RestCartControllerTest {
         verify(cartService, atLeastOnce()).modifyTempCart(any(), any());
         resultActions
                 .andExpect(status().isOk())
+                .andExpect(cookie().exists("cartCookie"))
+                .andExpect(cookie().maxAge("cartCookie", 60 * 60 * 24 *1))
+                .andExpect(cookie().path("cartCookie", "/"))
                 .andExpect(jsonPath("apiResultMessage").value(CartResult.MODIFY_CART_SUCCESS.getMessage()))
                 .andExpect(jsonPath("apiResult").value(CartResult.MODIFY_CART_SUCCESS.getResult()));
     }

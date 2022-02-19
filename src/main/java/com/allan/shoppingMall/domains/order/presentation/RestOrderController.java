@@ -122,7 +122,7 @@ public class RestOrderController {
                 log.error(error.getDefaultMessage());
             }
             log.error("======================================");
-            return new ResponseEntity<OrderResponse>(new OrderResponse("주문도메인 생성실패", "empty", OrderErrorResponse.of(ErrorCode.INVALID_ORDER_REQUEST_INPUT_VALUE, bindingResult)),
+            return new ResponseEntity<OrderResponse>(new OrderResponse(OrderResult.ORDER_FAIL, "empty", OrderErrorResponse.of(ErrorCode.INVALID_ORDER_REQUEST_INPUT_VALUE, bindingResult)),
                     HttpStatus.OK);
         }
 
@@ -148,9 +148,9 @@ public class RestOrderController {
 
         try{
             String orderNum = orderService.order(request, findMember);
-            return new ResponseEntity<OrderResponse>(new OrderResponse("주문도메인 생성성공", orderNum), HttpStatus.OK);
+            return new ResponseEntity<OrderResponse>(new OrderResponse(OrderResult.ORDER_SUCCESS, orderNum), HttpStatus.OK);
         }catch (BusinessException e){
-            return new ResponseEntity<OrderResponse>(new OrderResponse("주문도메인 생성실패", "empty", OrderErrorResponse.of(e.getErrorCode())),
+            return new ResponseEntity<OrderResponse>(new OrderResponse(OrderResult.ORDER_FAIL, "empty", OrderErrorResponse.of(e.getErrorCode())),
                     HttpStatus.OK);
         }
     }
@@ -176,11 +176,11 @@ public class RestOrderController {
                     .build();
             orderService.validatePaymentByIamport(paymentDTO, authentication.getName());
             // 결제 성공.
-            return new ResponseEntity<OrderResponse>(new OrderResponse("결제 성공", "empty"), HttpStatus.OK);
+            return new ResponseEntity<OrderResponse>(new OrderResponse(OrderResult.PAYMENT_SUCCESS, paymentDTO.getMerchantUid()), HttpStatus.OK);
         }catch (IOException | IamportResponseException e){
             log.error("validatePaymentAfter() cause iamport error!!");
             log.error("message: " + e.getMessage());
-            return new ResponseEntity<OrderResponse>(new OrderResponse("결제 및 환불 실패", "empty", OrderErrorResponse.of(e.getMessage(), ErrorCode.IAMPORT_ERROR)),
+            return new ResponseEntity<OrderResponse>(new OrderResponse(OrderResult.PAYMENT_REFUND_FAIL, "empty", OrderErrorResponse.of(e.getMessage(), ErrorCode.IAMPORT_ERROR)),
                     HttpStatus.OK);
         }catch (PaymentFailException paymentEx){
             try{
@@ -192,11 +192,11 @@ public class RestOrderController {
                 }
             }catch (RefundFailException refundEx){
                 // 환불 실패.
-                return new ResponseEntity<OrderResponse>(new OrderResponse("결제 및 환불 실패", "empty", OrderErrorResponse.of(refundEx.getErrorCode())),
+                return new ResponseEntity<OrderResponse>(new OrderResponse(OrderResult.PAYMENT_REFUND_FAIL, "empty", OrderErrorResponse.of(refundEx.getErrorCode())),
                         HttpStatus.OK);
             }
             // 결제 실패.
-            return new ResponseEntity<OrderResponse>(new OrderResponse("결제 실패", "empty", OrderErrorResponse.of(paymentEx.getErrorCode())),
+            return new ResponseEntity<OrderResponse>(new OrderResponse(OrderResult.PAYMENT_FAIL, "empty", OrderErrorResponse.of(paymentEx.getErrorCode())),
                     HttpStatus.OK);
         }
     }
