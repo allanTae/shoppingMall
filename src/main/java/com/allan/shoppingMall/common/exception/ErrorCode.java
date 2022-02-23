@@ -62,7 +62,10 @@ public enum ErrorCode {
     // Cart
     MEMBER_CART_NOT_FOUND(400, "CART001", "조회 된 회원 장바구니가 없습니다."),
     INPUT_CART_ITEM_QUANTITY_LESS_THAN_MINIMUM_VALUE(400, "CART002", "장바구니에 담는 상품의 최소 수량은 1개입니다."),
-    TEMP_CART_NOT_FOUND(400, "CART003", "조회 된 비회원 장바구니가 없습니다.");
+    TEMP_CART_NOT_FOUND(400, "CART003", "조회 된 비회원 장바구니가 없습니다."),
+
+    // Category
+    CATEGORY_BRANCH_AND_NAME_IS_DUPLICATION(400, "CATE001", "이미 사용 중인 대분류 그룹과 이름입니다.");
 
     private final int status; // server status code;
     private final String code; // error 종류를 나타내는 코드.
