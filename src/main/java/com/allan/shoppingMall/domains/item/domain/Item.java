@@ -3,6 +3,7 @@ package com.allan.shoppingMall.domains.item.domain;
 import com.allan.shoppingMall.common.domain.BaseEntity;
 import com.allan.shoppingMall.common.exception.ErrorCode;
 import com.allan.shoppingMall.common.exception.order.OrderFailException;
+import com.allan.shoppingMall.domains.category.domain.Category;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +24,10 @@ public class Item extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long itemId;
 
+    @JoinColumn(name = "category_id", nullable = true)
+    @OneToOne(fetch = FetchType.LAZY)
+    private Category category;
+
     @Column(nullable = false)
     private String name;
 
@@ -39,11 +44,12 @@ public class Item extends BaseEntity {
     @Column(nullable = false, name = "stock_quantity")
     private Long stockQuantity = 0l;
 
-    public Item(String name, Long price, Long stockQuantity, Color color) {
+    public Item(String name, Long price, Long stockQuantity, Color color, Category category) {
         this.name = name;
         this.price = price;
         this.stockQuantity = stockQuantity;
         this.color = color;
+        this.category = category;
     }
 
     /**

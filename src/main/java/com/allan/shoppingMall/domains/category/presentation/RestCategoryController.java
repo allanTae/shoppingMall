@@ -38,7 +38,7 @@ public class RestCategoryController {
         try {
             category = categoryService.getEntireCategoryByBranch(branch);
         }catch (CategoryNotFoundException exception){
-            return new ResponseEntity<CategoryResponse>(new CategoryResponse(CategoryResult.GET_CATEGORY_FAIL,
+            return new ResponseEntity<CategoryResponse>(new CategoryResponse(branch + "관련 카테고리 정보를 찾을 수 없습니다.", false,
                     CategoryErrorResponse.of(exception.getErrorCode())), HttpStatus.OK);
         }
         return new ResponseEntity<CategoryResponse>(new CategoryResponse(CategoryResult.GET_CATEGORY_SUCCESS, category), HttpStatus.OK);

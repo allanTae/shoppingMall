@@ -1,7 +1,5 @@
 package com.allan.shoppingMall.domains.category.presentation;
 
-import com.allan.shoppingMall.domains.cart.presentation.CartErrorResponse;
-import com.allan.shoppingMall.domains.cart.presentation.CartResult;
 import com.allan.shoppingMall.domains.category.domain.model.CategoryDTO;
 import lombok.Getter;
 
@@ -14,9 +12,21 @@ public class CategoryResponse {
     private String apiResultMessage; // 결과 메시지.
     private Boolean apiResult; // api 결과 값. 사용자단에서 결과를 확인하기 위해 사용합니다.
 
-    private CategoryDTO categoryDTO;
+    private CategoryDTO category;
 
     private CategoryErrorResponse categoryErrorResponse;
+
+    /**
+     * @param apiResultMessage api 메시지.
+     * @param apiResult api 결과.
+     * @param categoryErrorResponse 에러 응답 정보.
+     * @return
+     */
+    public CategoryResponse(String apiResultMessage, Boolean apiResult, CategoryErrorResponse categoryErrorResponse) {
+        this.apiResultMessage = apiResultMessage;
+        this.apiResult = apiResult;
+        this.categoryErrorResponse = categoryErrorResponse;
+    }
 
     /**
      * cartInfo 를 제외한 CartResponse 생성자.
@@ -30,7 +40,7 @@ public class CategoryResponse {
     public CategoryResponse(CategoryResult categoryResult, CategoryDTO categoryDTO){
         this.apiResultMessage = categoryResult.getMessage();
         this.apiResult = categoryResult.getResult();
-        this.categoryDTO = categoryDTO;
+        this.category = categoryDTO;
     }
 
     /**

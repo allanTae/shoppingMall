@@ -3,6 +3,8 @@ package com.allan.shoppingMall.domains.item.service;
 import com.allan.shoppingMall.common.exception.ErrorCode;
 import com.allan.shoppingMall.common.exception.ItemNotFoundException;
 import com.allan.shoppingMall.domains.cart.domain.model.RequiredOption;
+import com.allan.shoppingMall.domains.category.domain.Category;
+import com.allan.shoppingMall.domains.category.domain.CategoryRepository;
 import com.allan.shoppingMall.domains.item.domain.*;
 import com.allan.shoppingMall.domains.item.domain.clothes.*;
 import com.allan.shoppingMall.domains.item.domain.model.*;
@@ -27,6 +29,7 @@ public class ClothesService {
 
     private final ClothesRepository clothesRepository;
     private final ImageFileHandler imageFileHandler;
+    private final CategoryRepository categoryRepository;
 
     /**
      * form 으로 전달 된 데이터로 clothes 저장하는 메소드.
@@ -101,12 +104,16 @@ public class ClothesService {
             log.error("exception message: " + e.getMessage());
         }
 
+        Category findCategory = categoryRepository.findById(form.getCategoryId()).orElseThrow(() ->
+                new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+
         // 색상 정보.
         Clothes clothes = Clothes.builder()
                 .name(form.getName())
                 .price(form.getPrice())
                 .engName(form.getEngName())
                 .color(Color.valueOf(form.getClothesColor()))
+                .category(findCategory)
                 .build();
 
         clothes.changeClothesFabrics(fabrics);

@@ -20,6 +20,7 @@ public class ClothesForm {
     private Long price;
     private Long stockQuantity;
     private int clothesColor;
+    private Long categoryId;
 
     private List<ClothesFabricDTO> clothesFabrics = new ArrayList<>();
     private List<ClothesDetailDTO> clothesDetails = new ArrayList<>();
@@ -31,6 +32,7 @@ public class ClothesForm {
     @Override
     public String toString(){
         return "ClothesRequest [name=" + this.name + ", engName=" + this.engName + ", price=" + this.price + ", stockQuantity=" + this.stockQuantity + ", clothesFabrics="
-                + this.clothesFabrics + ", clothesDetails=" + this.clothesDetails + ", clothesSizes=" + this.clothesSizes + ", modelSize=" + this.modelSizes + "]";
+                + this.clothesFabrics + ", clothesDetails=" + this.clothesDetails + ", clothesSizes=" + this.clothesSizes + ", modelSize=" + this.modelSizes +
+                ", categoryId= " + this.categoryId + "]";
     }
 }

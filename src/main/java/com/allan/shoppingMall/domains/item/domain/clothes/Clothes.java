@@ -1,5 +1,6 @@
 package com.allan.shoppingMall.domains.item.domain.clothes;
 
+import com.allan.shoppingMall.domains.category.domain.Category;
 import com.allan.shoppingMall.domains.item.domain.Color;
 import com.allan.shoppingMall.domains.item.domain.Item;
 import lombok.AccessLevel;
@@ -48,8 +49,8 @@ public class Clothes extends Item {
     private String etc;
 
     @Builder
-    public Clothes(String name, Long price, Color color, String engName, String etc) {
-        super(name, price, 0l,color);
+    public Clothes(String name, Long price, Color color, String engName, String etc, Category category) {
+        super(name, price, 0l,color, category);
         this.engName = engName;
         this.etc = etc;
     }

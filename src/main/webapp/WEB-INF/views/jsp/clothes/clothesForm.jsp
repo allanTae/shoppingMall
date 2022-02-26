@@ -9,6 +9,130 @@
 </style>
 
 <script>
+    // 선택한 카테고리 아아디.
+    let selectedCategoryId = 0;
+
+    // 조회한 상품 카테고리 정보를 저장하는 오브젝트.
+    var categoryObj;
+
+    $(function(){
+        setCategory();
+    });
+
+    // 카테고리 정보 set 함수.
+    function setCategory(){
+        var headers = {"Content-Type" : "application/json; charset=UTF-8;"
+                      , "X-HTTP-Method-Override" : "GET"};
+        $.ajax({
+          url: "${pageContext.request.contextPath}/category/shop"
+          , headers : headers
+          , type : 'GET'
+          , dataType : 'json'
+          , success: function(result){
+            if(result.apiResultMessage === "카테고리 조회에 성공하였습니다."){
+                categoryObj = result.category; // 카테고리 정보 저장.
+
+                var htmls = '';
+                var mainCategoryItemLength = Object.keys(result.category.child).length;
+                if(mainCategoryItemLength > 0){
+                     $.each(result.category.child, function(key, value) {
+                        htmls += '<option value="' + key + '">' + value.name + '</option>';
+                    });
+                    $('#mainCategory').append(htmls);
+                }else{
+                    alert("등록 된 카테고리가 없습니다. \n 우선 카테고리를 등록 해 주세요.");
+                    $('#mainCategory').html('');
+                    $('#mainCategory').css('display', 'none');
+                    $('#middleCategory').html('');
+                    $('#middleCategory').css('display', 'none');
+                    $('#subCategory').html('');
+                    $('#subCategory').css('display', 'none');
+                }
+
+            }else{
+                alert(result.apiResultMessage);
+            }
+          }
+          , error:function(request,status,error){
+            console.log("error: " + error);
+          }
+        });
+    }
+
+    // 대분류 카테고리 이벤트.
+    $(document).on("change", "#mainCategory", function(){
+        var htmls = '<option selected>중분류</option>';
+        selectedCategoryId = 0;
+
+        // 하위(중분류) 카테고리 수.
+        var midleCategoryItemLength = ($(this).val() !== "대분류") ? Object.keys(categoryObj.child[$(this).val()].child).length : 0 ;
+
+        // 하위 카테고리가 존재한다면,
+        if(midleCategoryItemLength > 0){
+            $.each(categoryObj.child[$(this).val()].child, function(key, value) {
+                htmls += '<option value="' + key + '">' + value.name + '</option>';
+            });
+            $('#middleCategory').html(htmls);
+            $('#middleCategory').css('display', 'inline');
+            $('#subCategory').html('');
+            $('#subCategory').css('display', 'none');
+
+        // 하위 카테고리가 없다면,
+        }else{
+            // 하위 카테고리 초기화.
+            selectedCategoryId = ($(this).val() !== "대분류") ? categoryObj.child[$(this).val()].categoryId : 0;
+            console.log("selectedCategoryId: " + selectedCategoryId);
+            $('#middleCategory').html('');
+            $('#middleCategory').css('display', 'none');
+            $('#subCategory').html('');
+            $('#subCategory').css('display', 'none');
+        }
+    });
+
+    // 중분류 카테고리 이벤트.
+    $(document).on("change", "#middleCategory", function(){
+        selectedCategoryId = 0;
+        var mainCategoryId = $('#mainCategory option:selected').val(); // 대분류 카테고리 아이디.
+        var htmls = '<option selected>소분류</option>';
+
+        // 하위(소분류) 카테고리 수.
+        var subCategoryItemLength =  ($(this).val() !== "중분류") ? Object.keys(categoryObj.child[mainCategoryId].child[$(this).val()].child).length : 0;
+
+        // 하위 카테고리가 존재한다면,
+        if(subCategoryItemLength > 0){
+            $.each(categoryObj.child[mainCategoryId].child[$(this).val()].child, function(key, value) {
+                htmls += '<option value="' + key + '">' + value.name + '</option>';
+            });
+            $('#subCategory').html(htmls);
+            $('#subCategory').css('display', 'inline');
+        }else{
+            // 하위 카테고리 초기화.
+            selectedCategoryId = ($(this).val() !== "중분류") ? categoryObj.child[mainCategoryId].child[$(this).val()].categoryId : 0;
+            console.log("selectedCategoryId: " + selectedCategoryId);
+            $('#subCategory').html('');
+            $('#subCategory').css('display', 'none');
+        }
+
+    });
+
+    // 소분류 카테고리 이벤트.
+    $(document).on("change", "#subCategory", function(){
+        var mainCategoryId = $('#mainCategory option:selected').val(); // 대분류 카테고리 아이디.
+        var middleCategoryId = $('#middleCategory option:selected').val(); // 중분류 카테고리 아이디.
+
+        selectedCategoryId = categoryObj.child[mainCategoryId].child[middleCategoryId].child[$(this).val()].categoryId;
+        console.log("selectedCategoryId: " + selectedCategoryId);
+    });
+
+    function validateForm(){
+        if(selectedCategoryId < 1){
+            alert("카테고리를 입력 해 주세요.")
+            return false;
+        }
+
+        return true;
+    }
+
     // talbleBox 추가를 위한 인덱스.
     var materialTableIndex = 2;
     var detailTableIndex = 2;
@@ -18,7 +142,12 @@
 
     // 회원가입 이벤트.
     $(document).on('click', '#btnEnroll', function(e){
-        $("#form").submit();
+        if(validateForm()){
+            let category = '<input type="text" name="categoryId" value="' + selectedCategoryId + '" />';
+            $("#form").append(category);
+            $("#form").submit();
+        }
+
     });
 
     // 원단 테이블 추가 버튼.
@@ -89,7 +218,7 @@
     // 취소 버튼 이벤트.
 	$(document).on('click', '#btnCancle', function(e){
 		e.preventDefault();
-		location.href="${pageContext.request.contextPath}/clothes/getBoardList";
+		location.href="${pageContext.request.contextPath}/index";
 	});
 
 
@@ -101,6 +230,26 @@
 			<div class="card-header">상품 등록</div>
 			<div class="card-body">
 				<form:form name="form" id="form" class="form-signup" role="form" modelAttribute="clothesForm" method="post" action="${pageContext.request.contextPath}/clothes/save" enctype="multipart/form-data">
+					<div id="categoryWrap" class="row">
+					    <label for="name" class="col-md-2 col-form-label text-md-right">카테고리</label>
+                        <div class="col-md-3 pe-0">
+                            <select class="form-select" data-size="5" id="mainCategory">
+                                <option selected>대분류</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3 p-0">
+                            <select class="form-select" data-size="5" style="display:none;" id="middleCategory">
+                            </select>
+                        </div>
+
+                        <div class="col-md-3 p-0">
+                            <select class="form-select" data-size="5" style="display:none;" id="subCategory">
+                                <option selected>소분류</option>
+                            </select>
+                        </div>
+
+                    </div>
 					<div class="row">
 						<label for="name" class="col-md-2 col-form-label text-md-right">상품명</label>
 						<div class="col-md-4">

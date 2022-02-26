@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -21,7 +22,7 @@ public class CategoryDTO {
     private String name; // 카테고리 이름.
     private String parentCategoryName; // 부모 카테고리 이름.
     private Integer depth;
-    private List<CategoryDTO> child;
+    private Map<Long, CategoryDTO> child;
 
     /**
      * @param entity 카테고리 도메인.
@@ -40,10 +41,14 @@ public class CategoryDTO {
         }
 
         // 순환하면서 하위 카테고리 정보 셋.
+//        this.child = entity.getChildCategory() == null ? null:entity.getChildCategory()
+//                .stream()
+//                .map(CategoryDTO::new)
+//                .collect(Collectors.toList());
+
         this.child = entity.getChildCategory() == null ? null:entity.getChildCategory()
                 .stream()
-                .map(CategoryDTO::new)
-                .collect(Collectors.toList());
+                .collect(Collectors.toMap(Category::getCategoryId, CategoryDTO::new));
     }
 
 

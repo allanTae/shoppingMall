@@ -1,5 +1,7 @@
 package com.allan.shoppingMall.domains.item.service;
 
+import com.allan.shoppingMall.domains.category.domain.Category;
+import com.allan.shoppingMall.domains.category.domain.CategoryRepository;
 import com.allan.shoppingMall.domains.item.domain.*;
 import com.allan.shoppingMall.domains.item.domain.clothes.*;
 import com.allan.shoppingMall.domains.item.domain.model.ClothesSummaryDTOForIndex;
@@ -35,7 +37,7 @@ public class ClothesServiceTest {
     ImageFileHandler imageFileHandler;
 
     @Mock
-    ItemImageRepository itemImageRepository;
+    CategoryRepository categoryRepository;
 
     @InjectMocks
     ClothesService clothesService;
@@ -47,6 +49,10 @@ public class ClothesServiceTest {
         List<ItemImage> TEST_ITEM_IMAGE = createItemImage();
         given(imageFileHandler.parseImageInfo(any(), any()))
                 .willReturn(TEST_ITEM_IMAGE);
+
+        Category TEST_CATEGORY = Category.builder().build();
+        given(categoryRepository.findById(any()))
+                .willReturn(Optional.of(TEST_CATEGORY));
 
         //when
         Long clothesId = clothesService.saveClothes(TEST_CLOTHES_REQUEST);
@@ -172,6 +178,9 @@ public class ClothesServiceTest {
                 new ModelSizeDTO(10.0, 20.0, 30.0, 40.0, 50.0)
         ));
         clothesRequest.setClothesColor(1);
+
+        clothesRequest.setCategoryId(2l);
+
         return clothesRequest;
     }
 
