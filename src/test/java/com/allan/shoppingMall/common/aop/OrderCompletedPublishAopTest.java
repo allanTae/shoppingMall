@@ -1,24 +1,17 @@
 package com.allan.shoppingMall.common.aop;
 
-import com.allan.shoppingMall.common.config.aop.MemberJoinedEventPublishAop;
 import com.allan.shoppingMall.common.config.aop.OrderCompletedPublishAop;
 import com.allan.shoppingMall.common.value.Address;
 import com.allan.shoppingMall.domains.delivery.domain.Delivery;
 import com.allan.shoppingMall.domains.item.domain.clothes.*;
-import com.allan.shoppingMall.domains.member.domain.MemberJoinedEvent;
-import com.allan.shoppingMall.domains.member.domain.MemberRepository;
-import com.allan.shoppingMall.domains.member.service.MemberService;
-import com.allan.shoppingMall.domains.mileage.domain.Mileage;
 import com.allan.shoppingMall.domains.mileage.domain.model.MileageDTO;
 import com.allan.shoppingMall.domains.mileage.service.MileageService;
 import com.allan.shoppingMall.domains.order.domain.*;
 import com.allan.shoppingMall.domains.order.service.OrderService;
-import com.allan.shoppingMall.domains.payment.domain.Payment;
 import com.allan.shoppingMall.domains.payment.domain.PaymentRepository;
 import com.allan.shoppingMall.domains.payment.domain.model.iamport.PaymentIamportDTO;
 import com.allan.shoppingMall.domains.payment.service.PaymentService;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
@@ -46,19 +39,19 @@ public class OrderCompletedPublishAopTest {
         PaymentRepository TEST_PAYMENT_REPOSITORY = mock(PaymentRepository.class);
         ApplicationContext TEST_APPLICATION_CONTEXT = mock(ApplicationContext.class);
         ClothesRepository TEST_CLOTHES_REPOSITORY = mock(ClothesRepository.class);
-        ClothesSizeRepository TEST_CLOTHES_SIZE_REPOSITORY = mock(ClothesSizeRepository.class);
+        ItemSizeRepository TEST_CLOTHES_SIZE_REPOSITORY = mock(ItemSizeRepository.class);
         PaymentService TEST_PAYMENT_SERVICE = mock(PaymentService.class);
 
         Clothes TEST_CLOTHES = Clothes.builder()
                 .price(1000l)
                 .build();
 
-        ClothesSize TEST_CLOTHES_SIZE = ClothesSize.builder()
+        ItemSize TEST_CLOTHES_SIZE = ItemSize.builder()
                 .stockQuantity(100l)
                 .sizeLabel(SizeLabel.S)
                 .build();
 
-        TEST_CLOTHES.changeClothesSizes(List.of(TEST_CLOTHES_SIZE));
+        TEST_CLOTHES.changeItemSizes(List.of(TEST_CLOTHES_SIZE));
 
         Order TEST_ORDER = Order.builder()
                 .delivery(Delivery.builder()

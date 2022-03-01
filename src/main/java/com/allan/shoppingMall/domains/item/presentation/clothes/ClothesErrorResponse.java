@@ -1,7 +1,6 @@
-package com.allan.shoppingMall.domains.item.presentation;
+package com.allan.shoppingMall.domains.item.presentation.clothes;
 
 import com.allan.shoppingMall.common.exception.ErrorCode;
-import com.allan.shoppingMall.domains.cart.presentation.CartErrorResponse;
 
 /**
  * Clothes 도메인 rest api 에러 정보를 저장하는 클래스입니다.

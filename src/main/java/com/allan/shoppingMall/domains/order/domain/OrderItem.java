@@ -2,8 +2,9 @@ package com.allan.shoppingMall.domains.order.domain;
 
 import com.allan.shoppingMall.common.domain.BaseEntity;
 import com.allan.shoppingMall.common.exception.order.OrderFailException;
-import com.allan.shoppingMall.domains.item.domain.Item;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
+import com.allan.shoppingMall.domains.item.domain.clothes.ItemSize;
+import com.allan.shoppingMall.domains.item.domain.item.Item;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -45,19 +46,53 @@ public class OrderItem extends BaseEntity {
     @JoinColumn(name = "item_id")
     private Item item;
 
+    // 상품 사이즈 정보 필드.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_size_id")
+    private ItemSize itemSize;
+
     @Builder
     public OrderItem(Long orderQuantity, Item item) {
         this.orderQuantity = orderQuantity;
-        this.item = setItem(item);
+        setItem(item);
         calculateAmount();
     }
+
+    public OrderItem(Long orderQuantity, Item item, ItemSize clothesSize){
+        this.orderQuantity = orderQuantity;
+        setItem(item);
+        calculateAmount();
+        setClothesSize(clothesSize); // clothesSize stockQuantity 조정
+    }
+
+    /**
+     * order 시, 사이즈에 맞는 item 의 재고량을 줄이기 위한 메소드.
+     */
+    private void setClothesSize(ItemSize itemSize){
+        itemSize.subStockQuantity(this.orderQuantity);
+        this.itemSize = itemSize;
+    }
+
 
     /**
      * 주문시, orderQunaitty 만큼 상품의 재고량을 줄이기 위한 메소드.
      */
-    private Item setItem(Item item) throws OrderFailException {
+    private void setItem(Item item) throws OrderFailException {
         item.subtractStockQuantity(this.orderQuantity);
-        return item;
+        this.item = item;
+    }
+
+
+    /**
+     * 주문 취소에 따른
+     * 상품의 재고량을 수정하는 메소드.
+     */
+    public void cancelOrderItem(){
+        // 사이즈별 재고량 원상복구.
+        this.itemSize.addStockQuantity(this.getOrderQuantity());
+
+        // 상품의 전체 재고량 원상복구.(OrderItem cancelOrderItem() 호출)
+        this.item.addStockQuantity(this.orderQuantity);
     }
 
     /**
@@ -67,13 +102,6 @@ public class OrderItem extends BaseEntity {
         this.orderItemAmount = this.orderQuantity * this.item.getPrice();
     }
 
-    /**
-     * 주문 취소에 따른
-     * 상품의 재고량을 수정하는 메소드.
-     */
-    public void cancelOrderItem(){
-        this.item.addStockQuantity(this.orderQuantity);
-    }
 
     /**
      * 연관관계 편의 메소드.
@@ -86,13 +114,13 @@ public class OrderItem extends BaseEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(this.item.getItemId());
+        return Objects.hashCode(this.getItem().getItemId() + this.getItemSize().getSizeLabel().getId());
     }
 
     /**
      * 주문시, 동일한 주문상품 도메인이 들어가는 것을 방지하기 위한 비교함수.
-     * 하나의 주문의 주문상품 도메인에는 동일한 상품이 들어가지 않는다.
-     * 그렇기에 비교값으로 상품도메인의 고유 아이디로 비교를 한다.
+     * 같은 주문의 주문상품에는 같은 상품이 사이즈가 동일하게 주문되지 않는다.
+     * 그렇기에 비교값으로 상품도메인의 고유 아이디 및 사이즈로 비교를 한다.
      * (주문 도메인을 통해 주문상품 도메인이 만들어지고,주문 도메인 persist 시점에 주문상품 도메인이
      * 같이 persist 되기 때문에 주문상품 도메인의 고유 아이디로 비교하지 않는다.)
      * @param obj
@@ -100,7 +128,7 @@ public class OrderItem extends BaseEntity {
      */
     @Override
     public boolean equals(Object obj) {
-        log.info("OrderItems equals() call!!!");
+        log.info("OrderItem equals() call!!!");
         if(obj == null){
             log.error("OrderItem equals()'s parameter is null");
             return false;
@@ -110,9 +138,8 @@ public class OrderItem extends BaseEntity {
         if(!(obj instanceof OrderItem))
             return false;
 
-        log.info("this.orderItemId: " + this.orderItemId);
-        log.info("obj orderItemId:" + ((OrderItem) obj).getOrderItemId());
-        return this.item.getItemId() == ((OrderItem) obj).getItem().getItemId();
+        return this.getItem().getItemId() == ((OrderItem) obj).getItem().getItemId() &&
+                this.getItemSize().getSizeLabel() == ((OrderItem) obj).getItemSize().getSizeLabel();
     }
 
 }

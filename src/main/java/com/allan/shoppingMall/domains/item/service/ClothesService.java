@@ -2,11 +2,12 @@ package com.allan.shoppingMall.domains.item.service;
 
 import com.allan.shoppingMall.common.exception.ErrorCode;
 import com.allan.shoppingMall.common.exception.ItemNotFoundException;
-import com.allan.shoppingMall.domains.cart.domain.model.RequiredOption;
 import com.allan.shoppingMall.domains.category.domain.Category;
 import com.allan.shoppingMall.domains.category.domain.CategoryRepository;
-import com.allan.shoppingMall.domains.item.domain.*;
 import com.allan.shoppingMall.domains.item.domain.clothes.*;
+import com.allan.shoppingMall.domains.item.domain.item.Color;
+import com.allan.shoppingMall.domains.item.domain.item.ImageType;
+import com.allan.shoppingMall.domains.item.domain.item.ItemImage;
 import com.allan.shoppingMall.domains.item.domain.model.*;
 import com.allan.shoppingMall.domains.item.infra.ImageFileHandler;
 import lombok.RequiredArgsConstructor;
@@ -39,10 +40,10 @@ public class ClothesService {
     @Transactional
     public Long saveClothes(ClothesForm form){
         // 의류 원단 정보.
-        List<ClothesFabric> fabrics = form.getClothesFabrics()
+        List<ItemFabric> fabrics = form.getClothesFabrics()
                 .stream()
                 .map(clothesFabricsDTO -> {
-                    return ClothesFabric.builder()
+                    return ItemFabric.builder()
                             .materialPart(clothesFabricsDTO.getMaterialPart())
                             .materialDesc(clothesFabricsDTO.getMaterialDesc())
                             .build();
@@ -50,20 +51,20 @@ public class ClothesService {
                 .collect(Collectors.toList());
 
         // 의류 디테일 정보.
-        List<ClothesDetail> details = form.getClothesDetails()
+        List<ItemDetail> details = form.getClothesDetails()
                 .stream()
                 .map(clothesDetailsDTO -> {
-                    return ClothesDetail.builder()
+                    return ItemDetail.builder()
                             .detailDesc(clothesDetailsDTO.getDetailDesc())
                             .build();
                 })
                 .collect(Collectors.toList());
 
         // 의류 사이즈 정보.
-        List<ClothesSize> sizes = form.getClothesSizes()
+        List<ItemSize> sizes = form.getClothesSizes()
                 .stream()
                 .map(clothesSizesDTO -> {
-                    return ClothesSize.builder()
+                    return ItemSize.builder()
                             .shoulderWidth(clothesSizesDTO.getShoulderWidth())
                             .backLength(clothesSizesDTO.getBackLength())
                             .bottomWidth(clothesSizesDTO.getBottomWidth())
@@ -116,9 +117,9 @@ public class ClothesService {
                 .category(findCategory)
                 .build();
 
-        clothes.changeClothesFabrics(fabrics);
-        clothes.changeClothesDetails(details);
-        clothes.changeClothesSizes(sizes);
+        clothes.changeItemFabrics(fabrics);
+        clothes.changeItemDetails(details);
+        clothes.changeItemSizes(sizes);
         clothes.changeModelSizes(modelSizes);
         clothes.changeItemImages(profileItemImages);
         clothes.changeItemImages(detailItemImages);
@@ -128,7 +129,7 @@ public class ClothesService {
     }
 
     /**
-     * 단일 clothesDTO 를 반환하는 메소드.
+     * 단일 Clothes 도메인에 대한 clothesDTO 를 반환하는 메소드.(상품 상세보기 위한 기능).
      * @param clothesId
      * @return ClothesDTO
      */
@@ -138,35 +139,35 @@ public class ClothesService {
                 .orElseThrow(() ->
                         new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND.getMessage(), ErrorCode.ENTITY_NOT_FOUND));
 
-        List<ClothesFabricDTO> fabricDTOS = findClothes.getClothesFabrics()
+        List<ItemFabricDTO> fabricDTOS = findClothes.getItemFabrics()
                 .stream()
-                .map(clothesFabric -> {
-                    return ClothesFabricDTO.builder()
-                            .materialPart(clothesFabric.getMaterialPart())
-                            .materialDesc(clothesFabric.getMaterialDesc())
+                .map(itemFabric -> {
+                    return ItemFabricDTO.builder()
+                            .materialPart(itemFabric.getMaterialPart())
+                            .materialDesc(itemFabric.getMaterialDesc())
                             .build();
                 }).collect(Collectors.toList());
 
-        List<ClothesDetailDTO> detailDTOS = findClothes.getClothesDetails()
+        List<ItemDetailDTO> detailDTOS = findClothes.getItemDetails()
                 .stream()
-                .map(clothesDetail -> {
-                    return ClothesDetailDTO.builder()
-                            .detailDesc(clothesDetail.getDetailDesc())
+                .map(itemDetail -> {
+                    return ItemDetailDTO.builder()
+                            .detailDesc(itemDetail.getDetailDesc())
                             .build();
                 }).collect(Collectors.toList());
 
-        List<ClothesSizeDTO> sizeDTOS = findClothes.getClothesSizes()
+        List<ItemSizeDTO> sizeDTOS = findClothes.getItemSizes()
                 .stream()
-                .map(clothesSize -> {
-                    return ClothesSizeDTO.builder()
-                            .backLength(clothesSize.getBackLength())
-                            .sizeLabel(clothesSize.getSizeLabel().getKey())
-                            .bottomWidth(clothesSize.getBottomWidth())
-                            .chestWidth(clothesSize.getChestWidth())
-                            .shoulderWidth(clothesSize.getShoulderWidth())
-                            .heapWidth(clothesSize.getHeapWidth())
-                            .sleeveLength(clothesSize.getSleeveLength())
-                            .waistWidth(clothesSize.getWaistWidth())
+                .map(itemSize -> {
+                    return ItemSizeDTO.builder()
+                            .backLength(itemSize.getBackLength())
+                            .sizeLabel(itemSize.getSizeLabel().getKey())
+                            .bottomWidth(itemSize.getBottomWidth())
+                            .chestWidth(itemSize.getChestWidth())
+                            .shoulderWidth(itemSize.getShoulderWidth())
+                            .heapWidth(itemSize.getHeapWidth())
+                            .sleeveLength(itemSize.getSleeveLength())
+                            .waistWidth(itemSize.getWaistWidth())
                             .build();
                 }).collect(Collectors.toList());
 
@@ -193,6 +194,7 @@ public class ClothesService {
                                     .modelSizes(modelSizeDTOS)
                                     .itemImages(findClothes.getItemImages())
                                     .color(findClothes.getColor().getDesc())
+                                    .categoryId(findClothes.getCategory().getCategoryId())
                                     .build();
 
         return clothesDTO;
@@ -214,6 +216,7 @@ public class ClothesService {
                             .price(clothes.getPrice())
                             .profileImageIds(ClothesSummaryDTOForIndex.toImagePath(clothes.getItemImages()))
                             .clothesColor(clothes.getColor().getDesc())
+                            .categoryId(clothes.getCategory().getCategoryId())
                             .build();
                     return clothesSummary;
                 }).collect(Collectors.toList());
@@ -230,9 +233,9 @@ public class ClothesService {
         Clothes findClothes = clothesRepository.findById(clothesId).orElseThrow(() ->
                 new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
-        List<SizeLabel> clothesSizes = findClothes.getClothesSizes().stream()
-                .map(clothesSize -> {
-                    return clothesSize.getSizeLabel();
+        List<SizeLabel> clothesSizes = findClothes.getItemSizes().stream()
+                .map(itemSize -> {
+                    return itemSize.getSizeLabel();
                 }).collect(Collectors.toList());
 
         return ClothesSummeryDTO.builder()

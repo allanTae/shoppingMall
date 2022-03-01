@@ -2,12 +2,11 @@ package com.allan.shoppingMall.domains.item.presentation;
 
 import com.allan.shoppingMall.common.exception.ErrorCode;
 import com.allan.shoppingMall.common.exception.ItemImageNotFoundException;
-import com.allan.shoppingMall.domains.item.domain.ItemImage;
-import com.allan.shoppingMall.domains.item.domain.ItemImageRepository;
+import com.allan.shoppingMall.domains.item.domain.item.ItemImage;
+import com.allan.shoppingMall.domains.item.domain.item.ItemImageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

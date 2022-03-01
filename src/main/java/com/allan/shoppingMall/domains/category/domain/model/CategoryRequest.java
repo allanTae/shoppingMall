@@ -13,4 +13,5 @@ public class CategoryRequest {
     private String name; // 카테고리 이름.
     private String branch; // 카테고리 그룹.
     private String parentCategoryName; // 부모 카테고리 이름.
+    private int categoryCode; // 상품 도메인 구분 역할(CategoryCode 참조.)
 }

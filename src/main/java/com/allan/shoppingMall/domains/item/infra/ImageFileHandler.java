@@ -1,7 +1,7 @@
 package com.allan.shoppingMall.domains.item.infra;
 
-import com.allan.shoppingMall.domains.item.domain.ImageType;
-import com.allan.shoppingMall.domains.item.domain.ItemImage;
+import com.allan.shoppingMall.domains.item.domain.item.ImageType;
+import com.allan.shoppingMall.domains.item.domain.item.ItemImage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;

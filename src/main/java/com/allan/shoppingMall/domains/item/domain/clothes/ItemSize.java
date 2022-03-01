@@ -3,7 +3,7 @@ package com.allan.shoppingMall.domains.item.domain.clothes;
 import com.allan.shoppingMall.common.domain.BaseEntity;
 import com.allan.shoppingMall.common.exception.ErrorCode;
 import com.allan.shoppingMall.common.exception.order.OrderFailException;
-import com.allan.shoppingMall.domains.item.domain.Item;
+import com.allan.shoppingMall.domains.item.domain.item.Item;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,13 +17,13 @@ import javax.persistence.*;
  */
 @Entity
 @Getter
-@Table(name = "clothesSizes")
+@Table(name = "itemSizes")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
-public class ClothesSize extends BaseEntity {
+public class ItemSize extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long clothesSizeId;
+    private Long itemSizeId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
@@ -67,7 +67,7 @@ public class ClothesSize extends BaseEntity {
     private Long stockQuantity;
 
     @Builder
-    public ClothesSize(SizeLabel sizeLabel, Double backLength, Double chestWidth, Double shoulderWidth, Double sleeveLength, Double waistWidth, Double heapWidth, Double bottomWidth, Long stockQuantity) {
+    public ItemSize(SizeLabel sizeLabel, Double backLength, Double chestWidth, Double shoulderWidth, Double sleeveLength, Double waistWidth, Double heapWidth, Double bottomWidth, Long stockQuantity) {
         this.sizeLabel = sizeLabel;
         this.backLength = backLength;
         this.chestWidth = chestWidth;

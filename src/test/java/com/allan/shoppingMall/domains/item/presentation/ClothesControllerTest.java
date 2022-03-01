@@ -4,6 +4,7 @@ import com.allan.shoppingMall.common.TestUserDetailsService;
 import com.allan.shoppingMall.domains.cart.service.CartService;
 import com.allan.shoppingMall.domains.item.domain.model.ClothesDTO;
 import com.allan.shoppingMall.domains.item.domain.model.ClothesForm;
+import com.allan.shoppingMall.domains.item.presentation.clothes.ClothesController;
 import com.allan.shoppingMall.domains.item.service.ClothesService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,25 +74,6 @@ public class ClothesControllerTest {
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(view().name("clothes/clothesForm"));
-    }
-
-    @Test
-    public void 의류_조회_테스트() throws Exception {
-        //given
-        ClothesDTO TEST_CLOTHES_DTO = ClothesDTO.builder()
-                .itemImages(List.of())
-                .build();
-        given(clothesService.getClothes(any()))
-                .willReturn(TEST_CLOTHES_DTO);
-
-        //when
-        ResultActions resultActions = mvc.perform(get("/clothes?clothesId=1"));
-
-        //then
-        resultActions
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("clothesInfo"))
-                .andExpect(view().name("clothes/clothesDetail"));
     }
 
 

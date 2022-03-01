@@ -2,14 +2,13 @@ package com.allan.shoppingMall.domains.cart.domain;
 
 import com.allan.shoppingMall.common.config.jpa.auditing.JpaAuditingConfig;
 import com.allan.shoppingMall.common.value.Address;
-import com.allan.shoppingMall.domains.item.domain.Color;
+import com.allan.shoppingMall.domains.item.domain.item.Color;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
-import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSize;
+import com.allan.shoppingMall.domains.item.domain.clothes.ItemSize;
 import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
 import com.allan.shoppingMall.domains.member.domain.Gender;
 import com.allan.shoppingMall.domains.member.domain.Member;
 import com.allan.shoppingMall.domains.member.domain.MemberRole;
-import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,16 +64,16 @@ public class CartTest {
                 .price(1000l)
                 .build();
 
-        TEST_CLOTHES.changeClothesSizes(List.of(
-                ClothesSize.builder()
+        TEST_CLOTHES.changeItemSizes(List.of(
+                ItemSize.builder()
                         .stockQuantity(10l)
                         .sizeLabel(SizeLabel.S)
                         .build(),
-                ClothesSize.builder()
+                ItemSize.builder()
                         .stockQuantity(20l)
                         .sizeLabel(SizeLabel.M)
                         .build(),
-                ClothesSize.builder()
+                ItemSize.builder()
                         .stockQuantity(30l)
                         .sizeLabel(SizeLabel.L)
                         .build()
@@ -87,12 +86,12 @@ public class CartTest {
                 .price(2000l)
                 .build();
 
-        TEST_CLOTHES_2.changeClothesSizes(List.of(
-                ClothesSize.builder()
+        TEST_CLOTHES_2.changeItemSizes(List.of(
+                ItemSize.builder()
                         .stockQuantity(10l)
                         .sizeLabel(SizeLabel.S)
                         .build(),
-                ClothesSize.builder()
+                ItemSize.builder()
                         .stockQuantity(20l)
                         .sizeLabel(SizeLabel.M)
                         .build()

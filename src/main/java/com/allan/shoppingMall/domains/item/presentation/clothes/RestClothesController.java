@@ -1,7 +1,10 @@
-package com.allan.shoppingMall.domains.item.presentation;
+package com.allan.shoppingMall.domains.item.presentation.clothes;
 
 import com.allan.shoppingMall.common.exception.ItemNotFoundException;
 import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSummeryDTO;
+import com.allan.shoppingMall.domains.item.presentation.clothes.ClothesErrorResponse;
+import com.allan.shoppingMall.domains.item.presentation.clothes.ClothesResponse;
+import com.allan.shoppingMall.domains.item.presentation.clothes.ClothesResult;
 import com.allan.shoppingMall.domains.item.service.ClothesService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +21,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class RestClothesController {
     private final ClothesService clothesService;
 
+    /**
+     * 장바구니 목록 프론트단에서 사용 할 상품 정보를 반환하는 핸들러.
+     * (cartList.jsp 참고.)
+     */
     @ResponseBody
     @GetMapping("/clothes/{clothesId}")
     public ResponseEntity<ClothesResponse> getClothesSummayDTO(@PathVariable("clothesId") Long clothesId){

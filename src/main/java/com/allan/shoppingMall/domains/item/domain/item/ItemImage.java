@@ -1,4 +1,4 @@
-package com.allan.shoppingMall.domains.item.domain;
+package com.allan.shoppingMall.domains.item.domain.item;
 
 import com.allan.shoppingMall.common.domain.BaseEntity;
 import lombok.AccessLevel;

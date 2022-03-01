@@ -5,8 +5,8 @@ import com.allan.shoppingMall.common.exception.order.payment.PaymentFailExceptio
 import com.allan.shoppingMall.common.value.Address;
 import com.allan.shoppingMall.domains.delivery.domain.Delivery;
 import com.allan.shoppingMall.domains.delivery.domain.DeliveryStatus;
-import com.allan.shoppingMall.domains.item.domain.Color;
-import com.allan.shoppingMall.domains.item.domain.ItemImage;
+import com.allan.shoppingMall.domains.item.domain.item.Color;
+import com.allan.shoppingMall.domains.item.domain.item.ItemImage;
 import com.allan.shoppingMall.domains.item.domain.clothes.*;
 import com.allan.shoppingMall.domains.member.domain.Member;
 import com.allan.shoppingMall.domains.mileage.domain.model.MileageContent;
@@ -57,7 +57,7 @@ public class OrderServiceTest {
     OrderRepository orderRepository;
 
     @Mock
-    ClothesSizeRepository clothesSizeRepository;
+    ItemSizeRepository clothesSizeRepository;
 
     @Mock
     MileageService mileageService;
@@ -68,16 +68,16 @@ public class OrderServiceTest {
     @Test
     public void 주문_테스트() throws Exception {
         //given
-        ClothesSize TEST_CLOTHES_SIZE = createClothesSize();
-        given(clothesSizeRepository.getClothesSizebySizelabel(any(), any()))
-                .willReturn(TEST_CLOTHES_SIZE);
+        ItemSize TEST_ITEM_SIZE = createItemSize();
+        given(clothesSizeRepository.getItemSizebySizelabel(any(), any()))
+                .willReturn(TEST_ITEM_SIZE);
 
         Clothes TEST_CLOTHES = Clothes.builder()
                 .price(15000l)
                 .build();
         // clothes 엔티티의 재고량을 조절하기 위해선 changeClotehsSizes() 를 활용해야 합니다.
         // 자세한 정보는 Clothes 엔티티를 참고 해 주세요.
-        TEST_CLOTHES.changeClothesSizes(createClothesSizes());
+        TEST_CLOTHES.changeItemSizes(createClothesSizes());
         given(clothesRepository.findById(any()))
                 .willReturn(Optional.of(TEST_CLOTHES));
 
@@ -105,7 +105,7 @@ public class OrderServiceTest {
         verify(orderRepository, atLeastOnce()).save(any());
         verify(mileageService, atLeastOnce()).deductMileage(any(), any(), any(), any());
         assertThat(TEST_CLOTHES.getStockQuantity(), is(12l));
-        assertThat(TEST_CLOTHES_SIZE.getStockQuantity(), is(2l));
+        assertThat(TEST_ITEM_SIZE.getStockQuantity(), is(2l));
     }
 
 
@@ -134,7 +134,7 @@ public class OrderServiceTest {
         ItemImage TEST_ITEM_IMAGE = ItemImage.builder()
                 .build();
 
-        ClothesSize TEST_CLOTHES_SIZE = ClothesSize.builder()
+        ItemSize TEST_CLOTHES_SIZE = ItemSize.builder()
                 .stockQuantity(10l)
                 .build();
 
@@ -142,7 +142,7 @@ public class OrderServiceTest {
                 .name("testClothesName")
                 .price(1000l)
                 .build();
-        TEST_CLOTHES.changeClothesSizes(List.of(TEST_CLOTHES_SIZE));
+        TEST_CLOTHES.changeItemSizes(List.of(TEST_CLOTHES_SIZE));
         TEST_CLOTHES.changeItemImages(List.of(TEST_ITEM_IMAGE));
 
         OrderClothes TEST_ORDER_CLOTHES = new OrderClothes(10l, TEST_CLOTHES, TEST_CLOTHES_SIZE);
@@ -168,7 +168,7 @@ public class OrderServiceTest {
     @Test
     public void 상세_주문_내역_테스트() throws Exception {
         //given
-        ClothesSize TEST_CLOTHES_SIZE = ClothesSize.builder()
+        ItemSize TEST_CLOTHES_SIZE = ItemSize.builder()
                 .stockQuantity(20l)
                 .build();
         ItemImage TEST_ITEM_IMAGE = ItemImage.builder().build();
@@ -179,7 +179,7 @@ public class OrderServiceTest {
                 .build();
 
         TEST_CLOTHES.changeItemImages(List.of(TEST_ITEM_IMAGE));
-        TEST_CLOTHES.changeClothesSizes(List.of(TEST_CLOTHES_SIZE));
+        TEST_CLOTHES.changeItemSizes(List.of(TEST_CLOTHES_SIZE));
 
         OrderClothes TEST_ORDER_CLOTHES = new OrderClothes(10l, TEST_CLOTHES, TEST_CLOTHES_SIZE);
 
@@ -228,7 +228,7 @@ public class OrderServiceTest {
     @Test
     public void 아임포트_결제_주문_유효성검사_주문금액과_결제금액_불일치로인한_결제실패_테스트() throws Exception {
         //given
-        ClothesSize TEST_CLOTHES_SIZE = ClothesSize.builder()
+        ItemSize TEST_CLOTHES_SIZE = ItemSize.builder()
                 .sizeLabel(SizeLabel.S)
                 .stockQuantity(10l)
                 .build();
@@ -237,7 +237,7 @@ public class OrderServiceTest {
                 .price(3000l)
                 .build();
 
-        TEST_CLOTHES.changeClothesSizes(List.of(TEST_CLOTHES_SIZE));
+        TEST_CLOTHES.changeItemSizes(List.of(TEST_CLOTHES_SIZE));
 
         OrderClothes TEST_ORDER_CLOTHES = new OrderClothes(3l, TEST_CLOTHES, TEST_CLOTHES_SIZE);
 
@@ -273,7 +273,7 @@ public class OrderServiceTest {
     @Test
     public void 아임포트_결제_주문_유효성검사_성공_테스트() throws Exception {
         //given
-        ClothesSize TEST_CLOTHES_SIZE = ClothesSize.builder()
+        ItemSize TEST_CLOTHES_SIZE = ItemSize.builder()
                 .sizeLabel(SizeLabel.S)
                 .stockQuantity(10l)
                 .build();
@@ -282,11 +282,11 @@ public class OrderServiceTest {
                 .price(3000l)
                 .build();
 
-        TEST_CLOTHES.changeClothesSizes(List.of(TEST_CLOTHES_SIZE));
+        TEST_CLOTHES.changeItemSizes(List.of(TEST_CLOTHES_SIZE));
 
         OrderClothes TEST_ORDER_CLOTHES = new OrderClothes(3l, TEST_CLOTHES, TEST_CLOTHES_SIZE);
 
-        ClothesSize TEST_CLOTHES_SIZE_2 = ClothesSize.builder()
+        ItemSize TEST_CLOTHES_SIZE_2 = ItemSize.builder()
                 .sizeLabel(SizeLabel.M)
                 .stockQuantity(10l)
                 .build();
@@ -295,7 +295,7 @@ public class OrderServiceTest {
                 .price(4000l)
                 .build();
 
-        TEST_CLOTHES_2.changeClothesSizes(List.of(TEST_CLOTHES_SIZE_2));
+        TEST_CLOTHES_2.changeItemSizes(List.of(TEST_CLOTHES_SIZE_2));
 
         OrderClothes TEST_ORDER_CLOTHES_2 = new OrderClothes(4l, TEST_CLOTHES_2, TEST_CLOTHES_SIZE_2);
 
@@ -352,7 +352,7 @@ public class OrderServiceTest {
     @Test
     public void 아임포트_결제_주문_유효성검사_주문상태_부적합으로인한_결제실패_테스트() throws Exception {
         //given
-        ClothesSize TEST_CLOTHES_SIZE = ClothesSize.builder()
+        ItemSize TEST_CLOTHES_SIZE = ItemSize.builder()
                 .sizeLabel(SizeLabel.S)
                 .stockQuantity(10l)
                 .build();
@@ -361,7 +361,7 @@ public class OrderServiceTest {
                 .price(3000l)
                 .build();
 
-        TEST_CLOTHES.changeClothesSizes(List.of(TEST_CLOTHES_SIZE));
+        TEST_CLOTHES.changeItemSizes(List.of(TEST_CLOTHES_SIZE));
 
         OrderClothes TEST_ORDER_CLOTHES = new OrderClothes(3l, TEST_CLOTHES, TEST_CLOTHES_SIZE);
 
@@ -420,12 +420,12 @@ public class OrderServiceTest {
                 .price(1000l)
                 .build();
 
-        ClothesSize TEST_CLOTHES_SIZE = ClothesSize.builder()
+        ItemSize TEST_CLOTHES_SIZE = ItemSize.builder()
                 .sizeLabel(SizeLabel.S)
                 .stockQuantity(10l)
                 .build();
 
-        TEST_CLOTHES.changeClothesSizes(List.of(TEST_CLOTHES_SIZE));
+        TEST_CLOTHES.changeItemSizes(List.of(TEST_CLOTHES_SIZE));
 
         Order TEST_TEMP_ORDER = Order.builder()
                 .delivery(Delivery.builder()
@@ -436,10 +436,9 @@ public class OrderServiceTest {
                         .build())
                 .build();
 
-        TEST_TEMP_ORDER.changeOrderItems(List.of(OrderClothes.builder()
-                .item(TEST_CLOTHES)
-                .orderQuantity(5l)
-                .build()));
+        TEST_TEMP_ORDER.changeOrderItems(List.of(
+                new OrderItem(5l, TEST_CLOTHES, TEST_CLOTHES_SIZE)
+        ));
 
         ReflectionTestUtils.setField(TEST_TEMP_ORDER, "orderStatus", OrderStatus.ORDER_TEMP);
         given(orderRepository.findByOrderNumAndAuthId(any(), any()))
@@ -462,12 +461,12 @@ public class OrderServiceTest {
                 .price(1000l)
                 .build();
 
-        ClothesSize TEST_CLOTHES_SIZE = ClothesSize.builder()
+        ItemSize TEST_CLOTHES_SIZE = ItemSize.builder()
                 .sizeLabel(SizeLabel.S)
                 .stockQuantity(100l)
                 .build();
 
-        TEST_CLOTHES.changeClothesSizes(List.of(TEST_CLOTHES_SIZE));
+        TEST_CLOTHES.changeItemSizes(List.of(TEST_CLOTHES_SIZE));
 
         Member TEST_ORDERER = Member.builder()
                 .authId("testAuthId")
@@ -486,7 +485,7 @@ public class OrderServiceTest {
         ReflectionTestUtils.setField(TEST_ORDER, "orderStatus", OrderStatus.ORDER_TEMP);
 
         TEST_ORDER.changeOrderItems(List.of(
-                new OrderClothes(10l, TEST_CLOTHES, TEST_CLOTHES_SIZE)
+                new OrderItem(10l, TEST_CLOTHES, TEST_CLOTHES_SIZE)
         ));
 
         given(orderRepository.getOrderIdsByAuthId(any(String.class), any()))
@@ -501,20 +500,20 @@ public class OrderServiceTest {
         verify(mileageService, atLeastOnce()).deleteMileage(any());
     }
 
-    private ClothesSize createClothesSize() {
-        return ClothesSize.builder()
+    private ItemSize createItemSize() {
+        return ItemSize.builder()
                 .stockQuantity(12l)
                 .sizeLabel(SizeLabel.M)
                 .build();
     }
 
-    private List<ClothesSize> createClothesSizes(){
+    private List<ItemSize> createClothesSizes(){
         return List.of(
-                ClothesSize.builder()
+                ItemSize.builder()
                 .stockQuantity(10l)
                 .build(),
 
-                createClothesSize()
+                createItemSize()
         );
     }
 

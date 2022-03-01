@@ -9,16 +9,16 @@ import lombok.*;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ClothesDetailDTO {
+public class ItemDetailDTO {
     private String detailDesc; // 원단 디테일 설명.
 
     @Builder
-    public ClothesDetailDTO(String detailDesc) {
+    public ItemDetailDTO(String detailDesc) {
         this.detailDesc = detailDesc;
     }
 
     @Override
     public String toString(){
-        return "ClothesDetails [detailDesc=" + this.detailDesc + "]";
+        return "ItemDetailDTO [detailDesc=" + this.detailDesc + "]";
     }
 }

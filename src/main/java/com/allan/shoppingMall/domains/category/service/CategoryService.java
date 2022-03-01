@@ -4,6 +4,7 @@ import com.allan.shoppingMall.common.exception.ErrorCode;
 import com.allan.shoppingMall.common.exception.category.CategoryCreateFailException;
 import com.allan.shoppingMall.common.exception.category.CategoryNotFoundException;
 import com.allan.shoppingMall.domains.category.domain.Category;
+import com.allan.shoppingMall.domains.category.domain.CategoryCode;
 import com.allan.shoppingMall.domains.category.domain.CategoryRepository;
 import com.allan.shoppingMall.domains.category.domain.model.CategoryDTO;
 import com.allan.shoppingMall.domains.category.domain.model.CategoryRequest;
@@ -44,6 +45,7 @@ public class CategoryService {
                     Category.builder()
                             .branch(categoryRequest.getBranch())
                             .name("ROOT")
+                            .categoryCode(CategoryCode.ROOT)
                             .depth(0)
                             .build());
 
@@ -56,6 +58,7 @@ public class CategoryService {
                 .branch(categoryRequest.getBranch())
                 .name(categoryRequest.getName())
                 .parentCategory(rootCategory)
+                .categoryCode(CategoryCode.valueOf(categoryRequest.getCategoryCode()))
                 .depth(1)
                 .build();
         }
@@ -70,6 +73,7 @@ public class CategoryService {
                 .branch(categoryRequest.getBranch())
                 .depth(parentCategory.getDepth() + 1)
                 .parentCategory(parentCategory)
+                .categoryCode(CategoryCode.valueOf(categoryRequest.getCategoryCode()))
                 .build();
         }
 

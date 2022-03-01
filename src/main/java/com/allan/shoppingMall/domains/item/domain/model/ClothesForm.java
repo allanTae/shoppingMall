@@ -22,9 +22,9 @@ public class ClothesForm {
     private int clothesColor;
     private Long categoryId;
 
-    private List<ClothesFabricDTO> clothesFabrics = new ArrayList<>();
-    private List<ClothesDetailDTO> clothesDetails = new ArrayList<>();
-    private List<ClothesSizeDTO> clothesSizes = new ArrayList<>();
+    private List<ItemFabricDTO> clothesFabrics = new ArrayList<>();
+    private List<ItemDetailDTO> clothesDetails = new ArrayList<>();
+    private List<ItemSizeDTO> clothesSizes = new ArrayList<>();
     private List<ModelSizeDTO> modelSizes = new ArrayList<>();
     private List<MultipartFile> profileImageFiles = new ArrayList<>();
     private List<MultipartFile> detailImageFiles = new ArrayList<>();

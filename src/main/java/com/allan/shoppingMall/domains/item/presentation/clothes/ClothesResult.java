@@ -1,4 +1,4 @@
-package com.allan.shoppingMall.domains.item.presentation;
+package com.allan.shoppingMall.domains.item.presentation.clothes;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

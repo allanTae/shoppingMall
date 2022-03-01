@@ -9,18 +9,18 @@ import lombok.*;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ClothesFabricDTO {
+public class ItemFabricDTO {
     private String materialPart; // 원단 부위 정보.
     private String materialDesc; // 원단 설명.
 
     @Builder
-    public ClothesFabricDTO(String materialPart, String materialDesc) {
+    public ItemFabricDTO(String materialPart, String materialDesc) {
         this.materialPart = materialPart;
         this.materialDesc = materialDesc;
     }
 
     @Override
     public String toString(){
-        return "ClothesFabrics [materialPart=" + this.materialPart + ", materialDesc=" + this.getMaterialDesc() + "]";
+        return "ItemFabricDTO [materialPart=" + this.materialPart + ", materialDesc=" + this.getMaterialDesc() + "]";
     }
 }

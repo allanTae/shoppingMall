@@ -1,9 +1,8 @@
 package com.allan.shoppingMall.domains.cart.domain;
 
 import com.allan.shoppingMall.common.config.jpa.auditing.JpaAuditingConfig;
-import com.allan.shoppingMall.domains.item.domain.Item;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
-import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSize;
+import com.allan.shoppingMall.domains.item.domain.clothes.ItemSize;
 import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 
@@ -42,12 +40,12 @@ public class CartItemTest {
         Cart TEST_CART = Cart.builder()
                 .build();
 
-        ClothesSize TEST_CLOTHES_1_SIZE_S = ClothesSize.builder()
+        ItemSize TEST_CLOTHES_1_SIZE_S = ItemSize.builder()
                 .stockQuantity(10l)
                 .sizeLabel(SizeLabel.S)
                 .build();
 
-        ClothesSize TEST_CLOTHES_2_SIZE_M = ClothesSize.builder()
+        ItemSize TEST_CLOTHES_2_SIZE_M = ItemSize.builder()
                 .stockQuantity(20l)
                 .sizeLabel(SizeLabel.M)
                 .build();
@@ -58,7 +56,7 @@ public class CartItemTest {
                 .price(1000l)
                 .build();
 
-        TEST_CLOTHES.changeClothesSizes(List.of(TEST_CLOTHES_1_SIZE_S, TEST_CLOTHES_2_SIZE_M));
+        TEST_CLOTHES.changeItemSizes(List.of(TEST_CLOTHES_1_SIZE_S, TEST_CLOTHES_2_SIZE_M));
 
         Clothes TEST_CLOTHES_2 = Clothes.builder()
                 .engName("testClothesEngName2")
@@ -66,12 +64,12 @@ public class CartItemTest {
                 .price(2000l)
                 .build();
 
-        TEST_CLOTHES_2.changeClothesSizes(List.of(TEST_CLOTHES_1_SIZE_S, TEST_CLOTHES_2_SIZE_M));
+        TEST_CLOTHES_2.changeItemSizes(List.of(TEST_CLOTHES_1_SIZE_S, TEST_CLOTHES_2_SIZE_M));
 
-        CartItem TEST_CART_ITEM_1 = new CartItem(TEST_CLOTHES, 1l, TEST_CLOTHES.getClothesSizes().get(0).getSizeLabel());
-        CartItem TEST_CART_ITEM_2 = new CartItem(TEST_CLOTHES, 1l, TEST_CLOTHES.getClothesSizes().get(0).getSizeLabel());
-        CartItem TEST_CART_ITEM_3 = new CartItem(TEST_CLOTHES, 1l, TEST_CLOTHES.getClothesSizes().get(1).getSizeLabel());
-        CartItem TEST_CART_ITEM_4 = new CartItem(TEST_CLOTHES_2, 1l, TEST_CLOTHES.getClothesSizes().get(0).getSizeLabel());
+        CartItem TEST_CART_ITEM_1 = new CartItem(TEST_CLOTHES, 1l, TEST_CLOTHES.getItemSizes().get(0).getSizeLabel());
+        CartItem TEST_CART_ITEM_2 = new CartItem(TEST_CLOTHES, 1l, TEST_CLOTHES.getItemSizes().get(0).getSizeLabel());
+        CartItem TEST_CART_ITEM_3 = new CartItem(TEST_CLOTHES, 1l, TEST_CLOTHES.getItemSizes().get(1).getSizeLabel());
+        CartItem TEST_CART_ITEM_4 = new CartItem(TEST_CLOTHES_2, 1l, TEST_CLOTHES.getItemSizes().get(0).getSizeLabel());
 
         // when
         testEntityManager.persist(TEST_CLOTHES);

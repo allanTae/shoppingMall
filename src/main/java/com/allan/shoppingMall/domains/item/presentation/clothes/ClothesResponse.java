@@ -1,4 +1,4 @@
-package com.allan.shoppingMall.domains.item.presentation;
+package com.allan.shoppingMall.domains.item.presentation.clothes;
 
 import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSummeryDTO;
 import lombok.Getter;

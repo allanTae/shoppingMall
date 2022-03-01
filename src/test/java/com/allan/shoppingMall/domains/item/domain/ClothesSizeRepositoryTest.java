@@ -2,8 +2,8 @@ package com.allan.shoppingMall.domains.item.domain;
 
 import com.allan.shoppingMall.common.config.jpa.auditing.JpaAuditingConfig;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
-import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSize;
-import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSizeRepository;
+import com.allan.shoppingMall.domains.item.domain.clothes.ItemSize;
+import com.allan.shoppingMall.domains.item.domain.clothes.ItemSizeRepository;
 import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class ClothesSizeRepositoryTest {
     TestEntityManager testEntityManager;
 
     @Autowired
-    ClothesSizeRepository clothesSizeRepository;
+    ItemSizeRepository clothesSizeRepository;
 
     @Test
     public void 의상아이디_사이즈로_사이즈정보_조회_테스트() throws Exception {
@@ -45,8 +45,8 @@ public class ClothesSizeRepositoryTest {
         testEntityManager.flush();
 
         //when
-        ClothesSize clothesSizebySize1 = clothesSizeRepository.getClothesSizebySizelabel(TEST_CLORTHES_LIST.get(0), SizeLabel.M);
-        ClothesSize clothesSizebySize2 = clothesSizeRepository.getClothesSizebySizelabel(TEST_CLORTHES_LIST.get(1), SizeLabel.L);
+        ItemSize clothesSizebySize1 = clothesSizeRepository.getItemSizebySizelabel(TEST_CLORTHES_LIST.get(0), SizeLabel.M);
+        ItemSize clothesSizebySize2 = clothesSizeRepository.getItemSizebySizelabel(TEST_CLORTHES_LIST.get(1), SizeLabel.L);
 
         //then
         assertThat(clothesSizebySize1.getSizeLabel(), is(SizeLabel.M));
@@ -62,22 +62,22 @@ public class ClothesSizeRepositoryTest {
                 .price(1000l)
                 .build();
 
-        ClothesSize clothesSize1 = ClothesSize.builder()
+        ItemSize clothesSize1 = ItemSize.builder()
                 .stockQuantity(10l)
                 .sizeLabel(SizeLabel.S)
                 .build();
 
-        ClothesSize clothesSize2 = ClothesSize.builder()
+        ItemSize clothesSize2 = ItemSize.builder()
                 .stockQuantity(12l)
                 .sizeLabel(SizeLabel.M)
                 .build();
 
-        ClothesSize clothesSize3 = ClothesSize.builder()
+        ItemSize clothesSize3 = ItemSize.builder()
                 .stockQuantity(5l)
                 .sizeLabel(SizeLabel.L)
                 .build();
 
-        clothes.changeClothesSizes(List.of(clothesSize1, clothesSize2, clothesSize3));
+        clothes.changeItemSizes(List.of(clothesSize1, clothesSize2, clothesSize3));
 
 
         Clothes clothes2 = Clothes.builder()
@@ -86,22 +86,22 @@ public class ClothesSizeRepositoryTest {
                 .price(500l)
                 .build();
 
-        ClothesSize clothesSize4 = ClothesSize.builder()
+        ItemSize clothesSize4 = ItemSize.builder()
                 .stockQuantity(20l)
                 .sizeLabel(SizeLabel.S)
                 .build();
 
-        ClothesSize clothesSize5 = ClothesSize.builder()
+        ItemSize clothesSize5 = ItemSize.builder()
                 .stockQuantity(22l)
                 .sizeLabel(SizeLabel.M)
                 .build();
 
-        ClothesSize clothesSize6 = ClothesSize.builder()
+        ItemSize clothesSize6 = ItemSize.builder()
                 .stockQuantity(25l)
                 .sizeLabel(SizeLabel.L)
                 .build();
 
-        clothes2.changeClothesSizes(List.of(clothesSize4, clothesSize5, clothesSize6));
+        clothes2.changeItemSizes(List.of(clothesSize4, clothesSize5, clothesSize6));
 
         return List.of(clothes, clothes2);
     }

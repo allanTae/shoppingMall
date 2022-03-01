@@ -3,11 +3,9 @@ package com.allan.shoppingMall.domains.cart.domain;
 import com.allan.shoppingMall.common.domain.BaseTimeEntity;
 import com.allan.shoppingMall.common.exception.ErrorCode;
 import com.allan.shoppingMall.common.exception.cart.CartAddItemFailException;
-import com.allan.shoppingMall.domains.item.domain.Item;
-import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
-import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSize;
+import com.allan.shoppingMall.domains.item.domain.clothes.ItemSize;
+import com.allan.shoppingMall.domains.item.domain.item.Item;
 import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
-import com.allan.shoppingMall.domains.member.domain.JoinType;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -82,7 +80,7 @@ public class CartItem extends BaseTimeEntity {
      * @param cartQuantity
      * @param clothesSize
      */
-    private void setQuantity(Long cartQuantity, ClothesSize clothesSize){
+    private void setQuantity(Long cartQuantity, ItemSize clothesSize){
         if(clothesSize.getStockQuantity() < cartQuantity)
             throw new CartAddItemFailException(ErrorCode.ITEM_STOCK_QUANTITY_EXCEEDED);
         else

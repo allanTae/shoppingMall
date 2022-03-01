@@ -32,7 +32,7 @@ public class Category extends BaseTimeEntity {
     @OneToMany(mappedBy = "parentCategory", cascade = {CascadeType.REMOVE}, orphanRemoval = true)
     private List<Category> childCategory = new ArrayList<>();
 
-    // 카테고리 그룹정보를 저장하기위한 필드.
+    // 카테고리 그룹정보를 저장하기위한 필드(카테고리 조회용).
     @Column(nullable = false)
     private String branch;
 
@@ -40,12 +40,17 @@ public class Category extends BaseTimeEntity {
     @Column(nullable = false)
     private Integer depth;
 
+    // 카테고리 구분 필드(상품 도메인 등록시, 상품 도메인 종류 구분용 예) Clothes, Accessory 구분).
+    @Enumerated(value = EnumType.STRING)
+    private CategoryCode categoryCode;
+
     @Builder
-    public Category(String name, Category parentCategory, String branch, Integer depth) {
+    public Category(String name, Category parentCategory, String branch, Integer depth, CategoryCode categoryCode) {
         this.name = name;
         this.parentCategory = parentCategory;
         this.branch = branch;
         this.depth = depth;
+        this.categoryCode = categoryCode;
     }
 
     public void changeName(String name){

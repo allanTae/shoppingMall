@@ -10,8 +10,8 @@ import com.allan.shoppingMall.domains.delivery.domain.Delivery;
 import com.allan.shoppingMall.domains.delivery.domain.DeliveryStatus;
 import com.allan.shoppingMall.domains.item.domain.clothes.ClothesRepository;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
-import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSize;
-import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSizeRepository;
+import com.allan.shoppingMall.domains.item.domain.clothes.ItemSize;
+import com.allan.shoppingMall.domains.item.domain.clothes.ItemSizeRepository;
 import com.allan.shoppingMall.domains.member.domain.Member;
 import com.allan.shoppingMall.domains.mileage.domain.model.MileageContent;
 import com.allan.shoppingMall.domains.mileage.domain.model.MileageDTO;
@@ -44,7 +44,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final ClothesRepository clothesRepository;
-    private final ClothesSizeRepository clothesSizeRepository;
+    private final ItemSizeRepository itemSizeRepository;
     private final PaymentRepository paymentRepository;
     private final PaymentService paymentService;
     private final MileageService mileageService;
@@ -88,9 +88,9 @@ public class OrderService {
                     Clothes clothes = clothesRepository.findById(orderLineRequest.getItemId()).orElseThrow(()
                             -> new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
-                    ClothesSize clothesSize = clothesSizeRepository.getClothesSizebySizelabel(clothes, orderLineRequest.getSize());
+                    ItemSize itemSize = itemSizeRepository.getItemSizebySizelabel(clothes, orderLineRequest.getSize());
 
-                    return new OrderClothes(orderLineRequest.getOrderQuantity(), clothes, clothesSize);
+                    return new OrderItem(orderLineRequest.getOrderQuantity(), clothes, itemSize);
                     // 그외의 상품인 경우.
                 }).collect(Collectors.toList());
         order.changeOrderItems(orderItems);

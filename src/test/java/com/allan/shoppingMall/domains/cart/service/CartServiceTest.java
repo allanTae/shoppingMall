@@ -4,10 +4,10 @@ import com.allan.shoppingMall.domains.cart.domain.Cart;
 import com.allan.shoppingMall.domains.cart.domain.CartItem;
 import com.allan.shoppingMall.domains.cart.domain.CartRepository;
 import com.allan.shoppingMall.domains.cart.domain.model.*;
-import com.allan.shoppingMall.domains.item.domain.ItemImage;
+import com.allan.shoppingMall.domains.item.domain.clothes.ItemSize;
+import com.allan.shoppingMall.domains.item.domain.item.ItemImage;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
 import com.allan.shoppingMall.domains.item.domain.clothes.ClothesRepository;
-import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSize;
 import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
 import com.allan.shoppingMall.domains.member.domain.Member;
 import com.allan.shoppingMall.domains.member.domain.MemberRepository;
@@ -347,17 +347,17 @@ public class CartServiceTest {
         ReflectionTestUtils.setField(TEST_CLOTHES, "itemId", TEST_ITEM_ID_3);
 
         // 1 상품 사이즈 도메인.
-        ClothesSize TEST_CLOTHES_SIZE_S = ClothesSize.builder()
+        ItemSize TEST_CLOTHES_SIZE_S = ItemSize.builder()
                 .stockQuantity(10l)
                 .sizeLabel(SizeLabel.S)
                 .build();
 
-        ClothesSize TEST_CLOTHES_SIZE_M = ClothesSize.builder()
+        ItemSize TEST_CLOTHES_SIZE_M = ItemSize.builder()
                 .stockQuantity(10l)
                 .sizeLabel(SizeLabel.M)
                 .build();
 
-        ClothesSize TEST_CLOTHES_SIZE_L = ClothesSize.builder()
+        ItemSize TEST_CLOTHES_SIZE_L = ItemSize.builder()
                 .stockQuantity(10l)
                 .sizeLabel(SizeLabel.L)
                 .build();
@@ -366,7 +366,7 @@ public class CartServiceTest {
         ItemImage TEST_ITEM_IMAGE = ItemImage.builder().build();
         ReflectionTestUtils.setField(TEST_ITEM_IMAGE, "itemImageId", 1l);
 
-        TEST_CLOTHES.changeClothesSizes(List.of(TEST_CLOTHES_SIZE_M, TEST_CLOTHES_SIZE_S, TEST_CLOTHES_SIZE_L));
+        TEST_CLOTHES.changeItemSizes(List.of(TEST_CLOTHES_SIZE_M, TEST_CLOTHES_SIZE_S, TEST_CLOTHES_SIZE_L));
         TEST_CLOTHES.changeItemImages(List.of(TEST_ITEM_IMAGE));
 
         // 2 상품 도메인.
@@ -377,22 +377,22 @@ public class CartServiceTest {
         ReflectionTestUtils.setField(TEST_CLOTHES_2, "itemId", TEST_ITEM_ID_4);
 
         // 2 상품 사이즈 도메인.
-        ClothesSize TEST_CLOTHES_2_SIZE_S = ClothesSize.builder()
+        ItemSize TEST_CLOTHES_2_SIZE_S = ItemSize.builder()
                 .stockQuantity(10l)
                 .sizeLabel(SizeLabel.S)
                 .build();
 
-        ClothesSize TEST_CLOTHES_2_SIZE_M = ClothesSize.builder()
+        ItemSize TEST_CLOTHES_2_SIZE_M = ItemSize.builder()
                 .stockQuantity(10l)
                 .sizeLabel(SizeLabel.M)
                 .build();
 
-        ClothesSize TEST_CLOTHES_2_SIZE_L = ClothesSize.builder()
+        ItemSize TEST_CLOTHES_2_SIZE_L = ItemSize.builder()
                 .stockQuantity(10l)
                 .sizeLabel(SizeLabel.L)
                 .build();
 
-        TEST_CLOTHES_2.changeClothesSizes(List.of(TEST_CLOTHES_2_SIZE_S, TEST_CLOTHES_2_SIZE_M, TEST_CLOTHES_2_SIZE_L));
+        TEST_CLOTHES_2.changeItemSizes(List.of(TEST_CLOTHES_2_SIZE_S, TEST_CLOTHES_2_SIZE_M, TEST_CLOTHES_2_SIZE_L));
 
         // 2 상품 이미지 도메인.
         ItemImage TEST_ITEM_IMAGE_2 = ItemImage.builder().build();
@@ -428,17 +428,17 @@ public class CartServiceTest {
         ReflectionTestUtils.setField(TEST_CLOTHES, "itemId", TEST_ITEM_ID_1);
 
         // 1 상품 사이즈 도메인.
-        ClothesSize TEST_CLOTHES_SIZE_S = ClothesSize.builder()
+        ItemSize TEST_CLOTHES_SIZE_S = ItemSize.builder()
                 .stockQuantity(10l)
                 .sizeLabel(SizeLabel.S)
                 .build();
 
-        ClothesSize TEST_CLOTHES_SIZE_M = ClothesSize.builder()
+        ItemSize TEST_CLOTHES_SIZE_M = ItemSize.builder()
                 .stockQuantity(10l)
                 .sizeLabel(SizeLabel.M)
                 .build();
 
-        ClothesSize TEST_CLOTHES_SIZE_L = ClothesSize.builder()
+        ItemSize TEST_CLOTHES_SIZE_L = ItemSize.builder()
                 .stockQuantity(10l)
                 .sizeLabel(SizeLabel.L)
                 .build();
@@ -447,7 +447,7 @@ public class CartServiceTest {
         ItemImage TEST_ITEM_IMAGE = ItemImage.builder().build();
         ReflectionTestUtils.setField(TEST_ITEM_IMAGE, "itemImageId", 1l);
 
-        TEST_CLOTHES.changeClothesSizes(List.of(TEST_CLOTHES_SIZE_M, TEST_CLOTHES_SIZE_S, TEST_CLOTHES_SIZE_L));
+        TEST_CLOTHES.changeItemSizes(List.of(TEST_CLOTHES_SIZE_M, TEST_CLOTHES_SIZE_S, TEST_CLOTHES_SIZE_L));
         TEST_CLOTHES.changeItemImages(List.of(TEST_ITEM_IMAGE));
 
         // 2 상품 도메인.
@@ -458,22 +458,22 @@ public class CartServiceTest {
         ReflectionTestUtils.setField(TEST_CLOTHES_2, "itemId", TEST_ITEM_ID_2);
 
         // 2 상품 사이즈 도메인.
-        ClothesSize TEST_CLOTHES_2_SIZE_S = ClothesSize.builder()
+        ItemSize TEST_CLOTHES_2_SIZE_S = ItemSize.builder()
                 .stockQuantity(10l)
                 .sizeLabel(SizeLabel.S)
                 .build();
 
-        ClothesSize TEST_CLOTHES_2_SIZE_M = ClothesSize.builder()
+        ItemSize TEST_CLOTHES_2_SIZE_M = ItemSize.builder()
                 .stockQuantity(10l)
                 .sizeLabel(SizeLabel.M)
                 .build();
 
-        ClothesSize TEST_CLOTHES_2_SIZE_L = ClothesSize.builder()
+        ItemSize TEST_CLOTHES_2_SIZE_L = ItemSize.builder()
                 .stockQuantity(10l)
                 .sizeLabel(SizeLabel.L)
                 .build();
 
-        TEST_CLOTHES_2.changeClothesSizes(List.of(TEST_CLOTHES_2_SIZE_S, TEST_CLOTHES_2_SIZE_M, TEST_CLOTHES_2_SIZE_L));
+        TEST_CLOTHES_2.changeItemSizes(List.of(TEST_CLOTHES_2_SIZE_S, TEST_CLOTHES_2_SIZE_M, TEST_CLOTHES_2_SIZE_L));
 
         // 2 상품 이미지 도메인.
         ItemImage TEST_ITEM_IMAGE_2 = ItemImage.builder().build();

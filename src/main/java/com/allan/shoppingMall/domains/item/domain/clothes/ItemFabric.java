@@ -1,7 +1,7 @@
 package com.allan.shoppingMall.domains.item.domain.clothes;
 
 import com.allan.shoppingMall.common.domain.BaseEntity;
-import com.allan.shoppingMall.domains.item.domain.Item;
+import com.allan.shoppingMall.domains.item.domain.item.Item;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,12 +15,12 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@Table(name = "clothesFabrics")
+@Table(name = "itemFabrics")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ClothesFabric extends BaseEntity {
+public class ItemFabric extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long clothesFabricId;
+    private Long itemFabricId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
@@ -35,7 +35,7 @@ public class ClothesFabric extends BaseEntity {
     private String materialDesc;
 
     @Builder
-    public ClothesFabric(String materialPart, String materialDesc) {
+    public ItemFabric(String materialPart, String materialDesc) {
         this.materialPart = materialPart;
         this.materialDesc = materialDesc;
     }

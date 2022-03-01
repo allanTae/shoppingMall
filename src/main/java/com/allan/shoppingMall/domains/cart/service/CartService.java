@@ -10,7 +10,7 @@ import com.allan.shoppingMall.domains.cart.domain.model.CartDTO;
 import com.allan.shoppingMall.domains.cart.domain.model.CartItemDTO;
 import com.allan.shoppingMall.domains.cart.domain.model.CartRequest;
 import com.allan.shoppingMall.domains.cart.domain.model.RequiredOption;
-import com.allan.shoppingMall.domains.item.domain.Item;
+import com.allan.shoppingMall.domains.item.domain.item.Item;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
 import com.allan.shoppingMall.domains.item.domain.clothes.ClothesRepository;
 import com.allan.shoppingMall.domains.member.domain.MemberRepository;
@@ -18,7 +18,6 @@ import com.allan.shoppingMall.domains.order.domain.model.OrderItemSummaryRequest
 import com.allan.shoppingMall.domains.order.domain.model.OrderSummaryRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

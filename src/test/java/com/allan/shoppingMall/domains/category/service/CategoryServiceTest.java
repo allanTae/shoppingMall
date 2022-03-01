@@ -36,6 +36,7 @@ public class CategoryServiceTest {
         TEST_CATEGORY_REQUEST.setBranch("testBranch");
         TEST_CATEGORY_REQUEST.setName("testName");
         TEST_CATEGORY_REQUEST.setParentCategoryName(null);
+        TEST_CATEGORY_REQUEST.setCategoryCode(2);
 
         given(categoryRepository.existsByBranchAndName(TEST_CATEGORY_REQUEST.getBranch(), TEST_CATEGORY_REQUEST.getName()))
                 .willReturn(false);
@@ -72,6 +73,7 @@ public class CategoryServiceTest {
         TEST_CATEGORY_REQUEST.setBranch("testBranch");
         TEST_CATEGORY_REQUEST.setName("testName");
         TEST_CATEGORY_REQUEST.setParentCategoryName("testParentCategoryName");
+        TEST_CATEGORY_REQUEST.setCategoryCode(2);
 
         Category TEST_PARENT_CATEGORY = Category.builder()
                 .depth(1)

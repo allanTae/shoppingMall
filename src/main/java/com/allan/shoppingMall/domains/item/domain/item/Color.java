@@ -1,9 +1,7 @@
-package com.allan.shoppingMall.domains.item.domain;
+package com.allan.shoppingMall.domains.item.domain.item;
 
-import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 @AllArgsConstructor

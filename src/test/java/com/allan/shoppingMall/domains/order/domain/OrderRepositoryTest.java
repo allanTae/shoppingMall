@@ -6,9 +6,9 @@ import com.allan.shoppingMall.common.exception.order.OrderNotFoundException;
 import com.allan.shoppingMall.common.value.Address;
 import com.allan.shoppingMall.domains.delivery.domain.Delivery;
 import com.allan.shoppingMall.domains.delivery.domain.DeliveryStatus;
-import com.allan.shoppingMall.domains.item.domain.Color;
+import com.allan.shoppingMall.domains.item.domain.clothes.ItemSize;
+import com.allan.shoppingMall.domains.item.domain.item.Color;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
-import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSize;
 import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
 import com.allan.shoppingMall.domains.member.domain.Gender;
 import com.allan.shoppingMall.domains.member.domain.Member;
@@ -87,16 +87,16 @@ public class OrderRepositoryTest {
 
         Clothes TEST_CLOTHES2 = createClothes(100l, "testClothesName2", "testClothesEngName2", Color.BLUE);
 
-        ClothesSize TEST_CLOTEHS_SIZE_1 = createClothesSize(SizeLabel.S, 10l);
-        ClothesSize TEST_CLOTEHS_SIZE_2 = createClothesSize(SizeLabel.M, 20l);
-        ClothesSize TEST_CLOTEHS_SIZE_3 = createClothesSize(SizeLabel.L, 30l);
+        ItemSize TEST_CLOTEHS_SIZE_1 = createClothesSize(SizeLabel.S, 10l);
+        ItemSize TEST_CLOTEHS_SIZE_2 = createClothesSize(SizeLabel.M, 20l);
+        ItemSize TEST_CLOTEHS_SIZE_3 = createClothesSize(SizeLabel.L, 30l);
 
-        ClothesSize TEST_CLOTHES_SIZE_4 = createClothesSize(SizeLabel.S, 100l);
-        ClothesSize TEST_CLOTHES_SIZE_5 = createClothesSize(SizeLabel.M, 200l);
-        ClothesSize TEST_CLOTHES_SIZE_6 = createClothesSize(SizeLabel.L, 300l);
+        ItemSize TEST_CLOTHES_SIZE_4 = createClothesSize(SizeLabel.S, 100l);
+        ItemSize TEST_CLOTHES_SIZE_5 = createClothesSize(SizeLabel.M, 200l);
+        ItemSize TEST_CLOTHES_SIZE_6 = createClothesSize(SizeLabel.L, 300l);
 
-        TEST_CLOTHES1.changeClothesSizes(List.of(TEST_CLOTEHS_SIZE_1, TEST_CLOTEHS_SIZE_2, TEST_CLOTEHS_SIZE_3));
-        TEST_CLOTHES2.changeClothesSizes(List.of(TEST_CLOTHES_SIZE_4, TEST_CLOTHES_SIZE_5, TEST_CLOTHES_SIZE_6));
+        TEST_CLOTHES1.changeItemSizes(List.of(TEST_CLOTEHS_SIZE_1, TEST_CLOTEHS_SIZE_2, TEST_CLOTEHS_SIZE_3));
+        TEST_CLOTHES2.changeItemSizes(List.of(TEST_CLOTHES_SIZE_4, TEST_CLOTHES_SIZE_5, TEST_CLOTHES_SIZE_6));
 
         Order TEST_ORDER = Order.builder()
                 .orderer(TEST_MEMBER_1)
@@ -121,8 +121,8 @@ public class OrderRepositoryTest {
                 .build();
 
         TEST_ORDER.changeOrderItems(List.of(
-                new OrderClothes(10l, TEST_CLOTHES1, TEST_CLOTEHS_SIZE_1),
-                new OrderClothes(20l, TEST_CLOTHES1, TEST_CLOTEHS_SIZE_2)));
+                new OrderItem(10l, TEST_CLOTHES1, TEST_CLOTEHS_SIZE_1),
+                new OrderItem(20l, TEST_CLOTHES1, TEST_CLOTEHS_SIZE_2)));
 
         Order TEST_ORDER_2 = Order.builder()
                 .orderer(TEST_MEMBER_2)
@@ -147,7 +147,7 @@ public class OrderRepositoryTest {
                 .build();
 
         TEST_ORDER_2.changeOrderItems(List.of(
-                new OrderClothes(100l, TEST_CLOTHES2, TEST_CLOTHES_SIZE_4)
+                new OrderItem(100l, TEST_CLOTHES2, TEST_CLOTHES_SIZE_4)
         ));
 
         Order TEST_ORDER_3 = Order.builder()
@@ -173,7 +173,7 @@ public class OrderRepositoryTest {
                 .build();
 
         TEST_ORDER_3.changeOrderItems(List.of(
-                new OrderClothes(100l, TEST_CLOTHES2, TEST_CLOTHES_SIZE_5)
+                new OrderItem(100l, TEST_CLOTHES2, TEST_CLOTHES_SIZE_5)
         ));
 
         Order TEST_ORDER_4 = Order.builder()
@@ -199,7 +199,7 @@ public class OrderRepositoryTest {
                 .build();
 
         TEST_ORDER_4.changeOrderItems(List.of(
-                new OrderClothes(10l, TEST_CLOTHES2, TEST_CLOTHES_SIZE_5)
+                new OrderItem(10l, TEST_CLOTHES2, TEST_CLOTHES_SIZE_5)
         ));
 
         Order TEST_ORDER_5 = Order.builder()
@@ -225,7 +225,7 @@ public class OrderRepositoryTest {
                 .build();
 
         TEST_ORDER_5.changeOrderItems(List.of(
-                new OrderClothes(10l, TEST_CLOTHES2, TEST_CLOTHES_SIZE_5)
+                new OrderItem(10l, TEST_CLOTHES2, TEST_CLOTHES_SIZE_5)
         ));
 
         Order TEST_ORDER_6 = Order.builder()
@@ -251,7 +251,7 @@ public class OrderRepositoryTest {
                 .build();
 
         TEST_ORDER_6.changeOrderItems(List.of(
-                new OrderClothes(10l, TEST_CLOTHES2, TEST_CLOTHES_SIZE_5)
+                new OrderItem(10l, TEST_CLOTHES2, TEST_CLOTHES_SIZE_5)
         ));
 
         Order TEST_ORDER_7 = Order.builder()
@@ -277,7 +277,7 @@ public class OrderRepositoryTest {
                 .build();
 
         TEST_ORDER_7.changeOrderItems(List.of(
-                new OrderClothes(10l, TEST_CLOTHES2, TEST_CLOTHES_SIZE_5)
+                new OrderItem(10l, TEST_CLOTHES2, TEST_CLOTHES_SIZE_5)
         ));
 
 
@@ -365,16 +365,16 @@ public class OrderRepositoryTest {
 
         Clothes TEST_CLOTHES2 = createClothes(100l, "testClothesName2", "testClothesEngName2", Color.BLUE);
 
-        ClothesSize TEST_CLOTEHS_SIZE_1 = createClothesSize(SizeLabel.S, 10l);
-        ClothesSize TEST_CLOTEHS_SIZE_2 = createClothesSize(SizeLabel.M, 20l);
-        ClothesSize TEST_CLOTEHS_SIZE_3 = createClothesSize(SizeLabel.L, 30l);
+        ItemSize TEST_CLOTEHS_SIZE_1 = createClothesSize(SizeLabel.S, 10l);
+        ItemSize TEST_CLOTEHS_SIZE_2 = createClothesSize(SizeLabel.M, 20l);
+        ItemSize TEST_CLOTEHS_SIZE_3 = createClothesSize(SizeLabel.L, 30l);
 
-        ClothesSize TEST_CLOTHES_SIZE_4 = createClothesSize(SizeLabel.S, 100l);
-        ClothesSize TEST_CLOTHES_SIZE_5 = createClothesSize(SizeLabel.M, 200l);
-        ClothesSize TEST_CLOTHES_SIZE_6 = createClothesSize(SizeLabel.L, 300l);
+        ItemSize TEST_CLOTHES_SIZE_4 = createClothesSize(SizeLabel.S, 100l);
+        ItemSize TEST_CLOTHES_SIZE_5 = createClothesSize(SizeLabel.M, 200l);
+        ItemSize TEST_CLOTHES_SIZE_6 = createClothesSize(SizeLabel.L, 300l);
 
-        TEST_CLOTHES1.changeClothesSizes(List.of(TEST_CLOTEHS_SIZE_1, TEST_CLOTEHS_SIZE_2, TEST_CLOTEHS_SIZE_3));
-        TEST_CLOTHES2.changeClothesSizes(List.of(TEST_CLOTHES_SIZE_4, TEST_CLOTHES_SIZE_5, TEST_CLOTHES_SIZE_6));
+        TEST_CLOTHES1.changeItemSizes(List.of(TEST_CLOTEHS_SIZE_1, TEST_CLOTEHS_SIZE_2, TEST_CLOTEHS_SIZE_3));
+        TEST_CLOTHES2.changeItemSizes(List.of(TEST_CLOTHES_SIZE_4, TEST_CLOTHES_SIZE_5, TEST_CLOTHES_SIZE_6));
 
         Order TEST_ORDER = Order.builder()
                 .orderer(TEST_MEMBER_1)
@@ -399,8 +399,8 @@ public class OrderRepositoryTest {
                 .build();
 
         TEST_ORDER.changeOrderItems(List.of(
-                new OrderClothes(10l, TEST_CLOTHES1, TEST_CLOTEHS_SIZE_1),
-                new OrderClothes(20l, TEST_CLOTHES1, TEST_CLOTEHS_SIZE_2)));
+                new OrderItem(10l, TEST_CLOTHES1, TEST_CLOTEHS_SIZE_1),
+                new OrderItem(20l, TEST_CLOTHES1, TEST_CLOTEHS_SIZE_2)));
 
         Order TEST_ORDER_2 = Order.builder()
                 .orderer(TEST_MEMBER_2)
@@ -425,7 +425,7 @@ public class OrderRepositoryTest {
                 .build();
 
         TEST_ORDER_2.changeOrderItems(List.of(
-                new OrderClothes(100l, TEST_CLOTHES2, TEST_CLOTHES_SIZE_4)
+                new OrderItem(100l, TEST_CLOTHES2, TEST_CLOTHES_SIZE_4)
         ));
 
         testEntityManager.persist(TEST_MEMBER_1);
@@ -484,16 +484,16 @@ public class OrderRepositoryTest {
 
         Clothes TEST_CLOTHES2 = createClothes(100l, "testClothesName2", "testClothesEngName2", Color.BLUE);
 
-        ClothesSize TEST_CLOTEHS_SIZE_1 = createClothesSize(SizeLabel.S, 10l);
-        ClothesSize TEST_CLOTEHS_SIZE_2 = createClothesSize(SizeLabel.M, 20l);
-        ClothesSize TEST_CLOTEHS_SIZE_3 = createClothesSize(SizeLabel.L, 30l);
+        ItemSize TEST_CLOTEHS_SIZE_1 = createClothesSize(SizeLabel.S, 10l);
+        ItemSize TEST_CLOTEHS_SIZE_2 = createClothesSize(SizeLabel.M, 20l);
+        ItemSize TEST_CLOTEHS_SIZE_3 = createClothesSize(SizeLabel.L, 30l);
 
-        ClothesSize TEST_CLOTHES_SIZE_4 = createClothesSize(SizeLabel.S, 100l);
-        ClothesSize TEST_CLOTHES_SIZE_5 = createClothesSize(SizeLabel.M, 200l);
-        ClothesSize TEST_CLOTHES_SIZE_6 = createClothesSize(SizeLabel.L, 300l);
+        ItemSize TEST_CLOTHES_SIZE_4 = createClothesSize(SizeLabel.S, 100l);
+        ItemSize TEST_CLOTHES_SIZE_5 = createClothesSize(SizeLabel.M, 200l);
+        ItemSize TEST_CLOTHES_SIZE_6 = createClothesSize(SizeLabel.L, 300l);
 
-        TEST_CLOTHES1.changeClothesSizes(List.of(TEST_CLOTEHS_SIZE_1, TEST_CLOTEHS_SIZE_2, TEST_CLOTEHS_SIZE_3));
-        TEST_CLOTHES2.changeClothesSizes(List.of(TEST_CLOTHES_SIZE_4, TEST_CLOTHES_SIZE_5, TEST_CLOTHES_SIZE_6));
+        TEST_CLOTHES1.changeItemSizes(List.of(TEST_CLOTEHS_SIZE_1, TEST_CLOTEHS_SIZE_2, TEST_CLOTEHS_SIZE_3));
+        TEST_CLOTHES2.changeItemSizes(List.of(TEST_CLOTHES_SIZE_4, TEST_CLOTHES_SIZE_5, TEST_CLOTHES_SIZE_6));
 
         Order TEST_ORDER = Order.builder()
                 .orderer(TEST_MEMBER_1)
@@ -518,8 +518,8 @@ public class OrderRepositoryTest {
                 .build();
 
         TEST_ORDER.changeOrderItems(List.of(
-                new OrderClothes(10l, TEST_CLOTHES1, TEST_CLOTEHS_SIZE_1),
-                new OrderClothes(20l, TEST_CLOTHES1, TEST_CLOTEHS_SIZE_2)));
+                new OrderItem(10l, TEST_CLOTHES1, TEST_CLOTEHS_SIZE_1),
+                new OrderItem(20l, TEST_CLOTHES1, TEST_CLOTEHS_SIZE_2)));
 
         Order TEST_ORDER_2 = Order.builder()
                 .orderer(TEST_MEMBER_2)
@@ -544,7 +544,7 @@ public class OrderRepositoryTest {
                 .build();
 
         TEST_ORDER_2.changeOrderItems(List.of(
-                new OrderClothes(100l, TEST_CLOTHES2, TEST_CLOTHES_SIZE_4)
+                new OrderItem(100l, TEST_CLOTHES2, TEST_CLOTHES_SIZE_4)
         ));
 
         testEntityManager.persist(TEST_MEMBER_1);
@@ -602,16 +602,16 @@ public class OrderRepositoryTest {
 
         Clothes TEST_CLOTHES2 = createClothes(100l, "testClothesName2", "testClothesEngName2", Color.BLUE);
 
-        ClothesSize TEST_CLOTEHS_SIZE_1 = createClothesSize(SizeLabel.S, 10l);
-        ClothesSize TEST_CLOTEHS_SIZE_2 = createClothesSize(SizeLabel.M, 20l);
-        ClothesSize TEST_CLOTEHS_SIZE_3 = createClothesSize(SizeLabel.L, 30l);
+        ItemSize TEST_CLOTEHS_SIZE_1 = createClothesSize(SizeLabel.S, 10l);
+        ItemSize TEST_CLOTEHS_SIZE_2 = createClothesSize(SizeLabel.M, 20l);
+        ItemSize TEST_CLOTEHS_SIZE_3 = createClothesSize(SizeLabel.L, 30l);
 
-        ClothesSize TEST_CLOTHES_SIZE_4 = createClothesSize(SizeLabel.S, 100l);
-        ClothesSize TEST_CLOTHES_SIZE_5 = createClothesSize(SizeLabel.M, 200l);
-        ClothesSize TEST_CLOTHES_SIZE_6 = createClothesSize(SizeLabel.L, 300l);
+        ItemSize TEST_CLOTHES_SIZE_4 = createClothesSize(SizeLabel.S, 100l);
+        ItemSize TEST_CLOTHES_SIZE_5 = createClothesSize(SizeLabel.M, 200l);
+        ItemSize TEST_CLOTHES_SIZE_6 = createClothesSize(SizeLabel.L, 300l);
 
-        TEST_CLOTHES1.changeClothesSizes(List.of(TEST_CLOTEHS_SIZE_1, TEST_CLOTEHS_SIZE_2, TEST_CLOTEHS_SIZE_3));
-        TEST_CLOTHES2.changeClothesSizes(List.of(TEST_CLOTHES_SIZE_4, TEST_CLOTHES_SIZE_5, TEST_CLOTHES_SIZE_6));
+        TEST_CLOTHES1.changeItemSizes(List.of(TEST_CLOTEHS_SIZE_1, TEST_CLOTEHS_SIZE_2, TEST_CLOTEHS_SIZE_3));
+        TEST_CLOTHES2.changeItemSizes(List.of(TEST_CLOTHES_SIZE_4, TEST_CLOTHES_SIZE_5, TEST_CLOTHES_SIZE_6));
 
         Order TEST_ORDER = Order.builder()
                 .orderer(TEST_MEMBER_1)
@@ -636,8 +636,8 @@ public class OrderRepositoryTest {
                 .build();
 
         TEST_ORDER.changeOrderItems(List.of(
-                new OrderClothes(10l, TEST_CLOTHES1, TEST_CLOTEHS_SIZE_1),
-                new OrderClothes(20l, TEST_CLOTHES1, TEST_CLOTEHS_SIZE_2)));
+                new OrderItem(10l, TEST_CLOTHES1, TEST_CLOTEHS_SIZE_1),
+                new OrderItem(20l, TEST_CLOTHES1, TEST_CLOTEHS_SIZE_2)));
 
         Order TEST_ORDER_2 = Order.builder()
                 .orderer(TEST_MEMBER_2)
@@ -662,7 +662,7 @@ public class OrderRepositoryTest {
                 .build();
 
         TEST_ORDER_2.changeOrderItems(List.of(
-                new OrderClothes(100l, TEST_CLOTHES2, TEST_CLOTHES_SIZE_4)
+                new OrderItem(100l, TEST_CLOTHES2, TEST_CLOTHES_SIZE_4)
         ));
 
         Order TEST_ORDER_3 = Order.builder()
@@ -688,7 +688,7 @@ public class OrderRepositoryTest {
                 .build();
 
         TEST_ORDER_3.changeOrderItems(List.of(
-                new OrderClothes(100l, TEST_CLOTHES2, TEST_CLOTHES_SIZE_5)
+                new OrderItem(100l, TEST_CLOTHES2, TEST_CLOTHES_SIZE_5)
         ));
 
         testEntityManager.persist(TEST_MEMBER_1);
@@ -765,16 +765,16 @@ public class OrderRepositoryTest {
 
         Clothes TEST_CLOTHES2 = createClothes(100l, "testClothesName2", "testClothesEngName2", Color.BLUE);
 
-        ClothesSize TEST_CLOTEHS_SIZE_1 = createClothesSize(SizeLabel.S, 10l);
-        ClothesSize TEST_CLOTEHS_SIZE_2 = createClothesSize(SizeLabel.M, 20l);
-        ClothesSize TEST_CLOTEHS_SIZE_3 = createClothesSize(SizeLabel.L, 30l);
+        ItemSize TEST_CLOTEHS_SIZE_1 = createClothesSize(SizeLabel.S, 10l);
+        ItemSize TEST_CLOTEHS_SIZE_2 = createClothesSize(SizeLabel.M, 20l);
+        ItemSize TEST_CLOTEHS_SIZE_3 = createClothesSize(SizeLabel.L, 30l);
 
-        ClothesSize TEST_CLOTHES_SIZE_4 = createClothesSize(SizeLabel.S, 100l);
-        ClothesSize TEST_CLOTHES_SIZE_5 = createClothesSize(SizeLabel.M, 200l);
-        ClothesSize TEST_CLOTHES_SIZE_6 = createClothesSize(SizeLabel.L, 300l);
+        ItemSize TEST_CLOTHES_SIZE_4 = createClothesSize(SizeLabel.S, 100l);
+        ItemSize TEST_CLOTHES_SIZE_5 = createClothesSize(SizeLabel.M, 200l);
+        ItemSize TEST_CLOTHES_SIZE_6 = createClothesSize(SizeLabel.L, 300l);
 
-        TEST_CLOTHES1.changeClothesSizes(List.of(TEST_CLOTEHS_SIZE_1, TEST_CLOTEHS_SIZE_2, TEST_CLOTEHS_SIZE_3));
-        TEST_CLOTHES2.changeClothesSizes(List.of(TEST_CLOTHES_SIZE_4, TEST_CLOTHES_SIZE_5, TEST_CLOTHES_SIZE_6));
+        TEST_CLOTHES1.changeItemSizes(List.of(TEST_CLOTEHS_SIZE_1, TEST_CLOTEHS_SIZE_2, TEST_CLOTEHS_SIZE_3));
+        TEST_CLOTHES2.changeItemSizes(List.of(TEST_CLOTHES_SIZE_4, TEST_CLOTHES_SIZE_5, TEST_CLOTHES_SIZE_6));
 
         Order TEST_ORDER = Order.builder()
                 .orderer(TEST_MEMBER_1)
@@ -799,8 +799,8 @@ public class OrderRepositoryTest {
                 .build();
 
         TEST_ORDER.changeOrderItems(List.of(
-                new OrderClothes(10l, TEST_CLOTHES1, TEST_CLOTEHS_SIZE_1),
-                new OrderClothes(20l, TEST_CLOTHES1, TEST_CLOTEHS_SIZE_2)));
+                new OrderItem(10l, TEST_CLOTHES1, TEST_CLOTEHS_SIZE_1),
+                new OrderItem(20l, TEST_CLOTHES1, TEST_CLOTEHS_SIZE_2)));
 
         Order TEST_ORDER_2 = Order.builder()
                 .orderer(TEST_MEMBER_2)
@@ -825,7 +825,7 @@ public class OrderRepositoryTest {
                 .build();
 
         TEST_ORDER_2.changeOrderItems(List.of(
-                new OrderClothes(100l, TEST_CLOTHES2, TEST_CLOTHES_SIZE_4)
+                new OrderItem(100l, TEST_CLOTHES2, TEST_CLOTHES_SIZE_4)
         ));
 
         Order TEST_ORDER_3 = Order.builder()
@@ -851,7 +851,7 @@ public class OrderRepositoryTest {
                 .build();
 
         TEST_ORDER_3.changeOrderItems(List.of(
-                new OrderClothes(100l, TEST_CLOTHES2, TEST_CLOTHES_SIZE_5)
+                new OrderItem(100l, TEST_CLOTHES2, TEST_CLOTHES_SIZE_5)
         ));
 
         testEntityManager.persist(TEST_MEMBER_1);
@@ -892,8 +892,8 @@ public class OrderRepositoryTest {
                 .build();
     }
 
-    private ClothesSize createClothesSize(SizeLabel sizeLabel, Long stockQuantity) {
-        return ClothesSize.builder()
+    private ItemSize createClothesSize(SizeLabel sizeLabel, Long stockQuantity) {
+        return ItemSize.builder()
                 .sizeLabel(sizeLabel)
                 .stockQuantity(stockQuantity)
                 .build();

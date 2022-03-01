@@ -1,11 +1,7 @@
 package com.allan.shoppingMall.domains.item.domain.model;
 
-import com.allan.shoppingMall.domains.item.domain.ImageType;
-import com.allan.shoppingMall.domains.item.domain.ItemImage;
-import com.allan.shoppingMall.domains.item.domain.clothes.ClothesDetail;
-import com.allan.shoppingMall.domains.item.domain.clothes.ClothesFabric;
-import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSize;
-import com.allan.shoppingMall.domains.item.domain.clothes.ModelSize;
+import com.allan.shoppingMall.domains.item.domain.item.ImageType;
+import com.allan.shoppingMall.domains.item.domain.item.ItemImage;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,21 +28,23 @@ public class ClothesDTO {
 
     private List<ModelSizeDTO> modelSizes = new ArrayList<>();
 
-    private List<ClothesFabricDTO> clothesFabrics = new ArrayList<>();
+    private List<ItemFabricDTO> clothesFabrics = new ArrayList<>();
 
-    private List<ClothesDetailDTO> clothesDetails = new ArrayList<>();
+    private List<ItemDetailDTO> clothesDetails = new ArrayList<>();
 
-    private List<ClothesSizeDTO> clothesSizes = new ArrayList<>();
+    private List<ItemSizeDTO> clothesSizes = new ArrayList<>();
 
     private String color;
 
     // 의류에 기타 정보를 담을 필드.
     private String etc;
 
+    private Long categoryId;
+
     @Builder
     public ClothesDTO(Long clothesId, String clothesName, Long price, String engName, List<ItemImage> itemImages, List<ModelSizeDTO> modelSizes,
-                      List<ClothesFabricDTO> clothesFabrics, List<ClothesDetailDTO> clothesDetails, List<ClothesSizeDTO> clothesSizes, String etc,
-                      String color) {
+                      List<ItemFabricDTO> clothesFabrics, List<ItemDetailDTO> clothesDetails, List<ItemSizeDTO> clothesSizes, String etc,
+                      String color, Long categoryId) {
         this.clothesId = clothesId;
         this.clothesName = clothesName;
         this.price = price;
@@ -58,6 +56,7 @@ public class ClothesDTO {
         this.etc = etc;
         setImgaes(itemImages);
         this.color = color;
+        this.categoryId = categoryId;
     }
 
     /**

@@ -1,8 +1,8 @@
 package com.allan.shoppingMall.domains.item.presentation;
 
 import com.allan.shoppingMall.domains.cart.service.CartService;
-import com.allan.shoppingMall.domains.item.domain.ItemImage;
-import com.allan.shoppingMall.domains.item.domain.ItemImageRepository;
+import com.allan.shoppingMall.domains.item.domain.item.ItemImage;
+import com.allan.shoppingMall.domains.item.domain.item.ItemImageRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

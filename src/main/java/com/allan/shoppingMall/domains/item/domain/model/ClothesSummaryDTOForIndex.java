@@ -1,7 +1,7 @@
 package com.allan.shoppingMall.domains.item.domain.model;
 
-import com.allan.shoppingMall.domains.item.domain.ImageType;
-import com.allan.shoppingMall.domains.item.domain.ItemImage;
+import com.allan.shoppingMall.domains.item.domain.item.ImageType;
+import com.allan.shoppingMall.domains.item.domain.item.ItemImage;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,14 +24,16 @@ public class ClothesSummaryDTOForIndex {
     private String imagePath;
     private ImageType imageType;
     private String clothesColor;
+    private Long categoryId;
 
     @Builder
-    public ClothesSummaryDTOForIndex(Long clothesId, String clothesName, Long price, List<Long> profileImageIds, String clothesColor) {
+    public ClothesSummaryDTOForIndex(Long clothesId, String clothesName, Long price, List<Long> profileImageIds, String clothesColor, Long categoryId) {
         this.clothesId = clothesId;
         this.clothesName = clothesName;
         this.price = price;
         this.profileImageIds = profileImageIds;
         this.clothesColor = clothesColor;
+        this.categoryId = categoryId;
     }
 
     /**

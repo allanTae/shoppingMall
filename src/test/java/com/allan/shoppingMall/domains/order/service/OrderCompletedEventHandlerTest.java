@@ -4,7 +4,7 @@ import com.allan.shoppingMall.domains.cart.domain.Cart;
 import com.allan.shoppingMall.domains.cart.domain.CartItem;
 import com.allan.shoppingMall.domains.cart.domain.CartRepository;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
-import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSize;
+import com.allan.shoppingMall.domains.item.domain.clothes.ItemSize;
 import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
 import com.allan.shoppingMall.domains.order.domain.*;
 import org.junit.jupiter.api.Test;
@@ -47,22 +47,22 @@ public class OrderCompletedEventHandlerTest {
                 .build();
         ReflectionTestUtils.setField(TEST_CLOTHES, "itemId", 1l);
 
-        ClothesSize TEST_CLOTHES_SIZE_1 = ClothesSize.builder()
+        ItemSize TEST_CLOTHES_SIZE_1 = ItemSize.builder()
                 .sizeLabel(SizeLabel.S)
                 .stockQuantity(10l)
                 .build();
 
-        ClothesSize TEST_CLOTHES_SIZE_2 = ClothesSize.builder()
+        ItemSize TEST_CLOTHES_SIZE_2 = ItemSize.builder()
                 .sizeLabel(SizeLabel.M)
                 .stockQuantity(20l)
                 .build();
 
-        ClothesSize TEST_CLOTHES_SIZE_3 = ClothesSize.builder()
+        ItemSize TEST_CLOTHES_SIZE_3 = ItemSize.builder()
                 .sizeLabel(SizeLabel.L)
                 .stockQuantity(30l)
                 .build();
 
-        TEST_CLOTHES.changeClothesSizes(List.of(
+        TEST_CLOTHES.changeItemSizes(List.of(
                 TEST_CLOTHES_SIZE_1, TEST_CLOTHES_SIZE_2, TEST_CLOTHES_SIZE_3
         ));
 
@@ -70,16 +70,16 @@ public class OrderCompletedEventHandlerTest {
                 .price(2000l)
                 .build();
         ReflectionTestUtils.setField(TEST_CLOTHES, "itemId", 2l);
-        ClothesSize TEST_CLOTHES_SIZE_4 = ClothesSize.builder()
+        ItemSize TEST_CLOTHES_SIZE_4 = ItemSize.builder()
                 .sizeLabel(SizeLabel.S)
                 .stockQuantity(100l)
                 .build();
-        ClothesSize TEST_CLOTHES_SIZE_5 = ClothesSize.builder()
+        ItemSize TEST_CLOTHES_SIZE_5 = ItemSize.builder()
                 .sizeLabel(SizeLabel.M)
                 .stockQuantity(200l)
                 .build();
 
-        TEST_CLOTHES_2.changeClothesSizes(List.of(
+        TEST_CLOTHES_2.changeItemSizes(List.of(
             TEST_CLOTHES_SIZE_4, TEST_CLOTHES_SIZE_5
         ));
 

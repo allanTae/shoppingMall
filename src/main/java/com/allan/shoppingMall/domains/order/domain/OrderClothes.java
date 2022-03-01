@@ -1,7 +1,7 @@
 package com.allan.shoppingMall.domains.order.domain;
 
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
-import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSize;
+import com.allan.shoppingMall.domains.item.domain.clothes.ItemSize;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import javax.persistence.*;
 import java.util.Objects;
 
-@Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
@@ -18,7 +17,7 @@ public class OrderClothes extends OrderItem{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "clothes_size_id")
-    private ClothesSize clothesSize;
+    private ItemSize clothesSize;
 
     /**
      * 순서에 의존하는 생성자이기 떄문에 Builder 패턴을 사용하지 않는다.
@@ -26,7 +25,7 @@ public class OrderClothes extends OrderItem{
      * @param clothes
      * @param clothesSize 주문 받은 의상의 사이즈에 해당하는 clothesSize
      */
-    public OrderClothes(Long orderQuantity, Clothes clothes, ClothesSize clothesSize) {
+    public OrderClothes(Long orderQuantity, Clothes clothes, ItemSize clothesSize) {
         super(orderQuantity, clothes);
         setClothesSize(clothesSize); // clothesSize stockQuantity 조정.
     }
@@ -37,7 +36,7 @@ public class OrderClothes extends OrderItem{
      * (전체 재고량의 경우, OrderClothes 의 부모인 OrderItem 의 생성자를 통해 조절이 된다.)
      * (OrderItem 의 setItem() 부분 참조.)
      */
-    private void setClothesSize(ClothesSize clothesSize){
+    private void setClothesSize(ItemSize clothesSize){
         clothesSize.subStockQuantity(this.getOrderQuantity());
         this.clothesSize = clothesSize;
     }
