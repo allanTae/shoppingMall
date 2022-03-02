@@ -39,6 +39,14 @@
         <put-attribute name="tile_body" value="/WEB-INF/views/jsp/clothes/{1}.jsp" />
     </definition>
 
+    <!-- accessory -->
+    <definition name="accessory-layout" template="/WEB-INF/tiles/layouts/accessory/accessory_layout.jsp">
+        <put-attribute name="tile_nav" value="/WEB-INF/tiles/layouts/common/nav.jsp" />
+    </definition>
+    <definition name="accessory/*" extends="accessory-layout">
+        <put-attribute name="tile_body" value="/WEB-INF/views/jsp/accessory/{1}.jsp" />
+    </definition>
+
     <!-- member -->
     <definition name="member-layout" template="/WEB-INF/tiles/layouts/member/member_layout.jsp">
         <put-attribute name="tile_common" value="/WEB-INF/tiles/layouts/common/common.jsp" />

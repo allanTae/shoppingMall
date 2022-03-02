@@ -475,7 +475,7 @@
     // 주문 및 결제 결과 폼 내용 생성 메소드.
     function getOrderForm(orderResponse){
         var orderFormInfo = "";
-        orderFormInfo += '<input type="text" name="orderResult" value="' + orderResponse.orderResult + '" />';
+        orderFormInfo += '<input type="text" name="orderResult" value="' + orderResponse.apiResultMessage + '" />';
         orderFormInfo += '<input type="text" name="orderNum" value="' + orderResponse.orderNum + '" />';
         if(orderResponse.errorResponse !== null){
             orderFormInfo += '<input type="text" name="orderErrorResponse.errorCode" value="' + orderResponse.errorResponse.errorCode + '" />';

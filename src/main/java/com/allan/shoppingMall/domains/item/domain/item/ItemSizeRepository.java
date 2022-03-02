@@ -1,6 +1,6 @@
-package com.allan.shoppingMall.domains.item.domain.clothes;
+package com.allan.shoppingMall.domains.item.domain.item;
 
-import com.allan.shoppingMall.domains.item.domain.item.Item;
+import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

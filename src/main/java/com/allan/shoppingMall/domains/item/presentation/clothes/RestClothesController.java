@@ -1,10 +1,7 @@
 package com.allan.shoppingMall.domains.item.presentation.clothes;
 
-import com.allan.shoppingMall.common.exception.ItemNotFoundException;
+import com.allan.shoppingMall.common.exception.item.ItemNotFoundException;
 import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSummeryDTO;
-import com.allan.shoppingMall.domains.item.presentation.clothes.ClothesErrorResponse;
-import com.allan.shoppingMall.domains.item.presentation.clothes.ClothesResponse;
-import com.allan.shoppingMall.domains.item.presentation.clothes.ClothesResult;
 import com.allan.shoppingMall.domains.item.service.ClothesService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

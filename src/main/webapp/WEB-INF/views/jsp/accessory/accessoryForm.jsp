@@ -180,39 +180,24 @@
         var htmls ='<tr>';
         htmls += '<th scope="row">' + sizeTableIndex + '</th>';
         htmls += '<td class="col-md-2">';
-        htmls += '  <select class="form-select" name="clothesSizes[' + (sizeTableIndex-1) + '].sizeLabel">';
+        htmls += '  <select class="form-select" name="itemSizes[' + (sizeTableIndex-1) + '].sizeLabel">';
         htmls += '    <option selected>사이즈</option>';
         htmls += '    <option value="1">S</option>';
         htmls += '    <option value="2">M</option>';
         htmls += '    <option value="3">L</option>';
         htmls += '  </select>';
         htmls += '</td>';
-        htmls += '<td><input type="text" class="form-control" name="clothesSizes['+ (sizeTableIndex-1) + '].backLength' + '" placeholder="총장"></td>';
-        htmls += '<td><input type="text" class="form-control" name="clothesSizes[' + (sizeTableIndex-1) + '].chestWidth' + '" placeholder="가슴둘레"></td>';
-        htmls += '<td><input type="text" class="form-control" name="clothesSizes[' + (sizeTableIndex-1) + '].shoulderWidth' + '" placeholder="어깨넓이"></td>';
-        htmls += '<td><input type="text" class="form-control" name="clothesSizes[' + (sizeTableIndex-1) + '].sleeveLength' + '" placeholder="소매길이"></td>';
-        htmls += '<td><input type="text" class="form-control" name="clothesSizes[' + (sizeTableIndex-1) + '].waistWidth' + '" placeholder="허리둘레"></td>';
-        htmls += '<td><input type="text" class="form-control" name="clothesSizes[' + (sizeTableIndex-1) + '].heapWidth' + '" placeholder="엉덩이"></td>';
-        htmls += '<td><input type="text" class="form-control" name="clothesSizes[' + (sizeTableIndex-1) + '].bottomWidth' + '" placeholder="밑단둘레"></td>';
-        htmls += '<td><input type="text" class="form-control" name="clothesSizes[' + (sizeTableIndex-1) + '].stockQuantity' + '" placeholder="수량"></td>';
+        htmls += '<td><input type="text" class="form-control" name="itemSizes['+ (sizeTableIndex-1) + '].backLength' + '" placeholder="총장"></td>';
+        htmls += '<td><input type="text" class="form-control" name="itemSizes[' + (sizeTableIndex-1) + '].chestWidth' + '" placeholder="가슴둘레"></td>';
+        htmls += '<td><input type="text" class="form-control" name="itemSizes[' + (sizeTableIndex-1) + '].shoulderWidth' + '" placeholder="어깨넓이"></td>';
+        htmls += '<td><input type="text" class="form-control" name="itemSizes[' + (sizeTableIndex-1) + '].sleeveLength' + '" placeholder="소매길이"></td>';
+        htmls += '<td><input type="text" class="form-control" name="itemSizes[' + (sizeTableIndex-1) + '].waistWidth' + '" placeholder="허리둘레"></td>';
+        htmls += '<td><input type="text" class="form-control" name="itemSizes[' + (sizeTableIndex-1) + '].heapWidth' + '" placeholder="엉덩이"></td>';
+        htmls += '<td><input type="text" class="form-control" name="itemSizes[' + (sizeTableIndex-1) + '].bottomWidth' + '" placeholder="밑단둘레"></td>';
+        htmls += '<td><input type="text" class="form-control" name="itemSizes[' + (sizeTableIndex-1) + '].stockQuantity' + '" placeholder="수량"></td>';
         htmls += '</tr>';
         $("#sizeTable:last-child").append(htmls);
         sizeTableIndex++;
-    });
-
-    // 모델 사이즈 테이블 추가 버튼.
-    $(document).on('click', "#btnModelSizeAdd", function(e){
-        e.preventDefault();
-        var htmls ='<tr>';
-        htmls += '<th scope="row">' + modelSizeTableIndex + '</th>';
-        htmls += '<td><input type="text" class="form-control" name="modelSizes[' + (modelSizeTableIndex-1) + '].modelShoulderSize' + '" placeholder="모델 어깨"></td>';
-        htmls += '<td><input type="text" class="form-control" name="modelSizes[' + (modelSizeTableIndex-1) + '].modelWaist' + '" placeholder="모델 허리"></td>';
-        htmls += '<td><input type="text" class="form-control" name="modelSizes[' + (modelSizeTableIndex-1) + '].modelHeap' + '" placeholder="모델 엉덩이"></td>';
-        htmls += '<td><input type="text" class="form-control" name="modelSizes[' + (modelSizeTableIndex-1) + '].modelHeight' + '" placeholder="모델 키"></td>';
-        htmls += '<td><input type="text" class="form-control" name="modelSizes[' + (modelSizeTableIndex-1) + '].modelWeight' + '" placeholder="모델 몸무게"></td>';
-        htmls += '</tr>';
-        $("#modelSizeTable:last-child").append(htmls);
-        modelSizeTableIndex++
     });
 
     // 취소 버튼 이벤트.
@@ -224,12 +209,12 @@
 
 </script>
 <article>
-	<div class="container clothesCardContainer col-md-10" role="main">
+	<div class="container accessoryCardContainer col-md-10" role="main">
 	    <!--form card-->
 		<div class="card">
-			<div class="card-header">의류 상품 등록</div>
+			<div class="card-header">악세서리 상품 등록</div>
 			<div class="card-body">
-				<form:form name="form" id="form" class="form-signup" role="form" modelAttribute="clothesForm" method="post" action="${pageContext.request.contextPath}/clothes/save" enctype="multipart/form-data">
+				<form:form name="form" id="form" class="form-signup" role="form" modelAttribute="accessoryForm" method="post" action="${pageContext.request.contextPath}/accessory/save" enctype="multipart/form-data">
 					<div id="categoryWrap" class="row">
 					    <label for="name" class="col-md-2 col-form-label text-md-right">카테고리</label>
                         <div class="col-md-3 pe-0">
@@ -292,6 +277,7 @@
                     <div class="row">
                         <label for="priceError" class="col-sd-2" text-md-right></label>
                         <form:errors path="price" id="priceError" class="col-md-4 form-group text-left" style="font-size:15px; color:red; width=100px;"/>
+
                     </div>
                     <p class="m-0"><br /></p>
                     <div class="clothesInfoContainer">
@@ -368,55 +354,26 @@
                                 <tr>
                                   <th scope="row ">1</th>
                                   <td class="col-md-2">
-                                    <select class="form-select" name="clothesSizes[0].sizeLabel">
+                                    <select class="form-select" name="itemSizes[0].sizeLabel">
                                         <option selected>사이즈</option>
                                         <option value="1">S</option>
                                         <option value="2">M</option>
                                         <option value="3">L</option>
                                     </select>
                                   </td>
-                                  <td><input type="text" class="form-control" name="clothesSizes[0].backLength" placeholder="총장"></td>
-                                  <td><input type="text" class="form-control" name="clothesSizes[0].chestWidth" placeholder="가슴둘레"></td>
-                                  <td><input type="text" class="form-control" name="clothesSizes[0].shoulderWidth" placeholder="어깨넓이"></td>
-                                  <td><input type="text" class="form-control" name="clothesSizes[0].sleeveLength" placeholder="소매길이"></td>
-                                  <td><input type="text" class="form-control" name="clothesSizes[0].waistWidth" placeholder="허리둘레"></td>
-                                  <td><input type="text" class="form-control" name="clothesSizes[0].heapWidth" placeholder="엉덩이"></td>
-                                  <td><input type="text" class="form-control" name="clothesSizes[0].bottomWidth" placeholder="밑단둘레"></td>
-                                  <td><input type="text" class="form-control" name="clothesSizes[0].stockQuantity" placeholder="수량"></td>
+                                  <td><input type="text" class="form-control" name="itemSizes[0].backLength" placeholder="총장"></td>
+                                  <td><input type="text" class="form-control" name="itemSizes[0].chestWidth" placeholder="가슴둘레"></td>
+                                  <td><input type="text" class="form-control" name="itemSizes[0].shoulderWidth" placeholder="어깨넓이"></td>
+                                  <td><input type="text" class="form-control" name="itemSizes[0].sleeveLength" placeholder="소매길이"></td>
+                                  <td><input type="text" class="form-control" name="itemSizes[0].waistWidth" placeholder="허리둘레"></td>
+                                  <td><input type="text" class="form-control" name="itemSizes[0].heapWidth" placeholder="엉덩이"></td>
+                                  <td><input type="text" class="form-control" name="itemSizes[0].bottomWidth" placeholder="밑단둘레"></td>
+                                  <td><input type="text" class="form-control" name="itemSizes[0].stockQuantity" placeholder="수량"></td>
                                 </tr>
                               </tbody>
                             </table>
                         </div>
                         <!-- end size table -->
-
-                        <!-- modelSizeTable -->
-                        <div class="form-group row">
-                            <p class="col-md-2 text-start m-0">ModelSize</p>
-                            <table class="table col-md-10" id="modelSizeTable" style="border: 1px solid black;">
-                              <thead>
-                                <tr >
-                                  <th scope="col" class="align-middle">#</th>
-                                  <th scope="col" class="align-middle">모델 어깨</th>
-                                  <th scope="col" class="align-middle">모델 허리</th>
-                                  <th scope="col" class="align-middle">모델 엉덩이</th>
-                                  <th scope="col" class="align-middle">모델 키</th>
-                                  <th scope="col" class="align-middle">모델 몸무게</th>
-                                  <th scope="col" class="align-middle"><button type="button" class="btn btn-prmary" id="btnModelSizeAdd">+</button></th>
-                                </tr>
-                              </thead>
-                              <tbody class="border-0">
-                                <tr>
-                                  <th scope="row">1</th>
-                                  <td><input type="text" class="form-control" name="modelSizes[0].modelShoulderSize" placeholder="모델 어깨"></td>
-                                  <td><input type="text" class="form-control" name="modelSizes[0].modelWaist" placeholder="모델 허리"></td>
-                                  <td><input type="text" class="form-control" name="modelSizes[0].modelHeap" placeholder="모델 엉덩이"></td>
-                                  <td><input type="text" class="form-control" name="modelSizes[0].modelHeight" placeholder="모델 키"></td>
-                                  <td><input type="text" class="form-control" name="modelSizes[0].modelWeight" placeholder="모델 몸무게"></td>
-                                </tr>
-                              </tbody>
-                            </table>
-                        </div>
-                        <!-- end model size table-->
 
                         <!-- image file -->
                         <!-- 소개용 이미지 -->

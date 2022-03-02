@@ -1,7 +1,7 @@
 package com.allan.shoppingMall.domains.cart.service;
 
 import com.allan.shoppingMall.common.exception.ErrorCode;
-import com.allan.shoppingMall.common.exception.ItemNotFoundException;
+import com.allan.shoppingMall.common.exception.item.ItemNotFoundException;
 import com.allan.shoppingMall.common.exception.cart.CartNotFoundException;
 import com.allan.shoppingMall.domains.cart.domain.Cart;
 import com.allan.shoppingMall.domains.cart.domain.CartItem;

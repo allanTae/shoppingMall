@@ -2,9 +2,10 @@ package com.allan.shoppingMall.domains.cart.domain;
 
 import com.allan.shoppingMall.common.config.jpa.auditing.JpaAuditingConfig;
 import com.allan.shoppingMall.common.value.Address;
+import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSize;
 import com.allan.shoppingMall.domains.item.domain.item.Color;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
-import com.allan.shoppingMall.domains.item.domain.clothes.ItemSize;
+import com.allan.shoppingMall.domains.item.domain.item.ItemSize;
 import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
 import com.allan.shoppingMall.domains.member.domain.Gender;
 import com.allan.shoppingMall.domains.member.domain.Member;
@@ -64,16 +65,16 @@ public class CartTest {
                 .price(1000l)
                 .build();
 
-        TEST_CLOTHES.changeItemSizes(List.of(
-                ItemSize.builder()
+        TEST_CLOTHES.changeClothesSize(List.of(
+                ClothesSize.builder()
                         .stockQuantity(10l)
                         .sizeLabel(SizeLabel.S)
                         .build(),
-                ItemSize.builder()
+                ClothesSize.builder()
                         .stockQuantity(20l)
                         .sizeLabel(SizeLabel.M)
                         .build(),
-                ItemSize.builder()
+                ClothesSize.builder()
                         .stockQuantity(30l)
                         .sizeLabel(SizeLabel.L)
                         .build()
@@ -86,12 +87,12 @@ public class CartTest {
                 .price(2000l)
                 .build();
 
-        TEST_CLOTHES_2.changeItemSizes(List.of(
-                ItemSize.builder()
+        TEST_CLOTHES_2.changeClothesSize(List.of(
+                ClothesSize.builder()
                         .stockQuantity(10l)
                         .sizeLabel(SizeLabel.S)
                         .build(),
-                ItemSize.builder()
+                ClothesSize.builder()
                         .stockQuantity(20l)
                         .sizeLabel(SizeLabel.M)
                         .build()

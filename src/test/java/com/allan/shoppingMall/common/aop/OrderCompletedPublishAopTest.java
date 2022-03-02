@@ -4,6 +4,8 @@ import com.allan.shoppingMall.common.config.aop.OrderCompletedPublishAop;
 import com.allan.shoppingMall.common.value.Address;
 import com.allan.shoppingMall.domains.delivery.domain.Delivery;
 import com.allan.shoppingMall.domains.item.domain.clothes.*;
+import com.allan.shoppingMall.domains.item.domain.item.ItemSize;
+import com.allan.shoppingMall.domains.item.domain.item.ItemSizeRepository;
 import com.allan.shoppingMall.domains.mileage.domain.model.MileageDTO;
 import com.allan.shoppingMall.domains.mileage.service.MileageService;
 import com.allan.shoppingMall.domains.order.domain.*;
@@ -46,7 +48,7 @@ public class OrderCompletedPublishAopTest {
                 .price(1000l)
                 .build();
 
-        ItemSize TEST_CLOTHES_SIZE = ItemSize.builder()
+        ClothesSize TEST_CLOTHES_SIZE = ClothesSize.builder()
                 .stockQuantity(100l)
                 .sizeLabel(SizeLabel.S)
                 .build();
@@ -63,7 +65,7 @@ public class OrderCompletedPublishAopTest {
         ReflectionTestUtils.setField(TEST_ORDER, "orderId", 1l);
         ReflectionTestUtils.setField(TEST_ORDER, "orderStatus", OrderStatus.ORDER_TEMP);
         TEST_ORDER.changeOrderItems(List.of(
-                new OrderClothes(10l, TEST_CLOTHES, TEST_CLOTHES_SIZE)));
+                new OrderItem(10l, TEST_CLOTHES, TEST_CLOTHES_SIZE)));
 
         given(TEST_ORDER_REPOSITORY.findByOrderNumAndAuthId("testAuthId", "testOrderNum"))
             .willReturn(Optional.of(TEST_ORDER));

@@ -4,9 +4,6 @@ import com.allan.shoppingMall.common.domain.BaseEntity;
 import com.allan.shoppingMall.common.exception.ErrorCode;
 import com.allan.shoppingMall.common.exception.order.OrderFailException;
 import com.allan.shoppingMall.domains.category.domain.Category;
-import com.allan.shoppingMall.domains.item.domain.clothes.ItemDetail;
-import com.allan.shoppingMall.domains.item.domain.clothes.ItemFabric;
-import com.allan.shoppingMall.domains.item.domain.clothes.ItemSize;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,10 +52,9 @@ public class Item extends BaseEntity {
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemSize> itemSizes = new ArrayList<>();
 
-    public Item(String name, Long price, Long stockQuantity, Color color, Category category) {
+    public Item(String name, Long price, Color color, Category category) {
         this.name = name;
         this.price = price;
-        this.stockQuantity = stockQuantity;
         this.color = color;
         this.category = category;
     }
@@ -75,18 +71,19 @@ public class Item extends BaseEntity {
         }
     }
 
-    public void subtractStockQuantity(Long orderQuantity){
+    public void subtractStockQuantity(Long stockQuantity){
 
-        if(this.stockQuantity < orderQuantity) {
+        if(this.stockQuantity < stockQuantity) {
             log.error("stockQuantity: " + this.stockQuantity);
-            log.error("orderQuantity: " + orderQuantity);
+            log.error("orderQuantity: " + stockQuantity);
             throw new OrderFailException(ErrorCode.ITEM_STOCK_QUANTITY_EXCEEDED.getMessage(), ErrorCode.ITEM_STOCK_QUANTITY_EXCEEDED);
         }
-        this.stockQuantity -= orderQuantity;
+        this.stockQuantity -= stockQuantity;
     }
 
-    public void addStockQuantity(Long orderQuantity){
-        this.stockQuantity += orderQuantity;
+    public void addStockQuantity(Long stockQuantity){
+        this.stockQuantity += stockQuantity;
+        log.info("stockQuantity: " + this.stockQuantity);
     }
 
     /**

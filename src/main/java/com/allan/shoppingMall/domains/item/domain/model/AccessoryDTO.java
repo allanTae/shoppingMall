@@ -11,16 +11,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Clothes 도메인 정보 Object.
- * 프론트단에서 사용 할 의류 상품 정보를 담고 있습니다.
+ * Accessory 도메인 정보 Object.
+ * 프론트단에서 사용 할 악세서리 상품 정보를 담고 있습니다.
  */
 @Getter
 @Setter
-public class ClothesDTO {
+public class AccessoryDTO {
 
-    private Long clothesId;
+    private Long accessoryId;
 
-    private String clothesName;
+    private String accessoryName;
 
     private Long price;
 
@@ -30,41 +30,34 @@ public class ClothesDTO {
 
     private List<Long> detailImages = new ArrayList<>();
 
-    private List<ModelSizeDTO> modelSizes = new ArrayList<>();
-
     private List<ItemFabricDTO> itemFabrics = new ArrayList<>();
 
     private List<ItemDetailDTO> itemDetails = new ArrayList<>();
 
-    private List<ClothesSizeDTO> clothesSizes = new ArrayList<>();
+    private List<ItemSizeDTO> itemSizes = new ArrayList<>();
 
     private String color;
-
-    // 의류에 기타 정보를 담을 필드.
-    private String etc;
 
     private Long categoryId;
 
     @Builder
-    public ClothesDTO(Long clothesId, String clothesName, Long price, String engName, List<ItemImage> itemImages, List<ModelSizeDTO> modelSizes,
-                      List<ItemFabricDTO> itemFabrics, List<ItemDetailDTO> itemDetails, List<ClothesSizeDTO> clothesSizes, String etc,
+    public AccessoryDTO(Long accessoryId, String accessoryName, Long price, String engName, List<ItemImage> itemImages,
+                      List<ItemFabricDTO> itemFabrics, List<ItemDetailDTO> itemDetails, List<ItemSizeDTO> itemSizes,
                       String color, Long categoryId) {
-        this.clothesId = clothesId;
-        this.clothesName = clothesName;
+        this.accessoryId = accessoryId;
+        this.accessoryName = accessoryName;
         this.price = price;
         this.engName = engName;
-        this.modelSizes = modelSizes;
         this.itemFabrics = itemFabrics;
         this.itemDetails = itemDetails;
-        this.clothesSizes = clothesSizes;
-        this.etc = etc;
+        this.itemSizes = itemSizes;
         setImgaes(itemImages);
         this.color = color;
         this.categoryId = categoryId;
     }
 
     /**
-     * 단일 Clothes Entity 정보를 프론트단에서 요구하는 '미리보기', '세부' 사진 정보로
+     * 단일 Accessory Entity 정보를 프론트단에서 요구하는 '미리보기', '세부' 사진 정보로
      * 나누어 set 하는 함수.
      * @param itemImages
      */

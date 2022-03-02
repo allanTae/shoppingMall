@@ -28,10 +28,10 @@
                                 </tr>
                               </thead>
                               <tbody class="border-0">
-                                <c:forEach var="clothesFabric" items="${clothesInfo.clothesFabrics}" varStatus="index" >
+                                <c:forEach var="itemFabric" items="${clothesInfo.itemFabrics}" varStatus="index" >
                                     <tr>
-                                        <td class="text-start" ><c:out value="${clothesFabric.materialPart}" /></td>
-                                        <td class="text-start" ><c:out value="${clothesFabric.materialDesc}" /></td>
+                                        <td class="text-start" ><c:out value="${itemFabric.materialPart}" /></td>
+                                        <td class="text-start" ><c:out value="${itemFabric.materialDesc}" /></td>
                                     </tr>
                                 </c:forEach>
                               </tbody>
@@ -45,9 +45,9 @@
                                 </tr>
                               </thead>
                               <tbody class="border-0">
-                                <c:forEach var="clothesDetail" items="${clothesInfo.clothesDetails}" varStatus="index" >
+                                <c:forEach var="itemDetail" items="${clothesInfo.itemDetails}" varStatus="index" >
                                     <tr>
-                                        <td class="text-start" ><c:out value="${clothesDetail.detailDesc}" /></td>
+                                        <td class="text-start" ><c:out value="${itemDetail.detailDesc}" /></td>
                                     </tr>
                                 </c:forEach>
                               </tbody>
@@ -71,16 +71,16 @@
                                     <td class="text-left" >엉덩이</td>
                                     <td class="text-left" >밑단둘레</td>
                                 </tr>
-                                <c:forEach var="clothesSize" items="${clothesInfo.clothesSizes}" varStatus="index" >
+                                <c:forEach var="clothesSizes" items="${clothesInfo.clothesSizes}" varStatus="index" >
                                     <tr>
-                                        <td class="text-left" ><c:out value="${clothesSize.sizeLabel}" /></td>
-                                        <td class="text-left" ><c:out value="${clothesSize.backLength}" /></td>
-                                        <td class="text-left" ><c:out value="${clothesSize.chestWidth}" /></td>
-                                        <td class="text-left" ><c:out value="${clothesSize.shoulderWidth}" /></td>
-                                        <td class="text-left" ><c:out value="${clothesSize.sleeveLength}" /></td>
-                                        <td class="text-left" ><c:out value="${clothesSize.waistWidth}" /></td>
-                                        <td class="text-left" ><c:out value="${clothesSize.heapWidth}" /></td>
-                                        <td class="text-left" ><c:out value="${clothesSize.bottomWidth}" /></td>
+                                        <td class="text-left" ><c:out value="${clothesSizes.sizeLabel}" /></td>
+                                        <td class="text-left" ><c:out value="${clothesSizes.backLength}" /></td>
+                                        <td class="text-left" ><c:out value="${clothesSizes.chestWidth}" /></td>
+                                        <td class="text-left" ><c:out value="${clothesSizes.shoulderWidth}" /></td>
+                                        <td class="text-left" ><c:out value="${clothesSizes.sleeveLength}" /></td>
+                                        <td class="text-left" ><c:out value="${clothesSizes.waistWidth}" /></td>
+                                        <td class="text-left" ><c:out value="${clothesSizes.heapWidth}" /></td>
+                                        <td class="text-left" ><c:out value="${clothesSizes.bottomWidth}" /></td>
                                     </tr>
                                 </c:forEach>
                               </tbody>

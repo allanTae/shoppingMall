@@ -88,7 +88,8 @@
                             <li class="nav-item dropdown">
                                 <a class="nav-link" href="#" class="dropdown-toggle" id="dropDownManager" data-bs-toggle="dropdown" aria-expanded="false">관리자 메뉴</a>
                                 <ul class="dropdown-menu" aria-labelledby="dropDownManager">
-                                  <li><a class="dropdown-item" href="${pageContext.request.contextPath}/clothes/clothesForm">상품 등록</a></li>
+                                  <li><a class="dropdown-item" href="${pageContext.request.contextPath}/clothes/clothesForm">의류상품 등록</a></li>
+                                  <li><a class="dropdown-item" href="${pageContext.request.contextPath}/accessory/accessoryForm">악세서리상품 등록</a></li>
                                 </ul>
                             </li>
                         </sec:authorize>

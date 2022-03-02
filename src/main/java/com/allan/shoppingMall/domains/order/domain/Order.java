@@ -113,12 +113,7 @@ public class Order extends BaseEntity {
             // 배송 취소.
             this.delivery.cancelDelivery();
             for(OrderItem orderItem : this.orderItems){
-                if( orderItem instanceof OrderClothes){
-                    OrderClothes orderClothes = (OrderClothes) orderItem;
-                    orderClothes.cancleOrderClothes();
-                }else{
-                    orderItem.cancelOrderItem();
-                }
+                orderItem.cancelOrderItem();
             }
         }else{
             throw new OrderCancelFailException(ErrorCode.ORDER_CANCEL_NOT_ALLOWED);

@@ -6,7 +6,7 @@ import com.allan.shoppingMall.common.exception.order.OrderNotFoundException;
 import com.allan.shoppingMall.common.value.Address;
 import com.allan.shoppingMall.domains.delivery.domain.Delivery;
 import com.allan.shoppingMall.domains.delivery.domain.DeliveryStatus;
-import com.allan.shoppingMall.domains.item.domain.clothes.ItemSize;
+import com.allan.shoppingMall.domains.item.domain.item.ItemSize;
 import com.allan.shoppingMall.domains.item.domain.item.Color;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
 import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
@@ -893,10 +893,7 @@ public class OrderRepositoryTest {
     }
 
     private ItemSize createClothesSize(SizeLabel sizeLabel, Long stockQuantity) {
-        return ItemSize.builder()
-                .sizeLabel(sizeLabel)
-                .stockQuantity(stockQuantity)
-                .build();
+        return new ItemSize(sizeLabel, stockQuantity);
     }
 
     private void setOrderStatus(List<Order> orders){

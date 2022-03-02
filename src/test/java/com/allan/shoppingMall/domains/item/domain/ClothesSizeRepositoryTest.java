@@ -2,8 +2,9 @@ package com.allan.shoppingMall.domains.item.domain;
 
 import com.allan.shoppingMall.common.config.jpa.auditing.JpaAuditingConfig;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
-import com.allan.shoppingMall.domains.item.domain.clothes.ItemSize;
-import com.allan.shoppingMall.domains.item.domain.clothes.ItemSizeRepository;
+import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSize;
+import com.allan.shoppingMall.domains.item.domain.item.ItemSize;
+import com.allan.shoppingMall.domains.item.domain.item.ItemSizeRepository;
 import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,17 +63,17 @@ public class ClothesSizeRepositoryTest {
                 .price(1000l)
                 .build();
 
-        ItemSize clothesSize1 = ItemSize.builder()
+        ClothesSize clothesSize1 = ClothesSize.builder()
                 .stockQuantity(10l)
                 .sizeLabel(SizeLabel.S)
                 .build();
 
-        ItemSize clothesSize2 = ItemSize.builder()
+        ClothesSize clothesSize2 = ClothesSize.builder()
                 .stockQuantity(12l)
                 .sizeLabel(SizeLabel.M)
                 .build();
 
-        ItemSize clothesSize3 = ItemSize.builder()
+        ClothesSize clothesSize3 = ClothesSize.builder()
                 .stockQuantity(5l)
                 .sizeLabel(SizeLabel.L)
                 .build();
@@ -86,17 +87,17 @@ public class ClothesSizeRepositoryTest {
                 .price(500l)
                 .build();
 
-        ItemSize clothesSize4 = ItemSize.builder()
+        ClothesSize clothesSize4 = ClothesSize.builder()
                 .stockQuantity(20l)
                 .sizeLabel(SizeLabel.S)
                 .build();
 
-        ItemSize clothesSize5 = ItemSize.builder()
+        ClothesSize clothesSize5 = ClothesSize.builder()
                 .stockQuantity(22l)
                 .sizeLabel(SizeLabel.M)
                 .build();
 
-        ItemSize clothesSize6 = ItemSize.builder()
+        ClothesSize clothesSize6 = ClothesSize.builder()
                 .stockQuantity(25l)
                 .sizeLabel(SizeLabel.L)
                 .build();

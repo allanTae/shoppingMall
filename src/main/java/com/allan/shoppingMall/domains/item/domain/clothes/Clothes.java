@@ -3,6 +3,7 @@ package com.allan.shoppingMall.domains.item.domain.clothes;
 import com.allan.shoppingMall.domains.category.domain.Category;
 import com.allan.shoppingMall.domains.item.domain.item.Color;
 import com.allan.shoppingMall.domains.item.domain.item.Item;
+import com.allan.shoppingMall.domains.item.domain.item.ItemSize;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,13 +35,16 @@ public class Clothes extends Item {
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ModelSize> modelSizes = new ArrayList<>();
 
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ClothesSize> clothesSizes = new ArrayList<>();
+
     // 의류에 기타 정보를 담을 필드.
     @Column
     private String etc;
 
     @Builder
     public Clothes(String name, Long price, Color color, String engName, String etc, Category category) {
-        super(name, price, 0l,color, category);
+        super(name, price, color, category);
         this.engName = engName;
         this.etc = etc;
     }
@@ -55,6 +59,26 @@ public class Clothes extends Item {
             this.modelSizes.add(modelSize);
             modelSize.changeItem(this);
         }
+    }
+
+    /**
+     * 양방향 매핑을 위한 연관 관계 편의 메소드.
+     * ClothesSize 등록함.
+     * @param clothesSizes
+     */
+    public void changeClothesSize(List<ClothesSize> clothesSizes){
+        log.info("changeClothesSize() call!!!");
+        log.info("list size: "+ clothesSizes.size());
+        long totalQuantity = 0l;
+        for(ClothesSize clothesSize : clothesSizes){
+            log.info("for");
+            log.info(clothesSize.toString());
+            log.info("");
+            totalQuantity += clothesSize.getStockQuantity();
+            this.clothesSizes.add(clothesSize);
+            clothesSize.changeItem(this);
+        }
+        addStockQuantity(totalQuantity); // 재고량을 증가하기 위한 메소드.
     }
 
 }

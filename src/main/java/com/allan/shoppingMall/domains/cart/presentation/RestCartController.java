@@ -1,7 +1,7 @@
 package com.allan.shoppingMall.domains.cart.presentation;
 
 import com.allan.shoppingMall.common.exception.ErrorCode;
-import com.allan.shoppingMall.common.exception.ItemNotFoundException;
+import com.allan.shoppingMall.common.exception.item.ItemNotFoundException;
 import com.allan.shoppingMall.common.exception.cart.CartModifyFailException;
 import com.allan.shoppingMall.common.exception.cart.CartNotFoundException;
 import com.allan.shoppingMall.domains.cart.domain.model.CartDTO;
@@ -16,7 +16,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController

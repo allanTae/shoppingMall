@@ -4,7 +4,7 @@ import com.allan.shoppingMall.domains.cart.domain.Cart;
 import com.allan.shoppingMall.domains.cart.domain.CartItem;
 import com.allan.shoppingMall.domains.cart.domain.CartRepository;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
-import com.allan.shoppingMall.domains.item.domain.clothes.ItemSize;
+import com.allan.shoppingMall.domains.item.domain.item.ItemSize;
 import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
 import com.allan.shoppingMall.domains.order.domain.*;
 import org.junit.jupiter.api.Test;
@@ -47,20 +47,11 @@ public class OrderCompletedEventHandlerTest {
                 .build();
         ReflectionTestUtils.setField(TEST_CLOTHES, "itemId", 1l);
 
-        ItemSize TEST_CLOTHES_SIZE_1 = ItemSize.builder()
-                .sizeLabel(SizeLabel.S)
-                .stockQuantity(10l)
-                .build();
+        ItemSize TEST_CLOTHES_SIZE_1 = new ItemSize(SizeLabel.S, 10l);
 
-        ItemSize TEST_CLOTHES_SIZE_2 = ItemSize.builder()
-                .sizeLabel(SizeLabel.M)
-                .stockQuantity(20l)
-                .build();
+        ItemSize TEST_CLOTHES_SIZE_2 = new ItemSize(SizeLabel.M, 20l);
 
-        ItemSize TEST_CLOTHES_SIZE_3 = ItemSize.builder()
-                .sizeLabel(SizeLabel.L)
-                .stockQuantity(30l)
-                .build();
+        ItemSize TEST_CLOTHES_SIZE_3 = new ItemSize(SizeLabel.L, 30l);
 
         TEST_CLOTHES.changeItemSizes(List.of(
                 TEST_CLOTHES_SIZE_1, TEST_CLOTHES_SIZE_2, TEST_CLOTHES_SIZE_3
@@ -70,23 +61,17 @@ public class OrderCompletedEventHandlerTest {
                 .price(2000l)
                 .build();
         ReflectionTestUtils.setField(TEST_CLOTHES, "itemId", 2l);
-        ItemSize TEST_CLOTHES_SIZE_4 = ItemSize.builder()
-                .sizeLabel(SizeLabel.S)
-                .stockQuantity(100l)
-                .build();
-        ItemSize TEST_CLOTHES_SIZE_5 = ItemSize.builder()
-                .sizeLabel(SizeLabel.M)
-                .stockQuantity(200l)
-                .build();
+        ItemSize TEST_CLOTHES_SIZE_4 = new ItemSize(SizeLabel.S, 100l);
+        ItemSize TEST_CLOTHES_SIZE_5 = new ItemSize(SizeLabel.M, 200l);
 
         TEST_CLOTHES_2.changeItemSizes(List.of(
             TEST_CLOTHES_SIZE_4, TEST_CLOTHES_SIZE_5
         ));
 
         TEST_ORDER.changeOrderItems(List.of(
-                new OrderClothes(1l, TEST_CLOTHES, TEST_CLOTHES_SIZE_1),
-                new OrderClothes(1l, TEST_CLOTHES, TEST_CLOTHES_SIZE_2),
-                new OrderClothes(1l, TEST_CLOTHES, TEST_CLOTHES_SIZE_3)
+                new OrderItem(1l, TEST_CLOTHES, TEST_CLOTHES_SIZE_1),
+                new OrderItem(1l, TEST_CLOTHES, TEST_CLOTHES_SIZE_2),
+                new OrderItem(1l, TEST_CLOTHES, TEST_CLOTHES_SIZE_3)
         ));
 
         given(orderRepository.findById(any()))

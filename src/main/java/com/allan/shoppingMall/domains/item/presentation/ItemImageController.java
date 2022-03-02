@@ -1,7 +1,7 @@
 package com.allan.shoppingMall.domains.item.presentation;
 
 import com.allan.shoppingMall.common.exception.ErrorCode;
-import com.allan.shoppingMall.common.exception.ItemImageNotFoundException;
+import com.allan.shoppingMall.common.exception.item.ItemImageNotFoundException;
 import com.allan.shoppingMall.domains.item.domain.item.ItemImage;
 import com.allan.shoppingMall.domains.item.domain.item.ItemImageRepository;
 import lombok.RequiredArgsConstructor;

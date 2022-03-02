@@ -4,9 +4,7 @@ import com.allan.shoppingMall.domains.category.domain.Category;
 import com.allan.shoppingMall.domains.category.domain.CategoryCode;
 import com.allan.shoppingMall.domains.category.domain.CategoryRepository;
 import com.allan.shoppingMall.domains.item.domain.clothes.*;
-import com.allan.shoppingMall.domains.item.domain.item.Color;
-import com.allan.shoppingMall.domains.item.domain.item.ImageType;
-import com.allan.shoppingMall.domains.item.domain.item.ItemImage;
+import com.allan.shoppingMall.domains.item.domain.item.*;
 import com.allan.shoppingMall.domains.item.domain.model.ClothesSummaryDTOForIndex;
 import com.allan.shoppingMall.domains.item.domain.model.*;
 import com.allan.shoppingMall.domains.item.infra.ImageFileHandler;
@@ -53,7 +51,9 @@ public class ClothesServiceTest {
         given(imageFileHandler.parseImageInfo(any(), any()))
                 .willReturn(TEST_ITEM_IMAGE);
 
-        Category TEST_CATEGORY = Category.builder().build();
+        Category TEST_CATEGORY = Category.builder()
+                .categoryCode(CategoryCode.CLOTHES)
+                .build();
         given(categoryRepository.findById(any()))
                 .willReturn(Optional.of(TEST_CATEGORY));
 
@@ -108,7 +108,7 @@ public class ClothesServiceTest {
 
         TEST_CLOTHES.changeItemFabrics(List.of(ItemFabric.builder().materialPart("testMaterial").build()));
         TEST_CLOTHES.changeItemDetails(List.of(ItemDetail.builder().detailDesc("testDetail").build()));
-        TEST_CLOTHES.changeItemSizes(List.of(ItemSize.builder().shoulderWidth(10.5).sizeLabel(SizeLabel.S).stockQuantity(3l).build()));
+        TEST_CLOTHES.changeClothesSize(List.of(ClothesSize.builder().shoulderWidth(10.5).sizeLabel(SizeLabel.S).stockQuantity(3l).build()));
         TEST_CLOTHES.changeModelSizes(List.of(ModelSize.builder().modelWeight(10.5).build()));
         TEST_CLOTHES.changeItemImages(List.of(ItemImage.builder().imageType(ImageType.PREVIEW).build()));
 
@@ -123,8 +123,8 @@ public class ClothesServiceTest {
         assertThat(clothes.getClothesName(), is(TEST_CLOTHES.getName()));
         assertThat(clothes.getPrice(), is(TEST_CLOTHES.getPrice()));
         assertThat(clothes.getEngName(), is(TEST_CLOTHES.getEngName()));
-        assertThat(clothes.getClothesFabrics().size(), is(1));
-        assertThat(clothes.getClothesDetails().size(), is(1));
+        assertThat(clothes.getItemFabrics().size(), is(1));
+        assertThat(clothes.getItemDetails().size(), is(1));
         assertThat(clothes.getClothesSizes().size(), is(1));
         assertThat(clothes.getModelSizes().size(), is(1));
         assertThat(clothes.getPreviewImages().size(), is(1));
@@ -172,16 +172,15 @@ public class ClothesServiceTest {
         clothesRequest.setName("testName");
         clothesRequest.setEngName("testEngName");
         clothesRequest.setPrice(10000l);
-        clothesRequest.setStockQuantity(100l);
-        clothesRequest.setClothesFabrics(List.of(
+        clothesRequest.setItemFabrics(List.of(
                 new ItemFabricDTO("clothesMaterialPart", "clothesMaterialDesc")
         ));
-        clothesRequest.setClothesDetails(List.of(
+        clothesRequest.setItemDetails(List.of(
                 new ItemDetailDTO("clothesDetailDesc")
         ));
         clothesRequest.setClothesSizes(List.of(
-                new ItemSizeDTO("1", 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 10l),
-                new ItemSizeDTO("1", 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 20l)
+                new ClothesSizeDTO("1", 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 10l),
+                new ClothesSizeDTO("1", 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 20l)
         ));
         clothesRequest.setModelSizes(List.of(
                 new ModelSizeDTO(10.0, 20.0, 30.0, 40.0, 50.0)
@@ -204,15 +203,15 @@ public class ClothesServiceTest {
         ReflectionTestUtils.setField(TEST_CLOTHES, "itemId", 1l);
 
         TEST_CLOTHES.changeItemSizes(List.of(
-                ItemSize.builder()
+                ClothesSize.builder()
                         .sizeLabel(SizeLabel.S)
                         .stockQuantity(10l)
                         .build(),
-                ItemSize.builder()
+                ClothesSize.builder()
                         .sizeLabel(SizeLabel.M)
                         .stockQuantity(20l)
                         .build(),
-                ItemSize.builder()
+                ClothesSize.builder()
                         .sizeLabel(SizeLabel.L)
                         .stockQuantity(30l)
                         .build()

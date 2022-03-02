@@ -2,8 +2,7 @@ package com.allan.shoppingMall.domains.order.domain;
 
 import com.allan.shoppingMall.common.domain.BaseEntity;
 import com.allan.shoppingMall.common.exception.order.OrderFailException;
-import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
-import com.allan.shoppingMall.domains.item.domain.clothes.ItemSize;
+import com.allan.shoppingMall.domains.item.domain.item.ItemSize;
 import com.allan.shoppingMall.domains.item.domain.item.Item;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -58,30 +57,28 @@ public class OrderItem extends BaseEntity {
         calculateAmount();
     }
 
-    public OrderItem(Long orderQuantity, Item item, ItemSize clothesSize){
+    public OrderItem(Long orderQuantity, Item item, ItemSize itemSize){
         this.orderQuantity = orderQuantity;
-        setItem(item);
+        setItem(item); // item stockQunaity 조정.
         calculateAmount();
-        setClothesSize(clothesSize); // clothesSize stockQuantity 조정
+        setItemSize(itemSize); // itemSize stockQuantity 조정.
     }
 
     /**
-     * order 시, 사이즈에 맞는 item 의 재고량을 줄이기 위한 메소드.
+     * 주문시, 상품 사이즈 도메인의 재고량을 줄이기 위한 메소드.
      */
-    private void setClothesSize(ItemSize itemSize){
+    private void setItemSize(ItemSize itemSize){
         itemSize.subStockQuantity(this.orderQuantity);
         this.itemSize = itemSize;
     }
 
-
     /**
-     * 주문시, orderQunaitty 만큼 상품의 재고량을 줄이기 위한 메소드.
+     * 주문시, 상품 도메인의 재고량을 줄이기 위한 메소드.
      */
     private void setItem(Item item) throws OrderFailException {
         item.subtractStockQuantity(this.orderQuantity);
         this.item = item;
     }
-
 
     /**
      * 주문 취소에 따른

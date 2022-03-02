@@ -6,7 +6,7 @@ import com.allan.shoppingMall.common.exception.order.payment.PaymentFailByValida
 import com.allan.shoppingMall.common.value.Address;
 import com.allan.shoppingMall.domains.delivery.domain.Delivery;
 import com.allan.shoppingMall.domains.delivery.domain.DeliveryStatus;
-import com.allan.shoppingMall.domains.item.domain.clothes.ItemSize;
+import com.allan.shoppingMall.domains.item.domain.item.ItemSize;
 import com.allan.shoppingMall.domains.item.domain.item.Color;
 import com.allan.shoppingMall.domains.item.domain.item.Item;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
@@ -214,15 +214,6 @@ public class OrderTest {
                 .build();
     }
 
-    private List<OrderItem> createdOrderItems(Item item
-    ){
-        return List.of(
-                // 주문량 10개 아이템.
-                new OrderItem(10l, item)
-        );
-    }
-
-
     private Clothes createClothes(List<ItemSize> clothesSizes){
         Clothes clothes = Clothes.builder()
                 .name("testClothesName")
@@ -239,10 +230,7 @@ public class OrderTest {
     }
 
     private ItemSize createClothesSize(SizeLabel sizeLabel, Long stockQuantity){
-        return ItemSize.builder()
-                .sizeLabel(sizeLabel)
-                .stockQuantity(stockQuantity)
-                .build();
+        return new ItemSize(sizeLabel, stockQuantity);
     }
 
     private Order createOrderByMember() {

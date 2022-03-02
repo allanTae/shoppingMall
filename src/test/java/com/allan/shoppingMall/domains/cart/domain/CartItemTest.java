@@ -2,7 +2,8 @@ package com.allan.shoppingMall.domains.cart.domain;
 
 import com.allan.shoppingMall.common.config.jpa.auditing.JpaAuditingConfig;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
-import com.allan.shoppingMall.domains.item.domain.clothes.ItemSize;
+import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSize;
+import com.allan.shoppingMall.domains.item.domain.item.ItemSize;
 import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,12 +41,12 @@ public class CartItemTest {
         Cart TEST_CART = Cart.builder()
                 .build();
 
-        ItemSize TEST_CLOTHES_1_SIZE_S = ItemSize.builder()
+        ClothesSize TEST_CLOTHES_1_SIZE_S = ClothesSize.builder()
                 .stockQuantity(10l)
                 .sizeLabel(SizeLabel.S)
                 .build();
 
-        ItemSize TEST_CLOTHES_2_SIZE_M = ItemSize.builder()
+        ClothesSize TEST_CLOTHES_2_SIZE_M = ClothesSize.builder()
                 .stockQuantity(20l)
                 .sizeLabel(SizeLabel.M)
                 .build();

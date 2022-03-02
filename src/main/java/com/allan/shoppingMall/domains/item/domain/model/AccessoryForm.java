@@ -9,12 +9,11 @@ import java.util.List;
 
 /**
  * front 단에서 server단으로 전달하는 폼정보.
- * 서버측으로 전달 할 의류 상품 등록 정보 Object.
+ * 서버측으로 전달 할 악세서리 상품 등록 정보 Object.
  */
-
 @Getter
 @Setter
-public class ClothesForm {
+public class AccessoryForm {
     private String name;
     private String engName;
     private Long price;
@@ -23,15 +22,14 @@ public class ClothesForm {
 
     private List<ItemFabricDTO> itemFabrics = new ArrayList<>();
     private List<ItemDetailDTO> itemDetails = new ArrayList<>();
-    private List<ClothesSizeDTO> clothesSizes = new ArrayList<>();
-    private List<ModelSizeDTO> modelSizes = new ArrayList<>();
+    private List<ItemSizeDTO> itemSizes = new ArrayList<>();
     private List<MultipartFile> profileImageFiles = new ArrayList<>();
     private List<MultipartFile> detailImageFiles = new ArrayList<>();
 
     @Override
     public String toString(){
-        return "ClothesRequest [name=" + this.name + ", engName=" + this.engName + ", price=" + this.price + ", itemFabrics="
-                + this.itemFabrics + ", itemDetails=" + this.itemDetails + ", clothesSizes=" + this.clothesSizes + ", modelSize=" + this.modelSizes +
+        return "ClothesRequest [name=" + this.name + ", engName=" + this.engName + ", price=" + this.price + ", clothesFabrics="
+                + this.itemFabrics + ", clothesDetails=" + this.itemDetails + ", clothesSizes=" + this.itemSizes +
                 ", categoryId= " + this.categoryId + "]";
     }
 }

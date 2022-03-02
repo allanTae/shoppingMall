@@ -6,7 +6,6 @@ import com.allan.shoppingMall.domains.cart.domain.Cart;
 import com.allan.shoppingMall.domains.cart.domain.CartItem;
 import com.allan.shoppingMall.domains.cart.domain.CartRepository;
 import com.allan.shoppingMall.domains.order.domain.Order;
-import com.allan.shoppingMall.domains.order.domain.OrderClothes;
 import com.allan.shoppingMall.domains.order.domain.OrderCompletedEvent;
 import com.allan.shoppingMall.domains.order.domain.OrderRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +20,7 @@ import java.util.stream.Collectors;
 
 /**
  * 주문완료시, 주문결제 완료 이벤트에 반응하는 handler 클래스입니다.
+ * 주문완료시, 결제된 상품을 장바구니에서 차감합니다.
  */
 @Service
 @RequiredArgsConstructor
@@ -41,19 +41,11 @@ public class OrderCompletedEventHandler {
 
         List<CartItem> cartItems = findOrder.getOrderItems().stream()
                 .map(orderItem -> {
-                    if (orderItem instanceof OrderClothes) {
-                        OrderClothes orderClothes = (OrderClothes) orderItem;
-                        return CartItem.builder()
-                                .item(orderClothes.getItem())
-                                .cartQuantity(orderClothes.getOrderQuantity())
-                                .size(orderClothes.getClothesSize().getSizeLabel())
-                                .build();
-                    } else {
-                        return CartItem.builder()
-                                .item(orderItem.getItem())
-                                .cartQuantity(orderItem.getOrderQuantity())
-                                .build();
-                    }
+                    return CartItem.builder()
+                            .item(orderItem.getItem())
+                            .cartQuantity(orderItem.getOrderQuantity())
+                            .size(orderItem.getItemSize().getSizeLabel())
+                            .build();
                 }).collect(Collectors.toList());
 
         Cart findCart = cartRepository.findByAuthId(event.getAuthId()).orElseThrow(()

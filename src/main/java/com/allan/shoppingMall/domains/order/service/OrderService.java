@@ -1,7 +1,7 @@
 package com.allan.shoppingMall.domains.order.service;
 
 import com.allan.shoppingMall.common.exception.ErrorCode;
-import com.allan.shoppingMall.common.exception.ItemNotFoundException;
+import com.allan.shoppingMall.common.exception.item.ItemNotFoundException;
 import com.allan.shoppingMall.common.exception.order.OrderNotFoundException;
 import com.allan.shoppingMall.common.exception.order.payment.PaymentFailByValidatedAmountException;
 import com.allan.shoppingMall.common.exception.order.payment.PaymentFailException;
@@ -10,8 +10,8 @@ import com.allan.shoppingMall.domains.delivery.domain.Delivery;
 import com.allan.shoppingMall.domains.delivery.domain.DeliveryStatus;
 import com.allan.shoppingMall.domains.item.domain.clothes.ClothesRepository;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
-import com.allan.shoppingMall.domains.item.domain.clothes.ItemSize;
-import com.allan.shoppingMall.domains.item.domain.clothes.ItemSizeRepository;
+import com.allan.shoppingMall.domains.item.domain.item.ItemSize;
+import com.allan.shoppingMall.domains.item.domain.item.ItemSizeRepository;
 import com.allan.shoppingMall.domains.member.domain.Member;
 import com.allan.shoppingMall.domains.mileage.domain.model.MileageContent;
 import com.allan.shoppingMall.domains.mileage.domain.model.MileageDTO;
@@ -194,12 +194,7 @@ public class OrderService {
                             .discountPrice(0l)
                             .build();
 
-                    // Clothes 상품만 사이즈 정보를 가지고 있기에(ClothesSize 로 관리)
-                    // OrderClothes 인 경우를 체크하고 size 정보를 추가한다.
-                    if(orderItem instanceof OrderClothes){
-                        OrderClothes orderClothes = (OrderClothes) orderItem;
-                        orderItemDTO.setSize(orderClothes.getClothesSize().getSizeLabel());
-                    }
+                    orderItemDTO.setSize(orderItem.getItemSize().getSizeLabel());
 
                     return orderItemDTO;
                 })

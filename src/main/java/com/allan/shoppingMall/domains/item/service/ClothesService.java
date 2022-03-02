@@ -1,13 +1,13 @@
 package com.allan.shoppingMall.domains.item.service;
 
 import com.allan.shoppingMall.common.exception.ErrorCode;
-import com.allan.shoppingMall.common.exception.ItemNotFoundException;
+import com.allan.shoppingMall.common.exception.item.ClothesSaveFailException;
+import com.allan.shoppingMall.common.exception.item.ItemNotFoundException;
 import com.allan.shoppingMall.domains.category.domain.Category;
+import com.allan.shoppingMall.domains.category.domain.CategoryCode;
 import com.allan.shoppingMall.domains.category.domain.CategoryRepository;
 import com.allan.shoppingMall.domains.item.domain.clothes.*;
-import com.allan.shoppingMall.domains.item.domain.item.Color;
-import com.allan.shoppingMall.domains.item.domain.item.ImageType;
-import com.allan.shoppingMall.domains.item.domain.item.ItemImage;
+import com.allan.shoppingMall.domains.item.domain.item.*;
 import com.allan.shoppingMall.domains.item.domain.model.*;
 import com.allan.shoppingMall.domains.item.infra.ImageFileHandler;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +40,7 @@ public class ClothesService {
     @Transactional
     public Long saveClothes(ClothesForm form){
         // 의류 원단 정보.
-        List<ItemFabric> fabrics = form.getClothesFabrics()
+        List<ItemFabric> fabrics = form.getItemFabrics()
                 .stream()
                 .map(clothesFabricsDTO -> {
                     return ItemFabric.builder()
@@ -51,7 +51,7 @@ public class ClothesService {
                 .collect(Collectors.toList());
 
         // 의류 디테일 정보.
-        List<ItemDetail> details = form.getClothesDetails()
+        List<ItemDetail> details = form.getItemDetails()
                 .stream()
                 .map(clothesDetailsDTO -> {
                     return ItemDetail.builder()
@@ -61,10 +61,10 @@ public class ClothesService {
                 .collect(Collectors.toList());
 
         // 의류 사이즈 정보.
-        List<ItemSize> sizes = form.getClothesSizes()
+        List<ClothesSize> sizes = form.getClothesSizes()
                 .stream()
                 .map(clothesSizesDTO -> {
-                    return ItemSize.builder()
+                    return ClothesSize.builder()
                             .shoulderWidth(clothesSizesDTO.getShoulderWidth())
                             .backLength(clothesSizesDTO.getBackLength())
                             .bottomWidth(clothesSizesDTO.getBottomWidth())
@@ -108,6 +108,10 @@ public class ClothesService {
         Category findCategory = categoryRepository.findById(form.getCategoryId()).orElseThrow(() ->
                 new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
+        // 예외 처리 필요.
+        if(findCategory.getCategoryCode().getCode() != CategoryCode.CLOTHES.getCode())
+            throw new ClothesSaveFailException(ErrorCode.ITEM_CATEGORY_CODE_INVALID);
+
         // 색상 정보.
         Clothes clothes = Clothes.builder()
                 .name(form.getName())
@@ -119,7 +123,7 @@ public class ClothesService {
 
         clothes.changeItemFabrics(fabrics);
         clothes.changeItemDetails(details);
-        clothes.changeItemSizes(sizes);
+        clothes.changeClothesSize(sizes);
         clothes.changeModelSizes(modelSizes);
         clothes.changeItemImages(profileItemImages);
         clothes.changeItemImages(detailItemImages);
@@ -137,7 +141,7 @@ public class ClothesService {
 
         Clothes findClothes = clothesRepository.getClothes(clothesId)
                 .orElseThrow(() ->
-                        new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND.getMessage(), ErrorCode.ENTITY_NOT_FOUND));
+                        new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
         List<ItemFabricDTO> fabricDTOS = findClothes.getItemFabrics()
                 .stream()
@@ -156,10 +160,10 @@ public class ClothesService {
                             .build();
                 }).collect(Collectors.toList());
 
-        List<ItemSizeDTO> sizeDTOS = findClothes.getItemSizes()
+        List<ClothesSizeDTO> sizeDTOS = findClothes.getClothesSizes()
                 .stream()
                 .map(itemSize -> {
-                    return ItemSizeDTO.builder()
+                    return ClothesSizeDTO.builder()
                             .backLength(itemSize.getBackLength())
                             .sizeLabel(itemSize.getSizeLabel().getKey())
                             .bottomWidth(itemSize.getBottomWidth())
@@ -188,8 +192,8 @@ public class ClothesService {
                                     .engName(findClothes.getEngName())
                                     .price(findClothes.getPrice())
                                     .clothesId(findClothes.getItemId())
-                                    .clothesFabrics(fabricDTOS)
-                                    .clothesDetails(detailDTOS)
+                                    .itemFabrics(fabricDTOS)
+                                    .itemDetails(detailDTOS)
                                     .clothesSizes(sizeDTOS)
                                     .modelSizes(modelSizeDTOS)
                                     .itemImages(findClothes.getItemImages())

@@ -1,4 +1,4 @@
-package com.allan.shoppingMall.domains.item.domain.clothes;
+package com.allan.shoppingMall.domains.item.domain.item;
 
 import com.allan.shoppingMall.common.domain.BaseEntity;
 import com.allan.shoppingMall.domains.item.domain.item.Item;

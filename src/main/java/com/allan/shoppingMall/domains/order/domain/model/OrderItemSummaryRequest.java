@@ -1,16 +1,11 @@
 package com.allan.shoppingMall.domains.order.domain.model;
 
 import com.allan.shoppingMall.domains.cart.domain.model.RequiredOption;
-import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
-import com.allan.shoppingMall.domains.order.domain.OrderClothes;
-import com.allan.shoppingMall.domains.order.domain.OrderItem;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
