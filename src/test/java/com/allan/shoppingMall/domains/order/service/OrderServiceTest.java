@@ -221,7 +221,7 @@ public class OrderServiceTest {
         // 테스트를 위해서 따로 값을 추가.
         ReflectionTestUtils.setField(TEST_ORDER, "orderStatus", OrderStatus.ORDER_TEMP);
 
-        given(orderRepository.findById(any()))
+        given(orderRepository.findByOrderNumAndAuthId("testAuthId", "testOrderNum"))
                 .willReturn(Optional.of(TEST_ORDER));
 
         PaymentDTO TEST_PAYMENT_DTO = PaymentDTO.builder()
@@ -235,10 +235,12 @@ public class OrderServiceTest {
                 .willReturn(TEST_MILEAGE_DTO);
 
         //when
-        orderService.getOrderDetailDTO(any());
+        orderService.getOrderDetailDTO("testAuthId", "testOrderNum");
 
         //then
-        verify(orderRepository, atLeastOnce()).findById(any());
+        verify(orderRepository, atLeastOnce()).findByOrderNumAndAuthId(any(), any());
+        verify(paymentService, atLeastOnce()).getPamentDetail(any());
+        verify(mileageService, atLeastOnce()).getMileageByOrderNum(any(), any());
     }
 
     @Test

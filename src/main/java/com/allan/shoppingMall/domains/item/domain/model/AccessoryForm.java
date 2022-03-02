@@ -22,14 +22,14 @@ public class AccessoryForm {
 
     private List<ItemFabricDTO> itemFabrics = new ArrayList<>();
     private List<ItemDetailDTO> itemDetails = new ArrayList<>();
-    private List<ItemSizeDTO> itemSizes = new ArrayList<>();
+    private List<AccessorySizeDTO> accessorySizes = new ArrayList<>();
     private List<MultipartFile> profileImageFiles = new ArrayList<>();
     private List<MultipartFile> detailImageFiles = new ArrayList<>();
 
     @Override
     public String toString(){
-        return "ClothesRequest [name=" + this.name + ", engName=" + this.engName + ", price=" + this.price + ", clothesFabrics="
-                + this.itemFabrics + ", clothesDetails=" + this.itemDetails + ", clothesSizes=" + this.itemSizes +
+        return "ClothesRequest [name=" + this.name + ", engName=" + this.engName + ", price=" + this.price + ", itemFabrics="
+                + this.itemFabrics + ", itemDetails=" + this.itemDetails + ", accessorySizes=" + this.accessorySizes +
                 ", categoryId= " + this.categoryId + "]";
     }
 }

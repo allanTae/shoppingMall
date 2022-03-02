@@ -128,26 +128,6 @@ public class OrderControllerTest {
     }
 
     @Test
-    public void 상세주문_조회_테스트() throws Exception {
-        //given
-        OrderDetailDTO TEST_ORDER_DETAIL_DTO = OrderDetailDTO.builder()
-                .orderDate(LocalDateTime.now())
-                .orderStatus(OrderStatus.ORDER_ITEM_READY.getDesc())
-                .build();
-        given(orderService.getOrderDetailDTO(any()))
-                .willReturn(TEST_ORDER_DETAIL_DTO);
-
-        // when
-        ResultActions resultActions = mvc.perform(get("/order/1"));
-
-        //then
-        verify(orderService, atLeastOnce()).getOrderDetailDTO(any());
-        resultActions
-                .andExpect(status().isOk())
-                .andExpect(view().name("order/orderDetail"));
-    }
-
-    @Test
     public void 주문_취소_테스트() throws Exception {
         //given, when
         ResultActions resultActions = mvc.perform(post("/order/cancel/1"));
@@ -156,5 +136,26 @@ public class OrderControllerTest {
         verify(orderService,atLeastOnce()).cancelMyOrder(any(), any());
         resultActions
                 .andExpect(status().is3xxRedirection());
+    }
+
+    @Test
+    @WithMockUser
+    public void 상세주문_조회_테스트() throws Exception {
+        //given
+        OrderDetailDTO TEST_ORDER_DETAIL_DTO = OrderDetailDTO.builder()
+                .orderDate(LocalDateTime.now())
+                .orderStatus(OrderStatus.ORDER_ITEM_READY.getDesc())
+                .build();
+        given(orderService.getOrderDetailDTO("user", "testOrderNum"))
+                .willReturn(TEST_ORDER_DETAIL_DTO);
+
+        // when
+        ResultActions resultActions = mvc.perform(get("/order/testOrderNum"));
+
+        //then
+        verify(orderService, atLeastOnce()).getOrderDetailDTO(any(),any());
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(view().name("order/orderDetail"));
     }
 }

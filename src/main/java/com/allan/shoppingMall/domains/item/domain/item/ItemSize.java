@@ -15,7 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import javax.persistence.*;
 
 /**
- * 의류 사이즈 정보를 저장 할 엔티티.
+ * 상품 사이즈 도메인.
+ * 상품 사이즈 정보를 저장하는 엔티티 입니다.
  */
 @Entity
 @Getter
@@ -33,7 +34,7 @@ public class ItemSize extends BaseEntity {
     @JoinColumn(name = "item_id")
     private Item item;
 
-    // 의류 사이즈.
+    // 사이즈.
     @Column(name = "clothes_size")
     @Enumerated(value = EnumType.STRING)
     private SizeLabel sizeLabel;

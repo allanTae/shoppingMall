@@ -10,6 +10,10 @@ import lombok.experimental.SuperBuilder;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
+/**
+ * 의류상품 사이즈 도메인.
+ * 의류상품 사이즈 정보를 저장하는 엔티티 입니다.
+ */
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -55,18 +59,4 @@ public class ClothesSize extends ItemSize {
         this.bottomWidth = bottomWidth;
     }
 
-    @Override
-    public String toString() {
-        return "ClothesSize{" +
-                "sizeLabel= " + getSizeLabel() +
-                ", stockQuantity= " + getStockQuantity() +
-                ", backLength=" + backLength +
-                ", chestWidth=" + chestWidth +
-                ", shoulderWidth=" + shoulderWidth +
-                ", sleeveLength=" + sleeveLength +
-                ", waistWidth=" + waistWidth +
-                ", heapWidth=" + heapWidth +
-                ", bottomWidth=" + bottomWidth +
-                '}';
-    }
 }

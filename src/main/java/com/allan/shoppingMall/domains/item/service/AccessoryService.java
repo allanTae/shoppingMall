@@ -8,6 +8,7 @@ import com.allan.shoppingMall.domains.category.domain.CategoryCode;
 import com.allan.shoppingMall.domains.category.domain.CategoryRepository;
 import com.allan.shoppingMall.domains.item.domain.accessory.Accessory;
 import com.allan.shoppingMall.domains.item.domain.accessory.AccessoryRepository;
+import com.allan.shoppingMall.domains.item.domain.accessory.AccessorySize;
 import com.allan.shoppingMall.domains.item.domain.item.ItemDetail;
 import com.allan.shoppingMall.domains.item.domain.item.ItemFabric;
 import com.allan.shoppingMall.domains.item.domain.item.ItemSize;
@@ -41,139 +42,129 @@ public class AccessoryService {
      * @param form
      * @return accessoryId
      */
-//    @Transactional
-//    public Long saveAccessory(AccessoryForm form){
-//        // 의류 원단 정보.
-//        List<ItemFabric> fabrics = form.getItemFabrics()
-//                .stream()
-//                .map(clothesFabricsDTO -> {
-//                    return ItemFabric.builder()
-//                            .materialPart(clothesFabricsDTO.getMaterialPart())
-//                            .materialDesc(clothesFabricsDTO.getMaterialDesc())
-//                            .build();
-//                })
-//                .collect(Collectors.toList());
-//
-//        // 의류 디테일 정보.
-//        List<ItemDetail> details = form.getItemDetails()
-//                .stream()
-//                .map(clothesDetailsDTO -> {
-//                    return ItemDetail.builder()
-//                            .detailDesc(clothesDetailsDTO.getDetailDesc())
-//                            .build();
-//                })
-//                .collect(Collectors.toList());
-//
-//        // 의류 사이즈 정보.
-//        List<ItemSize> sizes = form.getItemSizes()
-//                .stream()
-//                .map(clothesSizesDTO -> {
-//                    return ItemSize.builder()
-//                            .shoulderWidth(clothesSizesDTO.getShoulderWidth())
-//                            .backLength(clothesSizesDTO.getBackLength())
-//                            .bottomWidth(clothesSizesDTO.getBottomWidth())
-//                            .chestWidth(clothesSizesDTO.getChestWidth())
-//                            .heapWidth(clothesSizesDTO.getHeapWidth())
-//                            .sleeveLength(clothesSizesDTO.getSleeveLength())
-//                            .sizeLabel(SizeLabel.valueOf(Integer.valueOf(clothesSizesDTO.getSizeLabel())))
-//                            .waistWidth(clothesSizesDTO.getWaistWidth())
-//                            .stockQuantity(clothesSizesDTO.getStockQuantity())
-//                            .build();
-//                })
-//                .collect(Collectors.toList());
-//
-//        // 이미지 파일 정보. (프로필 사진 파일, 디테일 사진 파일)
-//        List<MultipartFile> profileImageFiles = form.getProfileImageFiles();
-//        List<MultipartFile> detailImageFiles = form.getDetailImageFiles();
-//        List<ItemImage> profileItemImages = null;
-//        List<ItemImage> detailItemImages = null;
-//        try{
-//            profileItemImages = imageFileHandler.parseImageInfo(profileImageFiles, ImageType.PREVIEW);
-//            detailItemImages = imageFileHandler.parseImageInfo(detailImageFiles, ImageType.PRODUCT);
-//        }catch (IOException e){
-//            log.error("ClothesService's saveClothes() cause Error!");
-//            log.error("exception message: " + e.getMessage());
-//        }
-//
-//        Category findCategory = categoryRepository.findById(form.getCategoryId()).orElseThrow(() ->
-//                new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
-//
-//        // 예외 처리 필요.
-//        if(findCategory.getCategoryCode().getCode() != CategoryCode.ACCESSORY.getCode())
-//            throw new AccessorySaveFailException(ErrorCode.ITEM_CATEGORY_CODE_INVALID);
-//
-//        Accessory accessory = Accessory.builder()
-//                .name(form.getName())
-//                .engName(form.getEngName())
-//                .price(form.getPrice())
-//                .category(findCategory)
-//                .color(Color.valueOf(form.getClothesColor()))
-//                .build();
-//
-//        accessory.changeItemFabrics(fabrics);
-//        accessory.changeItemDetails(details);
-//        accessory.changeItemSizes(sizes);
-//        accessory.changeItemImages(profileItemImages);
-//        accessory.changeItemImages(detailItemImages);
-//
-//        accessoryRepository.save(accessory);
-//        return accessory.getItemId();
-//    }
+    @Transactional
+    public Long saveAccessory(AccessoryForm form){
+        // 의류 원단 정보.
+        List<ItemFabric> fabrics = form.getItemFabrics()
+                .stream()
+                .map(clothesFabricsDTO -> {
+                    return ItemFabric.builder()
+                            .materialPart(clothesFabricsDTO.getMaterialPart())
+                            .materialDesc(clothesFabricsDTO.getMaterialDesc())
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        // 의류 디테일 정보.
+        List<ItemDetail> details = form.getItemDetails()
+                .stream()
+                .map(clothesDetailsDTO -> {
+                    return ItemDetail.builder()
+                            .detailDesc(clothesDetailsDTO.getDetailDesc())
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        // 악세서리 사이즈 정보.
+        List<AccessorySize> sizes = form.getAccessorySizes()
+                .stream()
+                .map(accessorySizeDTO -> {
+                    return AccessorySize.builder()
+                            .widthLength(accessorySizeDTO.getWidthLength())
+                            .heightLength(accessorySizeDTO.getHeightLength())
+                            .sizeLabel(SizeLabel.valueOf(Integer.valueOf(accessorySizeDTO.getSizeLabel())))
+                            .stockQuantity(accessorySizeDTO.getStockQuantity())
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        // 이미지 파일 정보. (프로필 사진 파일, 디테일 사진 파일)
+        List<MultipartFile> profileImageFiles = form.getProfileImageFiles();
+        List<MultipartFile> detailImageFiles = form.getDetailImageFiles();
+        List<ItemImage> profileItemImages = null;
+        List<ItemImage> detailItemImages = null;
+        try{
+            profileItemImages = imageFileHandler.parseImageInfo(profileImageFiles, ImageType.PREVIEW);
+            detailItemImages = imageFileHandler.parseImageInfo(detailImageFiles, ImageType.PRODUCT);
+        }catch (IOException e){
+            log.error("ClothesService's saveClothes() cause Error!");
+            log.error("exception message: " + e.getMessage());
+        }
+
+        Category findCategory = categoryRepository.findById(form.getCategoryId()).orElseThrow(() ->
+                new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+
+        // 예외 처리 필요.
+        if(findCategory.getCategoryCode().getCode() != CategoryCode.ACCESSORY.getCode())
+            throw new AccessorySaveFailException(ErrorCode.ITEM_CATEGORY_CODE_INVALID);
+
+        Accessory accessory = Accessory.builder()
+                .name(form.getName())
+                .engName(form.getEngName())
+                .price(form.getPrice())
+                .category(findCategory)
+                .color(Color.valueOf(form.getClothesColor()))
+                .build();
+
+        accessory.changeItemFabrics(fabrics);
+        accessory.changeItemDetails(details);
+        accessory.changeAccessorySize(sizes);
+        accessory.changeItemImages(profileItemImages);
+        accessory.changeItemImages(detailItemImages);
+
+        accessoryRepository.save(accessory);
+        return accessory.getItemId();
+    }
 
     /**
      * 단일 Accessory 도메인에 대한 AccessoryDTO 를 반환하는 메소드.(상품 상세보기 위한 기능).
      * @param accessoryId 악세서리 도메인 id.
      * @return AccessoryDTO
      */
-//    public AccessoryDTO getAccessory(Long accessoryId){
-//        Accessory findAccessory = accessoryRepository.findById(accessoryId).orElseThrow(() ->
-//                new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
-//
-//        List<ItemFabricDTO> fabricDTOS = findAccessory.getItemFabrics()
-//                .stream()
-//                .map(itemFabric -> {
-//                    return ItemFabricDTO.builder()
-//                            .materialPart(itemFabric.getMaterialPart())
-//                            .materialDesc(itemFabric.getMaterialDesc())
-//                            .build();
-//                }).collect(Collectors.toList());
-//
-//        List<ItemDetailDTO> detailDTOS = findAccessory.getItemDetails()
-//                .stream()
-//                .map(itemDetail -> {
-//                    return ItemDetailDTO.builder()
-//                            .detailDesc(itemDetail.getDetailDesc())
-//                            .build();
-//                }).collect(Collectors.toList());
-//
-//        List<ItemSizeDTO> sizeDTOS = findAccessory.getItemSizes()
-//                .stream()
-//                .map(itemSize -> {
-//                    return ItemSizeDTO.builder()
-//                            .backLength(itemSize.getBackLength())
-//                            .sizeLabel(itemSize.getSizeLabel().getKey())
-//                            .bottomWidth(itemSize.getBottomWidth())
-//                            .chestWidth(itemSize.getChestWidth())
-//                            .shoulderWidth(itemSize.getShoulderWidth())
-//                            .heapWidth(itemSize.getHeapWidth())
-//                            .sleeveLength(itemSize.getSleeveLength())
-//                            .waistWidth(itemSize.getWaistWidth())
-//                            .build();
-//                }).collect(Collectors.toList());
-//
-//        AccessoryDTO accessoryDTO = AccessoryDTO.builder()
-//                .accessoryName(findAccessory.getName())
-//                .engName(findAccessory.getEngName())
-//                .price(findAccessory.getPrice())
-//                .accessoryId(findAccessory.getItemId())
-//                .itemFabrics(fabricDTOS)
-//                .itemDetails(detailDTOS)
-//                .itemSizes(sizeDTOS)
-//                .itemImages(findAccessory.getItemImages())
-//                .color(findAccessory.getColor().getDesc())
-//                .categoryId(findAccessory.getCategory().getCategoryId())
-//                .build();
-//
-//        return accessoryDTO;
-//    }
+    public AccessoryDTO getAccessory(Long accessoryId){
+        Accessory findAccessory = accessoryRepository.findById(accessoryId).orElseThrow(() ->
+                new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+
+        List<ItemFabricDTO> fabricDTOS = findAccessory.getItemFabrics()
+                .stream()
+                .map(itemFabric -> {
+                    return ItemFabricDTO.builder()
+                            .materialPart(itemFabric.getMaterialPart())
+                            .materialDesc(itemFabric.getMaterialDesc())
+                            .build();
+                }).collect(Collectors.toList());
+
+        List<ItemDetailDTO> detailDTOS = findAccessory.getItemDetails()
+                .stream()
+                .map(itemDetail -> {
+                    return ItemDetailDTO.builder()
+                            .detailDesc(itemDetail.getDetailDesc())
+                            .build();
+                }).collect(Collectors.toList());
+
+        List<AccessorySizeDTO> sizeDTOS = findAccessory.getAccessorySizes()
+                .stream()
+                .map(accessorySize -> {
+                    return AccessorySizeDTO.builder()
+                            .sizeLabel(accessorySize.getSizeLabel().getKey())
+                            .widthLength(accessorySize.getWidthLength())
+                            .heightLength(accessorySize.getHeightLength())
+                            .build();
+                }).collect(Collectors.toList());
+
+        AccessoryDTO accessoryDTO = AccessoryDTO.builder()
+                .accessoryName(findAccessory.getName())
+                .engName(findAccessory.getEngName())
+                .price(findAccessory.getPrice())
+                .accessoryId(findAccessory.getItemId())
+                .itemFabrics(fabricDTOS)
+                .itemDetails(detailDTOS)
+                .accessorySizes(sizeDTOS)
+                .itemImages(findAccessory.getItemImages())
+                .color(findAccessory.getColor().getDesc())
+                .categoryId(findAccessory.getCategory().getCategoryId())
+                .build();
+
+        return accessoryDTO;
+    }
 }

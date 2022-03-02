@@ -180,21 +180,17 @@
         var htmls ='<tr>';
         htmls += '<th scope="row">' + sizeTableIndex + '</th>';
         htmls += '<td class="col-md-2">';
-        htmls += '  <select class="form-select" name="itemSizes[' + (sizeTableIndex-1) + '].sizeLabel">';
+        htmls += '  <select class="form-select" name="accessorySizes[' + (sizeTableIndex-1) + '].sizeLabel">';
         htmls += '    <option selected>사이즈</option>';
         htmls += '    <option value="1">S</option>';
         htmls += '    <option value="2">M</option>';
         htmls += '    <option value="3">L</option>';
+        htmls += '    <option value="4">FREE</option>';
         htmls += '  </select>';
         htmls += '</td>';
-        htmls += '<td><input type="text" class="form-control" name="itemSizes['+ (sizeTableIndex-1) + '].backLength' + '" placeholder="총장"></td>';
-        htmls += '<td><input type="text" class="form-control" name="itemSizes[' + (sizeTableIndex-1) + '].chestWidth' + '" placeholder="가슴둘레"></td>';
-        htmls += '<td><input type="text" class="form-control" name="itemSizes[' + (sizeTableIndex-1) + '].shoulderWidth' + '" placeholder="어깨넓이"></td>';
-        htmls += '<td><input type="text" class="form-control" name="itemSizes[' + (sizeTableIndex-1) + '].sleeveLength' + '" placeholder="소매길이"></td>';
-        htmls += '<td><input type="text" class="form-control" name="itemSizes[' + (sizeTableIndex-1) + '].waistWidth' + '" placeholder="허리둘레"></td>';
-        htmls += '<td><input type="text" class="form-control" name="itemSizes[' + (sizeTableIndex-1) + '].heapWidth' + '" placeholder="엉덩이"></td>';
-        htmls += '<td><input type="text" class="form-control" name="itemSizes[' + (sizeTableIndex-1) + '].bottomWidth' + '" placeholder="밑단둘레"></td>';
-        htmls += '<td><input type="text" class="form-control" name="itemSizes[' + (sizeTableIndex-1) + '].stockQuantity' + '" placeholder="수량"></td>';
+        htmls += '<td><input type="text" class="form-control" name="accessorySizes['+ (sizeTableIndex-1) + '].widthLength' + '" placeholder="너비"></td>';
+        htmls += '<td><input type="text" class="form-control" name="accessorySizes[' + (sizeTableIndex-1) + '].heightLength' + '" placeholder="길이"></td>';
+        htmls += '<td><input type="text" class="form-control" name="accessorySizes[' + (sizeTableIndex-1) + '].stockQuantity' + '" placeholder="수량"></td>';
         htmls += '</tr>';
         $("#sizeTable:last-child").append(htmls);
         sizeTableIndex++;
@@ -339,13 +335,8 @@
                                 <tr >
                                   <th scope="col" class="align-middle">#</th>
                                   <th scope="col" class="align-middle">사이즈</th>
-                                  <th scope="col" class="align-middle">총장</th>
-                                  <th scope="col" class="align-middle">가슴둘레</th>
-                                  <th scope="col" class="align-middle">어깨넓이</th>
-                                  <th scope="col" class="align-middle">소매길이</th>
-                                  <th scope="col" class="align-middle">허리둘레</th>
-                                  <th scope="col" class="align-middle">엉덩이</th>
-                                  <th scope="col" class="align-middle">밑단둘레</th>
+                                  <th scope="col" class="align-middle">너비</th>
+                                  <th scope="col" class="align-middle">길이</th>
                                   <th scope="col" class="align-middle">수량</th>
                                   <th scope="col" class="align-middle"><button type="button" class="btn btn-prmary" id="btnSizeAdd">+</button></th>
                                 </tr>
@@ -354,21 +345,17 @@
                                 <tr>
                                   <th scope="row ">1</th>
                                   <td class="col-md-2">
-                                    <select class="form-select" name="itemSizes[0].sizeLabel">
+                                    <select class="form-select" name="accessorySizes[0].sizeLabel">
                                         <option selected>사이즈</option>
                                         <option value="1">S</option>
                                         <option value="2">M</option>
                                         <option value="3">L</option>
+                                        <option value="4">FREE</option>
                                     </select>
                                   </td>
-                                  <td><input type="text" class="form-control" name="itemSizes[0].backLength" placeholder="총장"></td>
-                                  <td><input type="text" class="form-control" name="itemSizes[0].chestWidth" placeholder="가슴둘레"></td>
-                                  <td><input type="text" class="form-control" name="itemSizes[0].shoulderWidth" placeholder="어깨넓이"></td>
-                                  <td><input type="text" class="form-control" name="itemSizes[0].sleeveLength" placeholder="소매길이"></td>
-                                  <td><input type="text" class="form-control" name="itemSizes[0].waistWidth" placeholder="허리둘레"></td>
-                                  <td><input type="text" class="form-control" name="itemSizes[0].heapWidth" placeholder="엉덩이"></td>
-                                  <td><input type="text" class="form-control" name="itemSizes[0].bottomWidth" placeholder="밑단둘레"></td>
-                                  <td><input type="text" class="form-control" name="itemSizes[0].stockQuantity" placeholder="수량"></td>
+                                  <td><input type="text" class="form-control" name="accessorySizes[0].widthLength" placeholder="너비"></td>
+                                  <td><input type="text" class="form-control" name="accessorySizes[0].heightLength" placeholder="길이"></td>
+                                  <td><input type="text" class="form-control" name="accessorySizes[0].stockQuantity" placeholder="수량"></td>
                                 </tr>
                               </tbody>
                             </table>

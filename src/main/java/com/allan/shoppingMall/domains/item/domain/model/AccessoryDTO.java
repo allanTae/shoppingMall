@@ -34,7 +34,7 @@ public class AccessoryDTO {
 
     private List<ItemDetailDTO> itemDetails = new ArrayList<>();
 
-    private List<ItemSizeDTO> itemSizes = new ArrayList<>();
+    private List<AccessorySizeDTO> accessorySizes = new ArrayList<>();
 
     private String color;
 
@@ -42,7 +42,7 @@ public class AccessoryDTO {
 
     @Builder
     public AccessoryDTO(Long accessoryId, String accessoryName, Long price, String engName, List<ItemImage> itemImages,
-                      List<ItemFabricDTO> itemFabrics, List<ItemDetailDTO> itemDetails, List<ItemSizeDTO> itemSizes,
+                      List<ItemFabricDTO> itemFabrics, List<ItemDetailDTO> itemDetails, List<AccessorySizeDTO> accessorySizes,
                       String color, Long categoryId) {
         this.accessoryId = accessoryId;
         this.accessoryName = accessoryName;
@@ -50,7 +50,7 @@ public class AccessoryDTO {
         this.engName = engName;
         this.itemFabrics = itemFabrics;
         this.itemDetails = itemDetails;
-        this.itemSizes = itemSizes;
+        this.accessorySizes = accessorySizes;
         setImgaes(itemImages);
         this.color = color;
         this.categoryId = categoryId;

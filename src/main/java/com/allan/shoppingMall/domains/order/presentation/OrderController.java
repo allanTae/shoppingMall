@@ -92,13 +92,13 @@ public class OrderController {
 
     /**
      * 상세 주문에 대한 조회 함수.
-     * @param orderId
+     * @param orderNum
      */
-    @GetMapping("/{orderId}")
-    public String getOrderDetail(@PathVariable("orderId") Long orderId, Model model){
+    @GetMapping("/{orderNum}")
+    public String getOrderDetail(@PathVariable("orderNum") String orderNum, Model model, Authentication authentication){
 
         // 주문정보 설정.
-        OrderDetailDTO orderDetail = orderService.getOrderDetailDTO(orderId);
+        OrderDetailDTO orderDetail = orderService.getOrderDetailDTO(authentication.getName(), orderNum);
         model.addAttribute("orderInfo", orderDetail);
 
         return "order/orderDetail";

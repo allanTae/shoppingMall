@@ -67,13 +67,8 @@ public class Clothes extends Item {
      * @param clothesSizes
      */
     public void changeClothesSize(List<ClothesSize> clothesSizes){
-        log.info("changeClothesSize() call!!!");
-        log.info("list size: "+ clothesSizes.size());
         long totalQuantity = 0l;
         for(ClothesSize clothesSize : clothesSizes){
-            log.info("for");
-            log.info(clothesSize.toString());
-            log.info("");
             totalQuantity += clothesSize.getStockQuantity();
             this.clothesSizes.add(clothesSize);
             clothesSize.changeItem(this);

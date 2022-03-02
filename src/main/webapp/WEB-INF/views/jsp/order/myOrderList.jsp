@@ -7,8 +7,8 @@
 <c:url var="getBoardList" value="/board/getBoardList">
 </c:url>
 <script>
-	function fn_contentView(orderId){
-		var url= "${pageContext.request.contextPath}/order/" + orderId;
+	function fn_contentView(orderNum){
+		var url= "${pageContext.request.contextPath}/order/" + orderNum;
 		location.href = url;
 	}
 
@@ -68,7 +68,7 @@
                 </c:when>
                 <c:when test="${!empty myOrderList}">
                     <c:forEach var="list" items="${myOrderList}">
-                        <a href="#" onclick="fn_contentView(${list.orderId})">
+                        <a href="#" onclick="fn_contentView('${list.orderNum}')">
                            <div class="orderItemWrap border mb-2">
                              <div class="row orderItem com-md-12">
                                 <div class="orderProfileImg col-md-2 p-0">

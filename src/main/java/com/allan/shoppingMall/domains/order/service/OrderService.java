@@ -173,14 +173,15 @@ public class OrderService {
 
     /**
      * 주문 1건에 대한 상세 주문정보를 반환하는 메소드.
-     * @param orderId 주문 도메인 id.
+     * @param authId 로그인 한 회원 아이디.
+     * @param orderNum 주문 도메인 주문번호.
      * @return OrderDetailDTO
      */
-    public OrderDetailDTO getOrderDetailDTO(Long orderId){
-        Order findOrder = orderRepository.findById(orderId).orElseThrow(()
+    public OrderDetailDTO getOrderDetailDTO(String authId, String orderNum){
+        Order findOrder = orderRepository.findByOrderNumAndAuthId(authId, orderNum).orElseThrow(()
                 -> new OrderNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
-        // 주문 상품.
+        // 주문 상품 정보)
         List<OrderItemDTO> orderItemDTOS = findOrder.getOrderItems()
                 .stream()
                 .map(orderItem -> {
@@ -219,14 +220,14 @@ public class OrderService {
         MileageDTO mileage = mileageService.getMileageByOrderNum(findOrder.getOrderNum(), MileageContent.USED_MILEAGE_DEDUCTION);
         payment.setMileagePoint(mileage.getMileagePoint());
 
-        // 할인 정보.
+        // 주소 정보등 그외 정보).
         OrderDetailDTO orderDetailDTO = OrderDetailDTO.builder()
                 .orderId(findOrder.getOrderId())
                 .orderDate(LocalDateTime.now())
                 .orderItems(orderItemDTOS)
                 .recipient(findOrder.getDelivery().getRecipient())
                 .recipientPhone(findOrder.getDelivery().getRecipientPhone())
-                .address(findOrder.getDelivery().getAddress().getRoadAddress() + findOrder.getDelivery().getAddress().getDetailAddress())
+                .address(findOrder.getDelivery().getAddress().getAddress() + findOrder.getDelivery().getAddress().getDetailAddress())
                 .orderStatus(findOrder.getOrderStatus().getDesc())
                 .ordererInfo(OrdererInfo.builder()
                         .ordererName(findOrder.getOrdererInfo().getOrdererName())
