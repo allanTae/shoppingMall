@@ -4,6 +4,8 @@ import com.allan.shoppingMall.common.domain.BaseEntity;
 import com.allan.shoppingMall.common.exception.ErrorCode;
 import com.allan.shoppingMall.common.exception.order.OrderFailException;
 import com.allan.shoppingMall.domains.category.domain.Category;
+import com.allan.shoppingMall.domains.category.domain.CategoryItem;
+import com.allan.shoppingMall.domains.order.domain.OrderItem;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,10 +24,6 @@ import java.util.List;
 public class Item extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long itemId;
-
-    @JoinColumn(name = "category_id", nullable = true)
-    @OneToOne(fetch = FetchType.LAZY)
-    private Category category;
 
     @Column(nullable = false)
     private String name;
@@ -52,11 +50,13 @@ public class Item extends BaseEntity {
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemSize> itemSizes = new ArrayList<>();
 
-    public Item(String name, Long price, Color color, Category category) {
+    @OneToMany(mappedBy = "item", cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, orphanRemoval = true)
+    private List<CategoryItem> categoryItems = new ArrayList<>();
+
+    public Item(String name, Long price, Color color) {
         this.name = name;
         this.price = price;
         this.color = color;
-        this.category = category;
     }
 
     /**
@@ -71,8 +71,11 @@ public class Item extends BaseEntity {
         }
     }
 
+    /**
+     * 재고량 차감 메소드.
+     * @param stockQuantity
+     */
     public void subtractStockQuantity(Long stockQuantity){
-
         if(this.stockQuantity < stockQuantity) {
             log.error("stockQuantity: " + this.stockQuantity);
             log.error("orderQuantity: " + stockQuantity);
@@ -81,9 +84,13 @@ public class Item extends BaseEntity {
         this.stockQuantity -= stockQuantity;
     }
 
+    /**
+     * 재고량 증가 메소드.
+     * @param
+     * @return
+     */
     public void addStockQuantity(Long stockQuantity){
         this.stockQuantity += stockQuantity;
-        log.info("stockQuantity: " + this.stockQuantity);
     }
 
     /**
@@ -124,5 +131,19 @@ public class Item extends BaseEntity {
             itemSize.changeItem(this);
         }
         addStockQuantity(totalQuantity); // 재고량을 증가하기 위한 메소드.
+    }
+
+    /**
+     * 양방향 매핑을 위한 연관 관계 편의 메소드.
+     * 카테고리 상품 도메인 추가를 위한 메소드 입니다.
+     * @param categoryItems
+     */
+    public void changeCategoryItems(List<CategoryItem> categoryItems){
+        for(CategoryItem categoryItem : categoryItems){
+            if(!this.categoryItems.contains(categoryItem)){
+                this.categoryItems.add(categoryItem);
+                categoryItem.changeitem(this);
+            }
+        }
     }
 }

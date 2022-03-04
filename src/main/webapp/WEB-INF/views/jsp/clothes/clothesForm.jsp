@@ -81,7 +81,6 @@
         }else{
             // 하위 카테고리 초기화.
             selectedCategoryId = ($(this).val() !== "대분류") ? categoryObj.child[$(this).val()].categoryId : 0;
-            console.log("selectedCategoryId: " + selectedCategoryId);
             $('#middleCategory').html('');
             $('#middleCategory').css('display', 'none');
             $('#subCategory').html('');
@@ -108,7 +107,6 @@
         }else{
             // 하위 카테고리 초기화.
             selectedCategoryId = ($(this).val() !== "중분류") ? categoryObj.child[mainCategoryId].child[$(this).val()].categoryId : 0;
-            console.log("selectedCategoryId: " + selectedCategoryId);
             $('#subCategory').html('');
             $('#subCategory').css('display', 'none');
         }
@@ -121,7 +119,6 @@
         var middleCategoryId = $('#middleCategory option:selected').val(); // 중분류 카테고리 아이디.
 
         selectedCategoryId = categoryObj.child[mainCategoryId].child[middleCategoryId].child[$(this).val()].categoryId;
-        console.log("selectedCategoryId: " + selectedCategoryId);
     });
 
     function validateForm(){
@@ -143,7 +140,7 @@
     // 회원가입 이벤트.
     $(document).on('click', '#btnEnroll', function(e){
         if(validateForm()){
-            let category = '<input type="text" name="categoryId" value="' + selectedCategoryId + '" />';
+            let category = '<input type="text" name="categoryId" value="' + selectedCategoryId + '" style="display:none;"/>';
             $("#form").append(category);
             $("#form").submit();
         }

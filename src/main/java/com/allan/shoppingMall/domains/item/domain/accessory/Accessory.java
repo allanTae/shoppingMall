@@ -25,8 +25,8 @@ public class Accessory extends Item {
     private String engName;
 
     @Builder
-    public Accessory(String name, Long price, Color color, String engName, Category category){
-        super(name, price, color, category);
+    public Accessory(String name, Long price, Color color, String engName){
+        super(name, price, color);
         this.engName = engName;
     }
 

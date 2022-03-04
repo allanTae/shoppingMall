@@ -2,6 +2,7 @@ package com.allan.shoppingMall.domains.item.service;
 
 import com.allan.shoppingMall.domains.category.domain.Category;
 import com.allan.shoppingMall.domains.category.domain.CategoryCode;
+import com.allan.shoppingMall.domains.category.domain.CategoryItem;
 import com.allan.shoppingMall.domains.category.domain.CategoryRepository;
 import com.allan.shoppingMall.domains.item.domain.clothes.*;
 import com.allan.shoppingMall.domains.item.domain.item.*;
@@ -101,16 +102,17 @@ public class ClothesServiceTest {
                 .engName("testEngName")
                 .price(1000l)
                 .color(Color.RED)
-                .category(Category.builder()
-                        .categoryCode(CategoryCode.CLOTHES)
-                        .build())
                 .build();
+
+        Category TEST_CATEGORY = Category.builder().build();
+        ReflectionTestUtils.setField(TEST_CATEGORY, "categoryId", 1l);
 
         TEST_CLOTHES.changeItemFabrics(List.of(ItemFabric.builder().materialPart("testMaterial").build()));
         TEST_CLOTHES.changeItemDetails(List.of(ItemDetail.builder().detailDesc("testDetail").build()));
         TEST_CLOTHES.changeClothesSize(List.of(ClothesSize.builder().shoulderWidth(10.5).sizeLabel(SizeLabel.S).stockQuantity(3l).build()));
         TEST_CLOTHES.changeModelSizes(List.of(ModelSize.builder().modelWeight(10.5).build()));
         TEST_CLOTHES.changeItemImages(List.of(ItemImage.builder().imageType(ImageType.PREVIEW).build()));
+        TEST_CLOTHES.changeCategoryItems(List.of(new CategoryItem(TEST_CATEGORY)));
 
         given(clothesRepository.getClothes(any()))
                 .willReturn(Optional.of(TEST_CLOTHES));
@@ -136,9 +138,6 @@ public class ClothesServiceTest {
                 .name("testClothesName")
                 .price(100l)
                 .color(Color.RED)
-                .category(Category.builder()
-                        .categoryCode(CategoryCode.CLOTHES)
-                        .build())
                 .build();
 
         clothes.changeItemImages(List.of(ItemImage.builder()
@@ -156,6 +155,11 @@ public class ClothesServiceTest {
         );
 
         ReflectionTestUtils.setField(clothes, "itemId", 1l);
+
+        Category TEST_CATEGORY = Category.builder().build();
+        ReflectionTestUtils.setField(TEST_CATEGORY, "categoryId", 1l);
+
+        clothes.changeCategoryItems(List.of(new CategoryItem(TEST_CATEGORY)));
 
         return List.of(
                 clothes

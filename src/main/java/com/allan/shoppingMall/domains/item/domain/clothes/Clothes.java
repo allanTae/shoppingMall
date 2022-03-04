@@ -43,8 +43,8 @@ public class Clothes extends Item {
     private String etc;
 
     @Builder
-    public Clothes(String name, Long price, Color color, String engName, String etc, Category category) {
-        super(name, price, color, category);
+    public Clothes(String name, Long price, Color color, String engName, String etc) {
+        super(name, price, color);
         this.engName = engName;
         this.etc = etc;
     }
@@ -74,6 +74,7 @@ public class Clothes extends Item {
             clothesSize.changeItem(this);
         }
         addStockQuantity(totalQuantity); // 재고량을 증가하기 위한 메소드.
+
     }
 
 }

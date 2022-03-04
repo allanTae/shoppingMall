@@ -5,6 +5,7 @@ import com.allan.shoppingMall.common.exception.item.ClothesSaveFailException;
 import com.allan.shoppingMall.common.exception.item.ItemNotFoundException;
 import com.allan.shoppingMall.domains.category.domain.Category;
 import com.allan.shoppingMall.domains.category.domain.CategoryCode;
+import com.allan.shoppingMall.domains.category.domain.CategoryItem;
 import com.allan.shoppingMall.domains.category.domain.CategoryRepository;
 import com.allan.shoppingMall.domains.item.domain.clothes.*;
 import com.allan.shoppingMall.domains.item.domain.item.*;
@@ -118,7 +119,6 @@ public class ClothesService {
                 .price(form.getPrice())
                 .engName(form.getEngName())
                 .color(Color.valueOf(form.getClothesColor()))
-                .category(findCategory)
                 .build();
 
         clothes.changeItemFabrics(fabrics);
@@ -127,6 +127,7 @@ public class ClothesService {
         clothes.changeModelSizes(modelSizes);
         clothes.changeItemImages(profileItemImages);
         clothes.changeItemImages(detailItemImages);
+        clothes.changeCategoryItems(List.of(new CategoryItem(findCategory)));
 
         clothesRepository.save(clothes);
         return clothes.getItemId();
@@ -198,7 +199,7 @@ public class ClothesService {
                                     .modelSizes(modelSizeDTOS)
                                     .itemImages(findClothes.getItemImages())
                                     .color(findClothes.getColor().getDesc())
-                                    .categoryId(findClothes.getCategory().getCategoryId())
+                                    .categoryId(findClothes.getCategoryItems().get(0).getCategory().getCategoryId())
                                     .build();
 
         return clothesDTO;
@@ -220,7 +221,7 @@ public class ClothesService {
                             .price(clothes.getPrice())
                             .profileImageIds(ClothesSummaryDTOForIndex.toImagePath(clothes.getItemImages()))
                             .clothesColor(clothes.getColor().getDesc())
-                            .categoryId(clothes.getCategory().getCategoryId())
+                            .categoryId(clothes.getCategoryItems().get(0).getCategory().getCategoryId())
                             .build();
                     return clothesSummary;
                 }).collect(Collectors.toList());

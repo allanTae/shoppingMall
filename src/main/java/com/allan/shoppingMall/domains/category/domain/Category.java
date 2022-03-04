@@ -9,9 +9,11 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 카테고리 정보를 저장하기 위한 도메인 클래스입니다.
+ * (Item, CategoryItem 도메인 클래스를 참고 해 주세요.)
  */
 @Entity
 @Table(name = "categories")

@@ -5,6 +5,7 @@ import com.allan.shoppingMall.common.exception.item.AccessorySaveFailException;
 import com.allan.shoppingMall.common.exception.item.ItemNotFoundException;
 import com.allan.shoppingMall.domains.category.domain.Category;
 import com.allan.shoppingMall.domains.category.domain.CategoryCode;
+import com.allan.shoppingMall.domains.category.domain.CategoryItem;
 import com.allan.shoppingMall.domains.category.domain.CategoryRepository;
 import com.allan.shoppingMall.domains.item.domain.accessory.Accessory;
 import com.allan.shoppingMall.domains.item.domain.accessory.AccessoryRepository;
@@ -102,7 +103,6 @@ public class AccessoryService {
                 .name(form.getName())
                 .engName(form.getEngName())
                 .price(form.getPrice())
-                .category(findCategory)
                 .color(Color.valueOf(form.getClothesColor()))
                 .build();
 
@@ -111,6 +111,7 @@ public class AccessoryService {
         accessory.changeAccessorySize(sizes);
         accessory.changeItemImages(profileItemImages);
         accessory.changeItemImages(detailItemImages);
+        accessory.changeCategoryItems(List.of(new CategoryItem(findCategory)));
 
         accessoryRepository.save(accessory);
         return accessory.getItemId();
@@ -162,7 +163,6 @@ public class AccessoryService {
                 .accessorySizes(sizeDTOS)
                 .itemImages(findAccessory.getItemImages())
                 .color(findAccessory.getColor().getDesc())
-                .categoryId(findAccessory.getCategory().getCategoryId())
                 .build();
 
         return accessoryDTO;
