@@ -11,7 +11,8 @@ import lombok.Getter;
 public enum CategoryCode {
     ROOT(1, "root"),
     CLOTHES(2, "clothes"),
-    ACCESSORY(3, "accessory");
+    ACCESSORY(3, "accessory"),
+    SHOP(4, "shop");
 
     private int code;
     private String desc;
@@ -24,6 +25,8 @@ public enum CategoryCode {
                 return CLOTHES;
             case 3:
                 return ACCESSORY;
+            case 4:
+                return SHOP;
             default:
                 throw new AssertionError("존재하지 않는 카테고리 정보입니다: " + code);
         }

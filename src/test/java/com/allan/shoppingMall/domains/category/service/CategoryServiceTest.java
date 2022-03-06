@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -130,5 +131,62 @@ public class CategoryServiceTest {
 
         //then
         verify(categoryRepository, atLeastOnce()).delete(any());
+    }
+
+    /**
+     * 조회한 카테고리와 연관 된 카테고리 id 리스트 반환 테스트 입니다.
+     * Ex) top 카테고리 조회시, 연관 된 shirt, knit 카테고리 아이디 리스트 반환.
+     */
+    @Test
+    public void 조회한_모든_카테고리_아이디_테스트() throws Exception {
+        //given
+        Category KNIT_CATEGORY = Category.builder()
+                .branch("shop")
+                .name("knit")
+                .depth(2)
+                .build();
+        ReflectionTestUtils.setField(KNIT_CATEGORY, "categoryId", 5l);
+
+        Category SHIRT_CATEGORY = Category.builder()
+                .branch("shop")
+                .name("shirt")
+                .depth(2)
+                .build();
+        ReflectionTestUtils.setField(SHIRT_CATEGORY, "categoryId", 4l);
+
+        Category BOTTOM_CATEGORY = Category.builder()
+                .branch("shop")
+                .name("bottom")
+                .depth(1)
+                .build();
+        ReflectionTestUtils.setField(BOTTOM_CATEGORY, "categoryId", 3l);
+
+        Category TOP_CATEGORY = Category.builder()
+                .branch("shop")
+                .name("top")
+                .depth(1)
+                .build();
+        ReflectionTestUtils.setField(TOP_CATEGORY, "categoryId", 2l);
+        ReflectionTestUtils.setField(TOP_CATEGORY, "childCategory", List.of(SHIRT_CATEGORY, KNIT_CATEGORY));
+
+        Category SHOP_CATEGORY = Category.builder()
+                .branch("shop")
+                .name("shop")
+                .depth(0)
+                .build();
+        ReflectionTestUtils.setField(SHOP_CATEGORY, "categoryId", 1l);
+        ReflectionTestUtils.setField(SHOP_CATEGORY, "childCategory", List.of(TOP_CATEGORY, BOTTOM_CATEGORY));
+
+        given(categoryRepository.findById(any()))
+                .willReturn(Optional.of(TOP_CATEGORY));
+
+        //when
+        List<Long> categoryIdList = categoryService.getCategoryIds(any());
+
+        //then
+        assertThat(categoryIdList.size(), is(3));
+        assertThat(categoryIdList.get(0), is(TOP_CATEGORY.getCategoryId()));
+        assertThat(categoryIdList.get(1), is(SHIRT_CATEGORY.getCategoryId()));
+        assertThat(categoryIdList.get(2), is(KNIT_CATEGORY.getCategoryId()));
     }
 }

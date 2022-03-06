@@ -13,6 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Category 서비스단 클래스 입니다.
  */
@@ -92,7 +95,40 @@ public class CategoryService {
 
         CategoryDTO categoryDTO = new CategoryDTO(findCategory);
 
-        return categoryDTO;
+       return categoryDTO;
+    }
+
+    /**
+     * 카테고리의 자식 카테고리를 포함한 모든 카테고리 아이디 리스트를 반환하는 메소드.
+     * @param categoryId 카테고리 도메인 아이디.
+     * @return List<Long> 카테고리 도메인 아이디 리스트.
+     */
+    public List<Long> getCategoryIds(Long categoryId){
+        Category findCategory = categoryRepository.findById(categoryId).orElseThrow(() ->
+                new CategoryNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+
+        List<Long> categoryIdList = new ArrayList<>();
+        categoryIdList.add(findCategory.getCategoryId());
+
+        addChildCategoryId(categoryIdList, findCategory);
+
+        return categoryIdList;
+    }
+
+
+    /** 연관된 모든 자식 카테고리 아이디를 리스트에 추가하는 메소드.
+     * 재귀를 통해, 모든 자식 카테고리 아이디를 조회합니다.
+     * @param categoryIdList
+     * @param parentCategory
+     */
+    private void addChildCategoryId(List<Long> categoryIdList, Category parentCategory){
+        if(parentCategory.getChildCategory().size() == 0)
+            return;
+
+        for(Category childCategory : parentCategory.getChildCategory()){
+            categoryIdList.add(childCategory.getCategoryId());
+            addChildCategoryId(categoryIdList, childCategory);
+        }
     }
 
     /**

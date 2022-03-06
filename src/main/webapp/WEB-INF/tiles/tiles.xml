@@ -63,4 +63,12 @@
         <put-attribute name="tile_body" value="/WEB-INF/views/jsp/cart/{1}.jsp" />
     </definition>
 
+    <!-- shop -->
+    <definition name="shop-layout" template="/WEB-INF/tiles/layouts/shop/shop_layout.jsp">
+        <put-attribute name="tile_nav" value="/WEB-INF/tiles/layouts/common/nav.jsp" />
+    </definition>
+    <definition name="shop/*" extends="shop-layout">
+        <put-attribute name="tile_body" value="/WEB-INF/views/jsp/shop/{1}.jsp" />
+    </definition>
+
 </tiles-definitions>

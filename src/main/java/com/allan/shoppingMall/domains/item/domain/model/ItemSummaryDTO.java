@@ -5,38 +5,34 @@ import com.allan.shoppingMall.domains.item.domain.item.ItemImage;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 프론트단으로 전달 할 의상 요약정보를 가지고 있는 DTO 클래스.
+ * 프론트단에서 상품목록에서 사용 할 상품 정보를 담는 DTO 클래스.
  */
 @Getter
 @Setter
-public class ClothesSummaryDTOForIndex {
-
-    private Long clothesId;
-    private String clothesName;
+public class ItemSummaryDTO {
+    private Long itemId;
+    private String name;
     private Long price;
     private List<Long> profileImageIds; // 이미지 파일을 조회하기 위한 itemImage entity의 식별자.
-    private String imagePath;
-    private ImageType imageType;
-    private String clothesColor;
+    private String itemColor;
     private Long categoryId;
 
     @Builder
-    public ClothesSummaryDTOForIndex(Long clothesId, String clothesName, Long price, List<Long> profileImageIds, String clothesColor, Long categoryId) {
-        this.clothesId = clothesId;
-        this.clothesName = clothesName;
+    public ItemSummaryDTO(Long itemId, String name, Long price, List<Long> profileImageIds, String itemColor, Long categoryId) {
+        this.itemId = itemId;
+        this.name = name;
         this.price = price;
         this.profileImageIds = profileImageIds;
-        this.clothesColor = clothesColor;
+        this.itemColor = itemColor;
         this.categoryId = categoryId;
     }
 
     /**
-     * itemImage Entity list를 ClothesSummaryDTO list로 변환하기 위한 메소드.
+     * itemImage Entity list를 profileImageId list로 변환하기 위한 메소드.
      * @param  itemImages
      * @return List<String>
      */
