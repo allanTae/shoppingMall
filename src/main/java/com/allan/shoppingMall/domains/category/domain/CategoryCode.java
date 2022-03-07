@@ -5,6 +5,8 @@ import lombok.Getter;
 
 /**
  * Item 도메인별 구분 조회를 위한 카테고리 구분을 위한 코드 enum.
+ * Item 도메인은 Clothes, Accessory 등의 형태로 상속받아 각자의 타입이 다르기에 상품 상세 조회시,
+ * 각 상품 도메인을 구분하기 위한 Enum class 입니다.
  */
 @Getter
 @AllArgsConstructor

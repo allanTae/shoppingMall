@@ -19,8 +19,7 @@
             url = "${pageContext.request.contextPath}/myOrder/list?page=${pagination.page} - 1";
         </c:if>
 
-        console.log("url: " + url);
-        //location.href = url;
+        location.href = url;
     });
 
     $(document).on('click', '#btnPage', function(e){
@@ -29,7 +28,6 @@
         console.log("page: " + page);
         var url = "${pageContext.request.contextPath}/myOrder/list?page=" + page;
 
-        console.log("url: " + url);
         location.href = url;
     });
 
@@ -40,8 +38,7 @@
             url = "${pageContext.request.contextPath}/myOrder/list?page=${pagination.page} + 1";
         </c:if>
 
-        console.log("url: " + url);
-        //location.href = url;
+        location.href = url;
     });
 </script>
 
@@ -107,12 +104,12 @@
 		<!-- pagination{s} -->
 		<div id="paginationBoxWrap">
 		    <div class="btn-group" role="group" >
-                <button type="button" class="btn btn-primary" id="btnPrev">이전</button>
+                <button type="button" class="btn btn-dark" id="btnPrev">이전</button>
                 <c:forEach begin="${pagination.startPage}" end="${pagination.endPage}" var="idx">
-                    <button type="button" class="btn btn-primary" id="btnPage">${idx}</button>
+                    <button type="button" class="btn btn-dark" id="btnPage">${idx}</button>
                 </c:forEach>
 
-                <button type="button" class="btn btn-primary" id="btnNext">다음</button>
+                <button type="button" class="btn btn-dark" id="btnNext">다음</button>
 		    </div>
 		</div>
 		<!-- pagination{e} -->

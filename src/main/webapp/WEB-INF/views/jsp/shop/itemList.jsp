@@ -16,20 +16,17 @@
         e.preventDefault();
         var url = "#";
         <c:if test="${pagination.isPrev}">
-            url = "${pageContext.request.contextPath}/myOrder/list?page=${pagination.page} - 1";
+            url = "${pageContext.request.contextPath}/shop?categoryId=${categoryId}&page=${pagination.page} - 1";
         </c:if>
-
-        console.log("url: " + url);
-        //location.href = url;
+        location.href = url;
     });
 
     $(document).on('click', '#btnPage', function(e){
         e.preventDefault();
         var page = $(this).text();
         console.log("page: " + page);
-        var url = "${pageContext.request.contextPath}/myOrder/list?page=" + page;
+        var url = "${pageContext.request.contextPath}/shop?categoryId=${categoryId}&page=" + page;
 
-        console.log("url: " + url);
         location.href = url;
     });
 
@@ -37,11 +34,10 @@
         e.preventDefault();
         var url = "#"
         <c:if test="${pagination.isNext}">
-            url = "${pageContext.request.contextPath}/myOrder/list?page=${pagination.page} + 1";
+            url = "${pageContext.request.contextPath}/shop?categoryId=${categoryId}&page=${pagination.page} + 1";
         </c:if>
 
-        console.log("url: " + url);
-        //location.href = url;
+        location.href = url;
     });
 </script>
 
@@ -58,18 +54,16 @@
 
 	<!-- container {s} -->
 	<div class="container shopContainer">
-		<h2>상품 목록</h2>
 
 		<!-- content-left {s} -->
 		<div class="itemWrap" id="con-left">
-            <div class="text-center">
-                <h2 class="section-heading text-uppercase">New Arrival</h2>
-                <h3 class="section-subheading text-muted">Recently Updated Clothes.</h3>
+            <div class="text-start">
+                <h5 class="section-subheading text-muted">${categoryName} Items <fmt:formatNumber type="number" maxFractionDigits="3" value="${itemQunatity}" /></h3>
             </div>
             <c:choose>
                 <c:when test="${empty itemList }" >
                     <div class="text-center">
-                        <h2 class="section-heading text-uppercase">Enrolled Clothes is Empty.....!</h2>
+                        <h2 class="section-heading text-uppercase">Enrolled Item is Empty.....!</h2>
                     </div>
                 </c:when>
                 <c:when test="${!empty itemList}">
@@ -106,12 +100,12 @@
 		<!-- pagination{s} -->
 		<div id="paginationBoxWrap">
 		    <div class="btn-group" role="group" >
-                <button type="button" class="btn btn-primary" id="btnPrev">이전</button>
+                <button type="button" class="btn btn-dark" id="btnPrev">이전</button>
                 <c:forEach begin="${pagination.startPage}" end="${pagination.endPage}" var="idx">
-                    <button type="button" class="btn btn-primary" id="btnPage">${idx}</button>
+                    <button type="button" class="btn btn-dark" id="btnPage">${idx}</button>
                 </c:forEach>
 
-                <button type="button" class="btn btn-primary" id="btnNext">다음</button>
+                <button type="button" class="btn btn-dark" id="btnNext">다음</button>
 		    </div>
 		</div>
 		<!-- pagination{e} -->

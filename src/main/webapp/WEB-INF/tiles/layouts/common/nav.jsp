@@ -32,36 +32,35 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link" href="#" class="dropdown-toggle" id="dropdownShop" data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
                             <ul class="dropdown-menu" aria-labelledby="dropdownShop">
-                                <li><a class="dropdown-item" href="#">Shop All</a></li>
-                                <li><a class="dropdown-item" href="#">NEW ARRIVAL</a></li>
-                                <li><a class="dropdown-item" href="#">OUTER</a></li>
+                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/shop?categoryId=3">Shop All</a></li>
+                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/shop?categoryId=9999">NEW ARRIVAL</a></li>
+                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/shop?categoryId=9">OUTER</a></li>
                                 <li>
-                                    <a class="dropdown-item" href="#">TOPS</a>
+                                    <a class="dropdown-item" href="${pageContext.request.contextPath}/shop?categoryId=5">TOPS</a>
                                     <ul class="dropdown-menu dropdown-submenu">
                                         <li>
-                                          <a class="dropdown-item" href="#">Knit</a>
+                                          <a class="dropdown-item" href="${pageContext.request.contextPath}/shop?categoryId=11">Knit</a>
                                         </li>
                                         <li>
-                                          <a class="dropdown-item" href="#">Shirt</a>
+                                          <a class="dropdown-item" href="${pageContext.request.contextPath}/shop?categoryId=8">Shirt</a>
                                         </li>
                                         <li>
-                                          <a class="dropdown-item" href="#">T-shirt & Sweatshirts</a>
+                                          <a class="dropdown-item" href="${pageContext.request.contextPath}/shop?categoryId=12">T-shirt & Sweatshirts</a>
                                         </li>
                                     </ul>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="#">BOTTOM</a>
+                                    <a class="dropdown-item" href="${pageContext.request.contextPath}/shop?categoryId=6">BOTTOM</a>
                                     <ul class="dropdown-menu dropdown-submenu">
                                         <li>
-                                          <a class="dropdown-item" href="#">Jeans</a>
+                                          <a class="dropdown-item" href="${pageContext.request.contextPath}/shop?categoryId=13">Jeans</a>
                                         </li>
                                         <li>
-                                          <a class="dropdown-item" href="#">Trousers & Shorts</a>
+                                          <a class="dropdown-item" href="${pageContext.request.contextPath}/shop?categoryId=14">Trousers & Shorts</a>
                                         </li>
                                     </ul>
                                 </li>
-                                <li><a class="dropdown-item" href="#">Bags</a></li>
-                                <li><a class="dropdown-item" href="#">ACCESSORIES</a></li>
+                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/shop?categoryId=4">ACCESSORIES</a></li>
                             </ul>
                         </li>
                         <li class="nav-item"><a class="nav-link" href="#">inspiration</a></li>

@@ -1,6 +1,10 @@
 package com.allan.shoppingMall;
 
 import com.allan.shoppingMall.common.domain.model.PageInfo;
+import com.allan.shoppingMall.common.exception.ErrorCode;
+import com.allan.shoppingMall.common.exception.category.CategoryNotFoundException;
+import com.allan.shoppingMall.domains.category.domain.Category;
+import com.allan.shoppingMall.domains.category.domain.CategoryRepository;
 import com.allan.shoppingMall.domains.item.domain.item.Item;
 import com.allan.shoppingMall.domains.item.service.ItemService;
 import lombok.RequiredArgsConstructor;
@@ -21,14 +25,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class ShopController {
 
     private final ItemService itemService;
+    private final CategoryRepository categoryRepository;
 
     /**
-     * 로그인 한 회원이 자신의 주문 목록을 확인하기 위해 호출하는 메소드.
+     * 카테고리별 상품 목록을 조회하는 메소드.
      */
     @GetMapping("/shop")
-    public String myOrderList(@RequestParam("categoryId") Long categoryId, Pageable pageable, Model model){
+    public String itemList(@RequestParam("categoryId") Long categoryId, Pageable pageable, Model model){
+        Category findCategory = categoryRepository.findById(categoryId).orElseThrow(() ->
+                new CategoryNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+
         Page<Item> page = itemService.getItems(categoryId, pageable);
 
+        model.addAttribute("categoryName", findCategory.getName());
+        model.addAttribute("categoryId", categoryId);
+
+        model.addAttribute("itemQunatity", page.getTotalElements());
         model.addAttribute("itemList", itemService.getItemDTOS(page.getContent(), categoryId)); // 상품 정보.
         model.addAttribute("pagination", new PageInfo(page.getNumber(), page.getTotalPages(), page.isFirst(), page.isLast())); // 페이징 정보.
 

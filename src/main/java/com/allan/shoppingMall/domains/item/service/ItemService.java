@@ -25,8 +25,9 @@ public class ItemService {
     private final CategoryService categoryService;
 
     /**
-     * 상품에 대한 PREVIEW 이미지, 상품이름, 가격 등의 정보를 반환하는 메소드.
-     * @return List<ItemSummaryDTO>
+     * 카테고리에 해당하는 상품 도메인 리스트를 페이징하여 반환하기 위한 메소드.
+     * (기본 페이징 사이즈는 10 입니다.)
+     * @return List<Item>
      */
     public Page<Item> getItems(Long categoryId, Pageable pageable){
 
