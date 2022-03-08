@@ -45,6 +45,19 @@ public class RestCategoryController {
     }
 
     @ResponseBody
+    @GetMapping("/category/shop")
+    public ResponseEntity<CategoryResponse> getCategory(){
+        CategoryDTO category = null;
+        try {
+            category = categoryService.getShopCategoryByBranch();
+        }catch (CategoryNotFoundException exception){
+            return new ResponseEntity<CategoryResponse>(new CategoryResponse("shop 관련 카테고리 정보를 찾을 수 없습니다.", false,
+                    CategoryErrorResponse.of(exception.getErrorCode())), HttpStatus.OK);
+        }
+        return new ResponseEntity<CategoryResponse>(new CategoryResponse(CategoryResult.GET_CATEGORY_SUCCESS, category), HttpStatus.OK);
+    }
+
+    @ResponseBody
     @PutMapping("/category/{categoryId}")
     public ResponseEntity<CategoryResponse> updateCategory(@PathVariable("categoryId") Long categoryId, @RequestBody CategoryRequest categoryRequest){
         try {

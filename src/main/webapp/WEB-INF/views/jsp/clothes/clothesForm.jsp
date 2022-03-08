@@ -36,7 +36,9 @@
                 var mainCategoryItemLength = Object.keys(result.category.child).length;
                 if(mainCategoryItemLength > 0){
                      $.each(result.category.child, function(key, value) {
-                        htmls += '<option value="' + key + '">' + value.name + '</option>';
+                        // clothes 상품인 경우만 select tag 에 추가합니다.
+                        if(value.code === 2)
+                            htmls += '<option value="' + key + '">' + value.name + '</option>';
                     });
                     $('#mainCategory').append(htmls);
                 }else{
@@ -62,7 +64,7 @@
     // 대분류 카테고리 이벤트.
     $(document).on("change", "#mainCategory", function(){
         var htmls = '<option selected>중분류</option>';
-        selectedCategoryId = 0;
+        selectedCategoryId = ($(this).val() !== "대분류") ? categoryObj.child[$(this).val()].categoryId : 0;
 
         // 하위(중분류) 카테고리 수.
         var midleCategoryItemLength = ($(this).val() !== "대분류") ? Object.keys(categoryObj.child[$(this).val()].child).length : 0 ;
@@ -80,7 +82,6 @@
         // 하위 카테고리가 없다면,
         }else{
             // 하위 카테고리 초기화.
-            selectedCategoryId = ($(this).val() !== "대분류") ? categoryObj.child[$(this).val()].categoryId : 0;
             $('#middleCategory').html('');
             $('#middleCategory').css('display', 'none');
             $('#subCategory').html('');
@@ -90,8 +91,9 @@
 
     // 중분류 카테고리 이벤트.
     $(document).on("change", "#middleCategory", function(){
-        selectedCategoryId = 0;
         var mainCategoryId = $('#mainCategory option:selected').val(); // 대분류 카테고리 아이디.
+        selectedCategoryId = ($(this).val() !== "중분류") ? categoryObj.child[mainCategoryId].child[$(this).val()].categoryId : mainCategoryId;
+
         var htmls = '<option selected>소분류</option>';
 
         // 하위(소분류) 카테고리 수.
@@ -106,7 +108,6 @@
             $('#subCategory').css('display', 'inline');
         }else{
             // 하위 카테고리 초기화.
-            selectedCategoryId = ($(this).val() !== "중분류") ? categoryObj.child[mainCategoryId].child[$(this).val()].categoryId : 0;
             $('#subCategory').html('');
             $('#subCategory').css('display', 'none');
         }
@@ -126,7 +127,6 @@
             alert("카테고리를 입력 해 주세요.")
             return false;
         }
-
         return true;
     }
 
@@ -141,7 +141,7 @@
     $(document).on('click', '#btnEnroll', function(e){
         if(validateForm()){
             let category = '<input type="text" name="categoryId" value="' + selectedCategoryId + '" style="display:none;"/>';
-            $("#form").append(category);
+            $("#selectedCategoryWrap").html(category);
             $("#form").submit();
         }
 
@@ -179,9 +179,11 @@
         htmls += '<td class="col-md-2">';
         htmls += '  <select class="form-select" name="clothesSizes[' + (sizeTableIndex-1) + '].sizeLabel">';
         htmls += '    <option selected>사이즈</option>';
-        htmls += '    <option value="1">S</option>';
-        htmls += '    <option value="2">M</option>';
-        htmls += '    <option value="3">L</option>';
+
+        <c:forEach items="${sizeLabels}" var="sizeLabel">
+        htmls += '    <option value="${sizeLabel.id}">${sizeLabel.key}</option>';
+        </c:forEach>
+
         htmls += '  </select>';
         htmls += '</td>';
         htmls += '<td><input type="text" class="form-control" name="clothesSizes['+ (sizeTableIndex-1) + '].backLength' + '" placeholder="총장"></td>';
@@ -367,9 +369,9 @@
                                   <td class="col-md-2">
                                     <select class="form-select" name="clothesSizes[0].sizeLabel">
                                         <option selected>사이즈</option>
-                                        <option value="1">S</option>
-                                        <option value="2">M</option>
-                                        <option value="3">L</option>
+                                        <c:forEach items="${sizeLabels}" var="sizeLabel">
+                                            <option value="${sizeLabel.id}">${sizeLabel.key}</option>
+                                        </c:forEach>
                                     </select>
                                   </td>
                                   <td><input type="text" class="form-control" name="clothesSizes[0].backLength" placeholder="총장"></td>
@@ -432,7 +434,9 @@
                         </div>
                         <!-- end image files -->
                     </div>
+                    <div id="selectedCategoryWrap">
 
+                    </div>
 				</form:form>
 			</div>
 		</div>

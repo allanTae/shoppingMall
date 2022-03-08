@@ -55,8 +55,6 @@
         .btn.gray:hover{
           border-bottom:2px solid black;
         }
-
-
 </style>
 <script>
     //천단위 콤마 추가 함수.
@@ -378,6 +376,11 @@
     // addSelectedItem() 에서 출력하는 tag 내용에 순서가 바뀌게 된다면, 에러가 발생 할 수 있으니, 주의 해야 합니다.
     // 셀렉트 상품 삭제 event.
     $(document).on("click", "#btnSelectedItemClose", function(event){
+        if($('.selectedRequireOptionBlock').length == 1){
+            alert('최소 1개 이상은 주문하셔야 합니다.');
+            return;
+        }
+
         var selectedOptionInfo = $(this).next().text(); // selectedSize + selectedColor 정보를 담고있는 span tag.
 
         // 셀렉트 한 상품 정보를 담고 있는 맵에서 삭제.
@@ -556,7 +559,7 @@
           , dataType : 'json'
           , success: function(result){
                 var htmls = "";
-                if(!result.cartInfo || result.cartInfo.cartItems.size < 1){
+                if(!result.cartInfo || Object.getOwnPropertyNames(result.cartInfo.cartItems).length < 1){
                   htmls += "<strong> 장바구니가 비어 있습니다.</strong>";
                   $("#cartDetailWrap").html(htmls);
                 } else {

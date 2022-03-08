@@ -3,6 +3,7 @@ package com.allan.shoppingMall.domains.item.presentation.clothes;
 import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
 import com.allan.shoppingMall.domains.item.domain.model.ClothesForm;
 import com.allan.shoppingMall.domains.item.service.ClothesService;
+import com.allan.shoppingMall.domains.member.domain.Gender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -31,6 +32,17 @@ public class ClothesController {
         List<SizeLabel> sizeLabelList = new ArrayList<>();
 
         return "clothes/clothesForm";
+    }
+
+    @ModelAttribute("sizeLabels")
+    public List<SizeLabel> genders(){
+        List<SizeLabel> list = new ArrayList<SizeLabel>();
+        list.add(SizeLabel.S);
+        list.add(SizeLabel.M);
+        list.add(SizeLabel.L);
+        list.add(SizeLabel.FREE);
+
+        return list;
     }
 
 }

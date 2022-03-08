@@ -26,8 +26,8 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
 
     /**
-     * @param categoryId 카테고리 id.
+     * categoryCode 로 카테고리를 조회하는 메소드.
+     * @param categoryCode 카테고리 code.
      */
-    @Query("select c from Category c join fetch c.parentCategory where c.categoryId = :categoryId")
-    Optional<Category> getCategory(@Param("categoryId") Long categoryId);
+    Optional<Category> findByCategoryCode(CategoryCode categoryCode);
 }

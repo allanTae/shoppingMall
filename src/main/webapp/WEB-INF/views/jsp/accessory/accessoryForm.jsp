@@ -36,7 +36,8 @@
                 var mainCategoryItemLength = Object.keys(result.category.child).length;
                 if(mainCategoryItemLength > 0){
                      $.each(result.category.child, function(key, value) {
-                        htmls += '<option value="' + key + '">' + value.name + '</option>';
+                        if(value.code === 3)
+                            htmls += '<option value="' + key + '">' + value.name + '</option>';
                     });
                     $('#mainCategory').append(htmls);
                 }else{
@@ -62,7 +63,7 @@
     // 대분류 카테고리 이벤트.
     $(document).on("change", "#mainCategory", function(){
         var htmls = '<option selected>중분류</option>';
-        selectedCategoryId = 0;
+        selectedCategoryId = ($(this).val() !== "대분류") ? categoryObj.child[$(this).val()].categoryId : 0;
 
         // 하위(중분류) 카테고리 수.
         var midleCategoryItemLength = ($(this).val() !== "대분류") ? Object.keys(categoryObj.child[$(this).val()].child).length : 0 ;
@@ -80,8 +81,6 @@
         // 하위 카테고리가 없다면,
         }else{
             // 하위 카테고리 초기화.
-            selectedCategoryId = ($(this).val() !== "대분류") ? categoryObj.child[$(this).val()].categoryId : 0;
-            console.log("selectedCategoryId: " + selectedCategoryId);
             $('#middleCategory').html('');
             $('#middleCategory').css('display', 'none');
             $('#subCategory').html('');
@@ -91,8 +90,9 @@
 
     // 중분류 카테고리 이벤트.
     $(document).on("change", "#middleCategory", function(){
-        selectedCategoryId = 0;
         var mainCategoryId = $('#mainCategory option:selected').val(); // 대분류 카테고리 아이디.
+        selectedCategoryId = ($(this).val() !== "중분류") ? categoryObj.child[mainCategoryId].child[$(this).val()].categoryId : mainCategoryId;
+
         var htmls = '<option selected>소분류</option>';
 
         // 하위(소분류) 카테고리 수.
@@ -107,8 +107,6 @@
             $('#subCategory').css('display', 'inline');
         }else{
             // 하위 카테고리 초기화.
-            selectedCategoryId = ($(this).val() !== "중분류") ? categoryObj.child[mainCategoryId].child[$(this).val()].categoryId : 0;
-            console.log("selectedCategoryId: " + selectedCategoryId);
             $('#subCategory').html('');
             $('#subCategory').css('display', 'none');
         }
@@ -121,7 +119,6 @@
         var middleCategoryId = $('#middleCategory option:selected').val(); // 중분류 카테고리 아이디.
 
         selectedCategoryId = categoryObj.child[mainCategoryId].child[middleCategoryId].child[$(this).val()].categoryId;
-        console.log("selectedCategoryId: " + selectedCategoryId);
     });
 
     function validateForm(){
@@ -129,7 +126,6 @@
             alert("카테고리를 입력 해 주세요.")
             return false;
         }
-
         return true;
     }
 
@@ -143,8 +139,8 @@
     // 회원가입 이벤트.
     $(document).on('click', '#btnEnroll', function(e){
         if(validateForm()){
-            let category = '<input type="text" name="categoryId" value="' + selectedCategoryId + '" />';
-            $("#form").append(category);
+            let category = '<input type="text" name="categoryId" value="' + selectedCategoryId + '" style="display:none;"/>';
+            $("#selectedCategoryWrap").html(category);
             $("#form").submit();
         }
 
@@ -182,10 +178,11 @@
         htmls += '<td class="col-md-2">';
         htmls += '  <select class="form-select" name="accessorySizes[' + (sizeTableIndex-1) + '].sizeLabel">';
         htmls += '    <option selected>사이즈</option>';
-        htmls += '    <option value="1">S</option>';
-        htmls += '    <option value="2">M</option>';
-        htmls += '    <option value="3">L</option>';
-        htmls += '    <option value="4">FREE</option>';
+
+        <c:forEach items="${sizeLabels}" var="sizeLabel">
+        htmls += '    <option value="${sizeLabel.id}">${sizeLabel.key}</option>';
+        </c:forEach>
+
         htmls += '  </select>';
         htmls += '</td>';
         htmls += '<td><input type="text" class="form-control" name="accessorySizes['+ (sizeTableIndex-1) + '].widthLength' + '" placeholder="너비"></td>';
@@ -347,10 +344,9 @@
                                   <td class="col-md-2">
                                     <select class="form-select" name="accessorySizes[0].sizeLabel">
                                         <option selected>사이즈</option>
-                                        <option value="1">S</option>
-                                        <option value="2">M</option>
-                                        <option value="3">L</option>
-                                        <option value="4">FREE</option>
+                                        <c:forEach items="${sizeLabels}" var="sizeLabel">
+                                            <option value="${sizeLabel.id}">${sizeLabel.key}</option>
+                                        </c:forEach>
                                     </select>
                                   </td>
                                   <td><input type="text" class="form-control" name="accessorySizes[0].widthLength" placeholder="너비"></td>
@@ -379,7 +375,9 @@
                         </div>
                         <!-- end image files -->
                     </div>
+                    <div id="selectedCategoryWrap">
 
+                    </div>
 				</form:form>
 			</div>
 		</div>

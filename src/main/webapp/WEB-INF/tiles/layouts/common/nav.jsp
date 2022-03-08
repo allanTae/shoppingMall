@@ -28,7 +28,7 @@
                     <i class="fas fa-bars ms-1"></i>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
-                    <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
+                    <ul class="navbar-nav text-uppercase m-4 py-4 py-lg-0">
                         <li class="nav-item dropdown">
                             <a class="nav-link" href="#" class="dropdown-toggle" id="dropdownShop" data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
                             <ul class="dropdown-menu" aria-labelledby="dropdownShop">
@@ -53,6 +53,9 @@
                                     <a class="dropdown-item" href="${pageContext.request.contextPath}/shop?categoryId=6">BOTTOM</a>
                                     <ul class="dropdown-menu dropdown-submenu">
                                         <li>
+                                          <a class="dropdown-item" href="${pageContext.request.contextPath}/shop?categoryId=7">Pants</a>
+                                        </li>
+                                        <li>
                                           <a class="dropdown-item" href="${pageContext.request.contextPath}/shop?categoryId=13">Jeans</a>
                                         </li>
                                         <li>
@@ -60,7 +63,14 @@
                                         </li>
                                     </ul>
                                 </li>
-                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/shop?categoryId=4">ACCESSORIES</a></li>
+                                <li>
+                                    <a class="dropdown-item" href="${pageContext.request.contextPath}/shop?categoryId=4">ACCESSORIES</a>
+                                    <ul class="dropdown-menu dropdown-submenu">
+                                        <li>
+                                          <a class="dropdown-item" href="${pageContext.request.contextPath}/shop?categoryId=10">Goods</a>
+                                        </li>
+                                    </ul>
+                                </li>
                             </ul>
                         </li>
                         <li class="nav-item"><a class="nav-link" href="#">inspiration</a></li>
@@ -87,8 +97,17 @@
                             <li class="nav-item dropdown">
                                 <a class="nav-link" href="#" class="dropdown-toggle" id="dropDownManager" data-bs-toggle="dropdown" aria-expanded="false">관리자 메뉴</a>
                                 <ul class="dropdown-menu" aria-labelledby="dropDownManager">
-                                  <li><a class="dropdown-item" href="${pageContext.request.contextPath}/clothes/clothesForm">의류상품 등록</a></li>
-                                  <li><a class="dropdown-item" href="${pageContext.request.contextPath}/accessory/accessoryForm">악세서리상품 등록</a></li>
+                                    <li>
+                                        <a class="dropdown-item" href="#">상품등록</a>
+                                        <ul class="dropdown-menu dropdown-submenu">
+                                            <li>
+                                              <a class="dropdown-item" href="${pageContext.request.contextPath}/clothes/clothesForm">의류상품</a>
+                                            </li>
+                                            <li>
+                                              <a class="dropdown-item" href="${pageContext.request.contextPath}/accessory/accessoryForm">악세서리상품</a>
+                                            </li>
+                                        </ul>
+                                    </li>
                                 </ul>
                             </li>
                         </sec:authorize>

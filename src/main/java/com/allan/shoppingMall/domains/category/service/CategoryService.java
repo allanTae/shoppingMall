@@ -99,6 +99,19 @@ public class CategoryService {
     }
 
     /**
+     * shop 카테고리를 조회하는 메소드.
+     * @return categoryDTO 카테고리 DTO 오브젝트.
+     */
+    public CategoryDTO getShopCategoryByBranch(){
+        Category findCategory = categoryRepository.findByCategoryCode(CategoryCode.SHOP).orElseThrow(() ->
+                new CategoryNotFoundException("shop 카테고리를 조회 할 수 없습니다.", ErrorCode.ENTITY_NOT_FOUND));
+
+        CategoryDTO categoryDTO = new CategoryDTO(findCategory);
+
+        return categoryDTO;
+    }
+
+    /**
      * 카테고리의 자식 카테고리를 포함한 모든 카테고리 아이디 리스트를 반환하는 메소드.
      * @param categoryId 카테고리 도메인 아이디.
      * @return List<Long> 카테고리 도메인 아이디 리스트.

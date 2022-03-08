@@ -23,6 +23,7 @@ public class CategoryDTO {
     private String parentCategoryName; // 부모 카테고리 이름.
     private Integer depth;
     private Map<Long, CategoryDTO> child;
+    private int code;
 
     /**
      * @param entity 카테고리 도메인.
@@ -33,18 +34,13 @@ public class CategoryDTO {
         this.branch = entity.getBranch();
         this.name = entity.getName();
         this.depth = entity.getDepth();
+        this.code = entity.getCategoryCode().getCode();
 
         if(entity.getParentCategory() == null){
             this.parentCategoryName = "대분류";
         }else{
             this.parentCategoryName = entity.getParentCategory().getName();
         }
-
-        // 순환하면서 하위 카테고리 정보 셋.
-//        this.child = entity.getChildCategory() == null ? null:entity.getChildCategory()
-//                .stream()
-//                .map(CategoryDTO::new)
-//                .collect(Collectors.toList());
 
         this.child = entity.getChildCategory() == null ? null:entity.getChildCategory()
                 .stream()
