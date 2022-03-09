@@ -15,6 +15,11 @@
               display: block;
             }
         </style>
+        <script>
+            function tempAlert(){
+                alert("업데이트 예정입니다.");
+            }
+        </script>
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
             <div class="container">
@@ -33,7 +38,9 @@
                             <a class="nav-link" href="#" class="dropdown-toggle" id="dropdownShop" data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
                             <ul class="dropdown-menu" aria-labelledby="dropdownShop">
                                 <li><a class="dropdown-item" href="${pageContext.request.contextPath}/shop?categoryId=3">Shop All</a></li>
-                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/shop?categoryId=9999">NEW ARRIVAL</a></li>
+                                <li>
+                                    <a class="dropdown-item" href="#" onclick="tempAlert();">NEW ARRIVAL</a>
+                                </li>
                                 <li><a class="dropdown-item" href="${pageContext.request.contextPath}/shop?categoryId=9">OUTER</a></li>
                                 <li>
                                     <a class="dropdown-item" href="${pageContext.request.contextPath}/shop?categoryId=5">TOPS</a>

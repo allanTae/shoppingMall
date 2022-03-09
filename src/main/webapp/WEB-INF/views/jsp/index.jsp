@@ -126,7 +126,7 @@
                               <div class="col-lg-4 col-sm-6 mb-4">
                                   <!-- Portfolio item 1-->
                                   <div class="clothes-item">
-                                      <a class="clothes-link" href="${pageContext.request.contextPath}/item?categoryId=${clothes.categoryId}&clothesId=${clothes.clothesId}">
+                                      <a class="clothes-link" href="${pageContext.request.contextPath}/item?categoryId=${clothes.categoryId}&itemId=${clothes.clothesId}">
                                           <img class="img-fluid" src=<c:out value="${pageContext.request.contextPath}/image/${clothes.profileImageIds[0]}" /> alt="..." />
                                       </a>
                                       <div class="clothes-caption">

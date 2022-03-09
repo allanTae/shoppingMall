@@ -4,7 +4,9 @@ import com.allan.shoppingMall.common.config.security.SecurityConfig;
 import com.allan.shoppingMall.domains.category.domain.Category;
 import com.allan.shoppingMall.domains.category.domain.CategoryCode;
 import com.allan.shoppingMall.domains.category.domain.CategoryRepository;
+import com.allan.shoppingMall.domains.item.domain.model.AccessoryDTO;
 import com.allan.shoppingMall.domains.item.domain.model.ClothesDTO;
+import com.allan.shoppingMall.domains.item.service.AccessoryService;
 import com.allan.shoppingMall.domains.item.service.ClothesService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +47,9 @@ public class ItemControllerTest {
     @MockBean
     CategoryRepository categoryRepository;
 
+    @MockBean
+    AccessoryService accessoryService;
+
     @Autowired
     MockMvc mvc;
 
@@ -65,7 +70,7 @@ public class ItemControllerTest {
                 .willReturn(Optional.of(TEST_CATEGORY));
 
         //when
-        ResultActions resultActions = mvc.perform(get("/item?categoryId=1&clothesId=1"));
+        ResultActions resultActions = mvc.perform(get("/item?categoryId=1&itemId=1"));
 
         //then
         verify(categoryRepository, atLeastOnce()).findById(anyLong());
@@ -74,6 +79,34 @@ public class ItemControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("clothesInfo"))
                 .andExpect(view().name("clothes/clothesDetail"));
+    }
+
+    @Test
+    public void 악세서리_상품_조회테스트() throws Exception {
+        //given
+        AccessoryDTO accessoryDTO = AccessoryDTO.builder()
+                .itemImages(List.of())
+                .build();
+        given(accessoryService.getAccessory(any()))
+                .willReturn(accessoryDTO);
+
+        Category TEST_CATEGORY = Category.builder()
+                .categoryCode(CategoryCode.ACCESSORY)
+                .build();
+
+        given(categoryRepository.findById(anyLong()))
+                .willReturn(Optional.of(TEST_CATEGORY));
+
+        //when
+        ResultActions resultActions = mvc.perform(get("/item?categoryId=1&itemId=1"));
+
+        //then
+        verify(categoryRepository, atLeastOnce()).findById(anyLong());
+        verify(accessoryService, atLeastOnce()).getAccessory(any());
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("accessoryInfo"))
+                .andExpect(view().name("accessory/accessoryDetail"));
     }
 
 }

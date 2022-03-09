@@ -1,5 +1,8 @@
 package com.allan.shoppingMall.domains.item.service;
 
+import com.allan.shoppingMall.common.exception.ErrorCode;
+import com.allan.shoppingMall.common.exception.category.CategoryItemNotFoundException;
+import com.allan.shoppingMall.domains.category.domain.*;
 import com.allan.shoppingMall.domains.category.service.CategoryService;
 import com.allan.shoppingMall.domains.item.domain.item.Item;
 import com.allan.shoppingMall.domains.item.domain.item.ItemRepository;
@@ -23,6 +26,7 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
     private final CategoryService categoryService;
+    private final CategoryItemRepository categoryItemRepository;
 
     /**
      * 카테고리에 해당하는 상품 도메인 리스트를 페이징하여 반환하기 위한 메소드.
@@ -45,16 +49,20 @@ public class ItemService {
      * @param items 페이징 한 Item 정보.
      * @return List<ItemSummaryDTO>
      */
-    public List<ItemSummaryDTO> getItemDTOS(List<Item> items, Long categoryId){
+    public List<ItemSummaryDTO> getItemDTOS(List<Item> items, Category category){
         List<ItemSummaryDTO> itemSummaryDTOList = items.stream()
                 .map(item -> {
+
+                    CategoryItem categoryItem = categoryItemRepository.getCategoryItem(List.of(CategoryCode.CLOTHES, CategoryCode.ACCESSORY), item.getItemId()).orElseThrow(() ->
+                            new CategoryItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+
                     return ItemSummaryDTO.builder()
                             .itemId(item.getItemId())
                             .name(item.getName())
                             .price(item.getPrice())
                             .itemColor(item.getColor().getDesc())
                             .profileImageIds(ItemSummaryDTO.toImagePath(item.getItemImages()))
-                            .categoryId(categoryId)
+                            .categoryId(categoryItem.getCategory().getCategoryId())
                             .build();
                 }).collect(Collectors.toList());
 

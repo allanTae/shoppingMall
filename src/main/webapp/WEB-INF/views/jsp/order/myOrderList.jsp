@@ -104,12 +104,15 @@
 		<!-- pagination{s} -->
 		<div id="paginationBoxWrap">
 		    <div class="btn-group" role="group" >
-                <button type="button" class="btn btn-dark" id="btnPrev">이전</button>
+                <c:if test="${pagination.isPrev}">
+                    <button type="button" class="btn btn-dark" id="btnPrev">이전</button>
+                </c:if>
                 <c:forEach begin="${pagination.startPage}" end="${pagination.endPage}" var="idx">
                     <button type="button" class="btn btn-dark" id="btnPage">${idx}</button>
                 </c:forEach>
-
-                <button type="button" class="btn btn-dark" id="btnNext">다음</button>
+                <c:if test="${pagination.isNext}">
+                    <button type="button" class="btn btn-dark" id="btnNext">다음</button>
+                </c:if>
 		    </div>
 		</div>
 		<!-- pagination{e} -->

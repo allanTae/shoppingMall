@@ -72,7 +72,7 @@
                               <div class="col-lg-4 col-sm-6 mb-4">
                                   <!-- Portfolio item 1-->
                                   <div class="item-item">
-                                      <a class="item-link" href="${pageContext.request.contextPath}/item?categoryId=${item.categoryId}&clothesId=${item.itemId}">
+                                      <a class="item-link" href="${pageContext.request.contextPath}/item?categoryId=${item.categoryId}&itemId=${item.itemId}">
                                           <img class="img-fluid" src=<c:out value="${pageContext.request.contextPath}/image/${item.profileImageIds[0]}" /> alt="..." />
                                       </a>
                                       <div class="item-caption">
@@ -100,12 +100,15 @@
 		<!-- pagination{s} -->
 		<div id="paginationBoxWrap">
 		    <div class="btn-group" role="group" >
-                <button type="button" class="btn btn-dark" id="btnPrev">이전</button>
+		        <c:if test="${pagination.isPrev}">
+                    <button type="button" class="btn btn-dark" id="btnPrev">이전</button>
+		        </c:if>
                 <c:forEach begin="${pagination.startPage}" end="${pagination.endPage}" var="idx">
                     <button type="button" class="btn btn-dark" id="btnPage">${idx}</button>
                 </c:forEach>
-
-                <button type="button" class="btn btn-dark" id="btnNext">다음</button>
+                <c:if test="${pagination.isNext}">
+                    <button type="button" class="btn btn-dark" id="btnNext">다음</button>
+                </c:if>
 		    </div>
 		</div>
 		<!-- pagination{e} -->
