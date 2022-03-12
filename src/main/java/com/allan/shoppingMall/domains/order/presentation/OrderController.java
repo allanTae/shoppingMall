@@ -1,9 +1,11 @@
 package com.allan.shoppingMall.domains.order.presentation;
 
 import com.allan.shoppingMall.common.domain.model.UserInfo;
+import com.allan.shoppingMall.common.exception.ErrorCode;
 import com.allan.shoppingMall.common.util.FormatUtil;
 import com.allan.shoppingMall.domains.infra.AuthenticationConverter;
 import com.allan.shoppingMall.domains.member.domain.Member;
+import com.allan.shoppingMall.domains.mileage.domain.model.MileageContent;
 import com.allan.shoppingMall.domains.mileage.service.MileageService;
 import com.allan.shoppingMall.domains.order.domain.model.*;
 import com.allan.shoppingMall.domains.order.service.OrderService;
@@ -73,10 +75,17 @@ public class OrderController {
      * @return
      */
     @PostMapping("/orderResult")
-    public String getOrderResult(@ModelAttribute("orderResult") OrderResultRequest orderResultRequest, Authentication authentication){
+    public String getOrderResult(@ModelAttribute("orderResult") OrderResultRequest orderResultRequest, Authentication authentication, Model model){
         // 임시 주문 삭제.
         orderService.deleteAllTempOrder(authentication.getName());
 
+        // 결제 성공 한 경우만,
+        if(orderResultRequest.getOrderResult().equals(OrderResult.PAYMENT_SUCCESS.getMessage())){
+            // 주문정보 및 마일리지 정보 설정.
+            OrderDetailDTO orderDetail = orderService.getOrderDetailDTO(authentication.getName(), orderResultRequest.getOrderNum());
+            model.addAttribute("orderInfo", orderDetail);
+            model.addAttribute("accumulatedMileage", mileageService.getMileageByOrderNum(orderResultRequest.getOrderNum(), MileageContent.PAYMENT_MILEAGE_ACCUMULATE));
+        }
         return "order/orderResult";
     }
 

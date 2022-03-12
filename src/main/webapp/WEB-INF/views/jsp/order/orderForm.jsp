@@ -478,8 +478,8 @@
         orderFormInfo += '<input type="text" name="orderResult" value="' + orderResponse.apiResultMessage + '" />';
         orderFormInfo += '<input type="text" name="orderNum" value="' + orderResponse.orderNum + '" />';
         if(orderResponse.errorResponse !== null){
-            orderFormInfo += '<input type="text" name="orderErrorResponse.errorCode" value="' + orderResponse.errorResponse.errorCode + '" />';
-            orderFormInfo += '<input type="text" name="orderErrorResponse.errMsg" value="' + orderResponse.errorResponse.errMsg + '" />';
+            orderFormInfo += '<input type="text" name="errorResponse.errorCode" value="' + orderResponse.errorResponse.errorCode + '" />';
+            orderFormInfo += '<input type="text" name="errorResponse.errMsg" value="' + orderResponse.errorResponse.errMsg + '" />';
         }
         return orderFormInfo;
     }
@@ -492,7 +492,10 @@
 
     // 셀렉트 된 상품의 주문량 change 이벤트.
     $(document).on("change","#mileagePoint",function(){
-        var mileage = Number($(this).val());
+        // 적용가능한 마일리지 계산.
+        var mileage = Number($(this).val()) > ${orderInfo.totalAmount} ? ${orderInfo.totalAmount}:Number($(this).val());
+        $(this).val(mileage);
+
         var orderTotalAmount = ${orderInfo.totalAmount + orderInfo.deliveryAmount} - mileage;
 
         $('#orderTotalAmount').text(orderTotalAmount.toLocaleString('ko-KR') + '원');

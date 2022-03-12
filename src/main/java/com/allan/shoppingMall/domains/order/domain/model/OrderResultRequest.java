@@ -23,4 +23,12 @@ public class OrderResultRequest {
 
     // iamport result
     IamportResult result;
+
+    @Override
+    public String toString() {
+        return "OrderResultRequest{" +
+                "orderResult='" + orderResult + '\'' +
+                ", orderNum='" + orderNum + '\'' +
+                '}';
+    }
 }

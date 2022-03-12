@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
  */
 @Getter
 @Setter
+@NoArgsConstructor
 public class OrderErrorResponse {
     private String errorCode; // server error code(ErrorCode class 참조).
     private int status; // server response status(ErrorCode class 참조).
