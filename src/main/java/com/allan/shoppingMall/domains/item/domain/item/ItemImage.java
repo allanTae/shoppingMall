@@ -60,4 +60,16 @@ public class ItemImage extends BaseEntity {
         this.item = item;
     }
 
+
+    @Override
+    public String toString() {
+        return "ItemImage{" +
+                "itemImageId=" + itemImageId +
+                ", item=" + item +
+                ", originalItemImageName='" + originalItemImageName + '\'' +
+                ", itemImagePath='" + itemImagePath + '\'' +
+                ", imageType=" + imageType +
+                ", imageSize=" + imageSize +
+                '}';
+    }
 }

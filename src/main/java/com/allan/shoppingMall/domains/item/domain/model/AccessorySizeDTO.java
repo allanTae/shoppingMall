@@ -1,5 +1,6 @@
 package com.allan.shoppingMall.domains.item.domain.model;
 
+import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,16 +15,17 @@ import lombok.Setter;
 public class AccessorySizeDTO extends ItemSizeDTO{
 
     // 너비.
-    private String widthLength;
+    private Double widthLength;
 
     // 높이.
-    private String heightLength;
+    private Double heightLength;
 
     @Builder
-    public AccessorySizeDTO(String sizeLabel, Long stockQuantity, String widthLength, String heightLength){
+    public AccessorySizeDTO(String sizeLabel, Long stockQuantity, Double widthLength, Double heightLength, SizeLabel labelInfo){
         super(sizeLabel, stockQuantity);
         this.widthLength = widthLength;
         this.heightLength = heightLength;
+        setLabelInfo(labelInfo);
     }
 
     @Override

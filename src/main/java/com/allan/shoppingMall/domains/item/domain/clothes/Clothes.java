@@ -77,4 +77,7 @@ public class Clothes extends Item {
 
     }
 
+    public void changeEngName(String engName){
+        this.engName = engName;
+    }
 }

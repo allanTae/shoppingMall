@@ -1,9 +1,6 @@
 package com.allan.shoppingMall.domains.item.service;
 
-import com.allan.shoppingMall.domains.category.domain.Category;
-import com.allan.shoppingMall.domains.category.domain.CategoryCode;
-import com.allan.shoppingMall.domains.category.domain.CategoryItem;
-import com.allan.shoppingMall.domains.category.domain.CategoryRepository;
+import com.allan.shoppingMall.domains.category.domain.*;
 import com.allan.shoppingMall.domains.item.domain.clothes.*;
 import com.allan.shoppingMall.domains.item.domain.item.*;
 import com.allan.shoppingMall.domains.item.domain.model.ClothesSummaryDTOForIndex;
@@ -40,6 +37,9 @@ public class ClothesServiceTest {
 
     @Mock
     CategoryRepository categoryRepository;
+
+    @Mock
+    CategoryItemRepository categoryItemRepository;
 
     @InjectMocks
     ClothesService clothesService;
@@ -103,6 +103,7 @@ public class ClothesServiceTest {
                 .price(1000l)
                 .color(Color.RED)
                 .build();
+        ReflectionTestUtils.setField(TEST_CLOTHES, "itemId", 2l);
 
         Category TEST_CATEGORY = Category.builder().build();
         ReflectionTestUtils.setField(TEST_CATEGORY, "categoryId", 1l);
@@ -116,6 +117,10 @@ public class ClothesServiceTest {
 
         given(clothesRepository.getClothes(any()))
                 .willReturn(Optional.of(TEST_CLOTHES));
+
+        CategoryItem TEST_CATEGORY_ITEM = new CategoryItem(Category.builder().build());
+        given(categoryItemRepository.getCategoryItem(List.of(CategoryCode.CLOTHES), TEST_CLOTHES.getItemId()))
+                .willReturn(Optional.of(TEST_CATEGORY_ITEM));
 
         //when
         ClothesDTO clothes = clothesService.getClothes(any());
@@ -183,8 +188,8 @@ public class ClothesServiceTest {
                 new ItemDetailDTO("clothesDetailDesc")
         ));
         clothesRequest.setClothesSizes(List.of(
-                new ClothesSizeDTO("1", 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 10l),
-                new ClothesSizeDTO("1", 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 20l)
+                new ClothesSizeDTO("1", 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 10l, SizeLabel.S),
+                new ClothesSizeDTO("1", 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 20l, SizeLabel.S)
         ));
         clothesRequest.setModelSizes(List.of(
                 new ModelSizeDTO(10.0, 20.0, 30.0, 40.0, 50.0)
@@ -245,6 +250,56 @@ public class ClothesServiceTest {
         assertThat(clothesSummaryDTO.getSizes().get(0), is(TEST_CLOTHES.getItemSizes().get(0).getSizeLabel()));
         assertThat(clothesSummaryDTO.getSizes().get(1), is(TEST_CLOTHES.getItemSizes().get(1).getSizeLabel()));
         assertThat(clothesSummaryDTO.getSizes().get(2), is(TEST_CLOTHES.getItemSizes().get(2).getSizeLabel()));
+    }
+
+    @Test
+    public void 의류상품_수정테스트() throws Exception {
+        Clothes TEST_CLOTHES = Clothes.builder()
+                .name("testName")
+                .engName("testEngName")
+                .price(1000l)
+                .color(Color.RED)
+                .build();
+
+        Category TEST_CATEGORY = Category.builder()
+                .categoryCode(CategoryCode.CLOTHES)
+                .build();
+        ReflectionTestUtils.setField(TEST_CATEGORY, "categoryId", 1l);
+
+        TEST_CLOTHES.changeItemFabrics(List.of(ItemFabric.builder().materialPart("testMaterial").build()));
+        TEST_CLOTHES.changeItemDetails(List.of(ItemDetail.builder().detailDesc("testDetail").build()));
+        TEST_CLOTHES.changeClothesSize(List.of(ClothesSize.builder().shoulderWidth(10.5).sizeLabel(SizeLabel.S).stockQuantity(3l).build()));
+        TEST_CLOTHES.changeModelSizes(List.of(ModelSize.builder().modelWeight(10.5).build()));
+        TEST_CLOTHES.changeItemImages(List.of(ItemImage.builder().imageType(ImageType.PREVIEW).build()));
+        TEST_CLOTHES.changeCategoryItems(List.of(new CategoryItem(TEST_CATEGORY)));
+
+        assertThat(TEST_CLOTHES.getItemFabrics().size(), is(1));
+        assertThat(TEST_CLOTHES.getItemDetails().size(), is(1));
+        assertThat(TEST_CLOTHES.getClothesSizes().size(), is(1));
+        assertThat(TEST_CLOTHES.getModelSizes().size(), is(1));
+        assertThat(TEST_CLOTHES.getItemImages().size(), is(1));
+        assertThat(TEST_CLOTHES.getCategoryItems().size(), is(1));
+
+        given(clothesRepository.findById(any()))
+                .willReturn(Optional.of(TEST_CLOTHES));
+
+        ClothesForm TEST_CLOTHES_REQUEST = createClothesRequest();
+
+        given(categoryRepository.findById(any()))
+                .willReturn(Optional.of(TEST_CATEGORY));
+
+        //when
+        clothesService.updateClothes(TEST_CLOTHES_REQUEST);
+
+        //then
+        verify(clothesRepository, atLeastOnce()).findById(any());
+        verify(categoryRepository, atLeastOnce()).findById(any());
+        assertThat(TEST_CLOTHES.getItemFabrics().size(), is(1));
+        assertThat(TEST_CLOTHES.getItemDetails().size(), is(1));
+        assertThat(TEST_CLOTHES.getClothesSizes().size(), is(2));
+        assertThat(TEST_CLOTHES.getModelSizes().size(), is(1));
+        assertThat(TEST_CLOTHES.getItemImages().size(), is(1));
+        assertThat(TEST_CLOTHES.getCategoryItems().size(), is(1));
     }
 
     private ItemImage createItemImage(Long imageId){

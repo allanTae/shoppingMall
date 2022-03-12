@@ -44,4 +44,8 @@ public class Accessory extends Item {
         }
         addStockQuantity(totalQuantity); // 재고량을 증가하기 위한 메소드.
     }
+
+    public void changeEngName(String engName){
+        this.engName = engName;
+    }
 }

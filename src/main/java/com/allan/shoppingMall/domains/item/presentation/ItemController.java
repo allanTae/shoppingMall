@@ -1,5 +1,6 @@
 package com.allan.shoppingMall.domains.item.presentation;
 
+import com.allan.shoppingMall.common.domain.model.PageInfo;
 import com.allan.shoppingMall.common.exception.BusinessException;
 import com.allan.shoppingMall.common.exception.ErrorCode;
 import com.allan.shoppingMall.common.exception.category.CategoryNotFoundException;
@@ -7,16 +8,23 @@ import com.allan.shoppingMall.domains.category.domain.Category;
 import com.allan.shoppingMall.domains.category.domain.CategoryCode;
 import com.allan.shoppingMall.domains.category.domain.CategoryRepository;
 import com.allan.shoppingMall.domains.item.domain.accessory.Accessory;
+import com.allan.shoppingMall.domains.item.domain.item.Item;
 import com.allan.shoppingMall.domains.item.domain.model.AccessoryDTO;
 import com.allan.shoppingMall.domains.item.domain.model.ClothesDTO;
+import com.allan.shoppingMall.domains.item.domain.model.ItemSummaryDTO;
 import com.allan.shoppingMall.domains.item.service.AccessoryService;
 import com.allan.shoppingMall.domains.item.service.ClothesService;
+import com.allan.shoppingMall.domains.item.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -25,6 +33,7 @@ public class ItemController {
     private final ClothesService clothesService;
     private final CategoryRepository categoryRepository;
     private final AccessoryService accessoryService;
+    private final ItemService itemService;
 
     /**
      * 단일 상품 조회 핸들러.
@@ -54,5 +63,16 @@ public class ItemController {
         }
 
         throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR);
+    }
+
+    @GetMapping("/item/manageList")
+    public String getAllClothes(Pageable pageable, Model model){
+        Page<Item> page = itemService.getAllItems(pageable);
+
+        List<ItemSummaryDTO> itemDTOS = itemService.getItemDTOS(page.getContent());
+        model.addAttribute("itemList", itemDTOS);
+        model.addAttribute("pagination", new PageInfo(page.getNumber(), page.getTotalPages(), page.isFirst(), page.isLast())); // 페이징 정보.
+
+        return "manage/manageList";
     }
 }

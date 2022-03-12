@@ -15,7 +15,7 @@
             </div>
             <div class="goodsForm col-md-6 p-4">
                 <header class="pb-5 border-bottom" >
-                    <div class="itemName"><c:out value="${accessoryInfo.accessoryName}(${accessoryInfo.color})" /></div>
+                    <div class="itemName"><c:out value="${accessoryInfo.accessoryName}(${accessoryInfo.color}) - ${accessoryInfo.engName}" /></div>
                     <div class="itemPrice"><fmt:formatNumber type="number" maxFractionDigits="3" value="${accessoryInfo.price}" />원</div>
                 </header>
                 <div class="goodsSummary">
@@ -61,18 +61,13 @@
                                 </tr>
                               </thead>
                               <tbody class="border-0">
-                                <tr>
+                                <tr class="text-start">
                                     <td class="text-left" >CM</td>
-                                    <td class="text-left" >총장</td>
-                                    <td class="text-left" >가슴둘레</td>
-                                    <td class="text-left" >어깨넓이</td>
-                                    <td class="text-left" >소매</td>
-                                    <td class="text-left" >허리둘레</td>
-                                    <td class="text-left" >엉덩이</td>
-                                    <td class="text-left" >밑단둘레</td>
+                                    <td class="text-left" >너비</td>
+                                    <td class="text-left" >길이</td>
                                 </tr>
                                 <c:forEach var="accessorySize" items="${accessoryInfo.accessorySizes}" varStatus="index" >
-                                    <tr>
+                                    <tr class="text-start">
                                         <td class="text-left" ><c:out value="${accessorySize.sizeLabel}" /></td>
                                         <td class="text-left" ><c:out value="${accessorySize.widthLength}" /></td>
                                         <td class="text-left" ><c:out value="${accessorySize.heightLength}" /></td>

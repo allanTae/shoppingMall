@@ -1,12 +1,10 @@
 package com.allan.shoppingMall.domains.item.service;
 
 import com.allan.shoppingMall.common.exception.ErrorCode;
+import com.allan.shoppingMall.common.exception.category.CategoryNotFoundException;
 import com.allan.shoppingMall.common.exception.item.ClothesSaveFailException;
 import com.allan.shoppingMall.common.exception.item.ItemNotFoundException;
-import com.allan.shoppingMall.domains.category.domain.Category;
-import com.allan.shoppingMall.domains.category.domain.CategoryCode;
-import com.allan.shoppingMall.domains.category.domain.CategoryItem;
-import com.allan.shoppingMall.domains.category.domain.CategoryRepository;
+import com.allan.shoppingMall.domains.category.domain.*;
 import com.allan.shoppingMall.domains.item.domain.clothes.*;
 import com.allan.shoppingMall.domains.item.domain.item.*;
 import com.allan.shoppingMall.domains.item.domain.model.*;
@@ -32,6 +30,7 @@ public class ClothesService {
     private final ClothesRepository clothesRepository;
     private final ImageFileHandler imageFileHandler;
     private final CategoryRepository categoryRepository;
+    private final CategoryItemRepository categoryItemRepository;
 
     /**
      * form 으로 전달 된 데이터로 clothes 저장하는 메소드.
@@ -113,7 +112,7 @@ public class ClothesService {
         if(findCategory.getCategoryCode().getCode() != CategoryCode.CLOTHES.getCode())
             throw new ClothesSaveFailException(ErrorCode.ITEM_CATEGORY_CODE_INVALID);
 
-        // 색상 정보.
+        // 의류 상품 도메인 생성.
         Clothes clothes = Clothes.builder()
                 .name(form.getName())
                 .price(form.getPrice())
@@ -144,6 +143,9 @@ public class ClothesService {
                 .orElseThrow(() ->
                         new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
+        CategoryItem clothesCategoryItem = categoryItemRepository.getCategoryItem(List.of(CategoryCode.CLOTHES), findClothes.getItemId()).orElseThrow(() ->
+                new CategoryNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+
         List<ItemFabricDTO> fabricDTOS = findClothes.getItemFabrics()
                 .stream()
                 .map(itemFabric -> {
@@ -173,6 +175,8 @@ public class ClothesService {
                             .heapWidth(itemSize.getHeapWidth())
                             .sleeveLength(itemSize.getSleeveLength())
                             .waistWidth(itemSize.getWaistWidth())
+                            .labelInfo(itemSize.getSizeLabel())
+                            .stockQuantity(itemSize.getStockQuantity())
                             .build();
                 }).collect(Collectors.toList());
 
@@ -199,7 +203,8 @@ public class ClothesService {
                                     .modelSizes(modelSizeDTOS)
                                     .itemImages(findClothes.getItemImages())
                                     .color(findClothes.getColor().getDesc())
-                                    .categoryId(findClothes.getCategoryItems().get(0).getCategory().getCategoryId())
+                                    .categoryId(clothesCategoryItem.getCategory().getCategoryId())
+                                    .categoryName(clothesCategoryItem.getCategory().getName())
                                     .build();
 
         return clothesDTO;
@@ -251,4 +256,97 @@ public class ClothesService {
                 .profileImgId(findClothes.getItemImages().get(0).getItemImageId())
                 .build();
     }
+
+    /**
+     * 프론트단으로 전달 받은 폼정보로, clothes 정보를 수정하는 메소드 입니다.
+     * @param form
+     * @return clothes domain id.
+     */
+    @Transactional
+    public Long updateClothes(ClothesForm form){
+        Clothes findClothes = clothesRepository.findById(form.getClothesId()).orElseThrow(() ->
+                new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+
+        // 기존 원단, 상세내용, 모델사이즈, 의류사이즈, 카테고리 정보 삭제.
+        findClothes.getItemFabrics().clear();
+        findClothes.getItemDetails().clear();
+        findClothes.getModelSizes().clear();
+        findClothes.getClothesSizes().clear();
+        findClothes.subtractStockQuantity(findClothes.getStockQuantity()); // 재고량 차감.
+        findClothes.getCategoryItems().clear();
+
+        // 의류 원단 정보.
+        List<ItemFabric> fabrics = form.getItemFabrics()
+                .stream()
+                .map(clothesFabricsDTO -> {
+                    return ItemFabric.builder()
+                            .materialPart(clothesFabricsDTO.getMaterialPart())
+                            .materialDesc(clothesFabricsDTO.getMaterialDesc())
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        // 의류 디테일 정보.
+        List<ItemDetail> details = form.getItemDetails()
+                .stream()
+                .map(clothesDetailsDTO -> {
+                    return ItemDetail.builder()
+                            .detailDesc(clothesDetailsDTO.getDetailDesc())
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        // 의류 사이즈 정보.
+        List<ClothesSize> sizes = form.getClothesSizes()
+                .stream()
+                .map(clothesSizesDTO -> {
+                    return ClothesSize.builder()
+                            .shoulderWidth(clothesSizesDTO.getShoulderWidth())
+                            .backLength(clothesSizesDTO.getBackLength())
+                            .bottomWidth(clothesSizesDTO.getBottomWidth())
+                            .chestWidth(clothesSizesDTO.getChestWidth())
+                            .heapWidth(clothesSizesDTO.getHeapWidth())
+                            .sleeveLength(clothesSizesDTO.getSleeveLength())
+                            .sizeLabel(SizeLabel.valueOf(Integer.valueOf(clothesSizesDTO.getSizeLabel())))
+                            .waistWidth(clothesSizesDTO.getWaistWidth())
+                            .stockQuantity(clothesSizesDTO.getStockQuantity())
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        // 모델 사이즈 정보.
+        List<ModelSize> modelSizes = form.getModelSizes()
+                .stream()
+                .map(modelSizeDTO -> {
+                    return ModelSize.builder()
+                            .modelShoulderSize(modelSizeDTO.getModelShoulderSize())
+                            .modelHeight(modelSizeDTO.getModelHeight())
+                            .modelWeight(modelSizeDTO.getModelWeight())
+                            .modelWaist(modelSizeDTO.getModelWaist())
+                            .modelHeap(modelSizeDTO.getModelHeap())
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        Category findCategory = categoryRepository.findById(form.getCategoryId()).orElseThrow(() ->
+                new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+
+        // 예외 처리 필요.
+        if(findCategory.getCategoryCode().getCode() != CategoryCode.CLOTHES.getCode())
+            throw new ClothesSaveFailException(ErrorCode.ITEM_CATEGORY_CODE_INVALID);
+
+        findClothes.changeName(form.getName());
+        findClothes.changePrice(form.getPrice());
+        findClothes.changeEngName(form.getEngName());
+        findClothes.changeColor(Color.valueOf(form.getClothesColor()));
+
+        findClothes.changeItemFabrics(fabrics);
+        findClothes.changeItemDetails(details);
+        findClothes.changeClothesSize(sizes);
+        findClothes.changeModelSizes(modelSizes);
+        findClothes.changeCategoryItems(List.of(new CategoryItem(findCategory)));
+
+        return findClothes.getItemId();
+    }
+
 }

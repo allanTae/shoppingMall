@@ -48,24 +48,24 @@ public class ClothesControllerTest {
     @Test
     public void 의류상품_추가_테스트() throws Exception {
         //given
-        ClothesForm TEST_CLOTHES_REQEUST = createClothesRequest();
+        ClothesForm TEST_CLOTHES_REQEUST = createClothesRequest(false);
 
         //when
         ResultActions resultActions = mvc.perform(post("/clothes/save")
                                             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                                            .flashAttr("clothesRequest", TEST_CLOTHES_REQEUST));
+                                            .flashAttr("clothesForm", TEST_CLOTHES_REQEUST));
 
         //then
+        verify(clothesService, atLeastOnce()).saveClothes(any());
         resultActions
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/index"));
-        verify(clothesService, atLeastOnce()).saveClothes(any());
     }
 
     @Test
     public void 의류_등록_폼() throws Exception {
         //given
-        ClothesForm TEST_CLOTHES_FORM = createClothesRequest();
+        ClothesForm TEST_CLOTHES_FORM = createClothesRequest(false);
 
         //when
         ResultActions resultActions = mvc.perform(get("/clothes/clothesForm"));
@@ -73,12 +73,33 @@ public class ClothesControllerTest {
         //then
         resultActions
                 .andExpect(status().isOk())
+                .andExpect(model().attributeExists("sizeLabels"))
                 .andExpect(view().name("clothes/clothesForm"));
     }
 
+    @Test
+    public void 의류_수정_테스트() throws Exception {
+        //given
+        ClothesForm TEST_CLOTHES_REQEUST = createClothesRequest(true);
 
-    private ClothesForm createClothesRequest() {
+        //when
+        ResultActions resultActions = mvc.perform(post("/clothes/save")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .flashAttr("clothesForm", TEST_CLOTHES_REQEUST));
+
+        //then
+        verify(clothesService, atLeastOnce()).updateClothes(any());
+        resultActions
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/index"));
+    }
+
+
+    private ClothesForm createClothesRequest(Boolean isEdit) {
         ClothesForm clothesRequest = new ClothesForm();
+        if(isEdit){
+            clothesRequest.setMode("edit");
+        }
         return clothesRequest;
     }
 }

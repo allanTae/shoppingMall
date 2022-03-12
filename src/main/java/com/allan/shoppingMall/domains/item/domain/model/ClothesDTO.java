@@ -44,11 +44,15 @@ public class ClothesDTO {
     private String etc;
 
     private Long categoryId;
+    private String categoryName;
+
+    // 등록폼, 수정폼에서 사용할 toggle.
+    private String mode = "enrole";
 
     @Builder
     public ClothesDTO(Long clothesId, String clothesName, Long price, String engName, List<ItemImage> itemImages, List<ModelSizeDTO> modelSizes,
                       List<ItemFabricDTO> itemFabrics, List<ItemDetailDTO> itemDetails, List<ClothesSizeDTO> clothesSizes, String etc,
-                      String color, Long categoryId) {
+                      String color, Long categoryId, String categoryName) {
         this.clothesId = clothesId;
         this.clothesName = clothesName;
         this.price = price;
@@ -61,6 +65,7 @@ public class ClothesDTO {
         setImgaes(itemImages);
         this.color = color;
         this.categoryId = categoryId;
+        this.categoryName = categoryName;
     }
 
     /**

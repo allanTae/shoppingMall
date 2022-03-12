@@ -105,6 +105,9 @@
                                 <a class="nav-link" href="#" class="dropdown-toggle" id="dropDownManager" data-bs-toggle="dropdown" aria-expanded="false">관리자 메뉴</a>
                                 <ul class="dropdown-menu" aria-labelledby="dropDownManager">
                                     <li>
+                                        <a class="dropdown-item" href="${pageContext.request.contextPath}/manage/itemList">상품수정</a>
+                                    </li>
+                                    <li>
                                         <a class="dropdown-item" href="#">상품등록</a>
                                         <ul class="dropdown-menu dropdown-submenu">
                                             <li>

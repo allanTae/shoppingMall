@@ -44,15 +44,25 @@ public class ItemService {
         return items;
     }
 
+    public Page<Item> getAllItems(Pageable pageable){
+        int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);
+
+        pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdDate"));
+        Page<Item> items = itemRepository.getAllItems(pageable);
+
+        return items;
+    }
+
     /**
      * 컨트롤러단에서 전달받은 Page<Item> 를 프론트단으로 전송 할 List<ItemSummaryDTO> 반환하기 위한 메소드.
      * @param items 페이징 한 Item 정보.
      * @return List<ItemSummaryDTO>
      */
-    public List<ItemSummaryDTO> getItemDTOS(List<Item> items, Category category){
+    public List<ItemSummaryDTO> getItemDTOS(List<Item> items){
         List<ItemSummaryDTO> itemSummaryDTOList = items.stream()
                 .map(item -> {
 
+                    // 카테고리가 의류 또는 악세서리인 상품 카테고리 아이템 정보만 조회.
                     CategoryItem categoryItem = categoryItemRepository.getCategoryItem(List.of(CategoryCode.CLOTHES, CategoryCode.ACCESSORY), item.getItemId()).orElseThrow(() ->
                             new CategoryItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
@@ -63,6 +73,7 @@ public class ItemService {
                             .itemColor(item.getColor().getDesc())
                             .profileImageIds(ItemSummaryDTO.toImagePath(item.getItemImages()))
                             .categoryId(categoryItem.getCategory().getCategoryId())
+                            .createdDate(item.getCreatedDate())
                             .build();
                 }).collect(Collectors.toList());
 

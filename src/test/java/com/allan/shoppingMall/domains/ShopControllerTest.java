@@ -81,7 +81,7 @@ public class ShopControllerTest {
                 .willReturn(itemPage);
 
         List<ItemSummaryDTO> TEST_ITEM_SUMMARY_DTO = new ArrayList<>();
-        given(itemService.getItemDTOS(any(), any()))
+        given(itemService.getItemDTOS(any()))
                 .willReturn(TEST_ITEM_SUMMARY_DTO);
 
         //when
@@ -92,7 +92,7 @@ public class ShopControllerTest {
         //then
         verify(categoryRepository, atLeastOnce()).findById(any());
         verify(itemService, atLeastOnce()).getItems(any(), any());
-        verify(itemService, atLeastOnce()).getItemDTOS(any(), any());
+        verify(itemService, atLeastOnce()).getItemDTOS(any());
 
         resultActions
                 .andExpect(status().isOk())

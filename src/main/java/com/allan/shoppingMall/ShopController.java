@@ -41,7 +41,7 @@ public class ShopController {
         model.addAttribute("categoryId", categoryId);
 
         model.addAttribute("itemQunatity", page.getTotalElements());
-        model.addAttribute("itemList", itemService.getItemDTOS(page.getContent(), findCategory)); // 상품 정보.
+        model.addAttribute("itemList", itemService.getItemDTOS(page.getContent())); // 상품 정보.
         model.addAttribute("pagination", new PageInfo(page.getNumber(), page.getTotalPages(), page.isFirst(), page.isLast())); // 페이징 정보.
 
         return "shop/itemList";

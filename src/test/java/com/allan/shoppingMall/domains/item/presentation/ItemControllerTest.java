@@ -8,6 +8,7 @@ import com.allan.shoppingMall.domains.item.domain.model.AccessoryDTO;
 import com.allan.shoppingMall.domains.item.domain.model.ClothesDTO;
 import com.allan.shoppingMall.domains.item.service.AccessoryService;
 import com.allan.shoppingMall.domains.item.service.ClothesService;
+import com.allan.shoppingMall.domains.item.service.ItemService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -49,6 +50,9 @@ public class ItemControllerTest {
 
     @MockBean
     AccessoryService accessoryService;
+
+    @MockBean
+    ItemService itemService;
 
     @Autowired
     MockMvc mvc;

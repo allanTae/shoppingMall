@@ -15,7 +15,7 @@
             </div>
             <div class="goodsForm col-md-6 p-4">
                 <header class="pb-5 border-bottom" >
-                    <div class="itemName"><c:out value="${clothesInfo.clothesName}(${clothesInfo.color})" /></div>
+                    <div class="itemName"><c:out value="${clothesInfo.clothesName}(${clothesInfo.color}) - ${clothesInfo.engName}" /></div>
                     <div class="itemPrice"><fmt:formatNumber type="number" maxFractionDigits="3" value="${clothesInfo.price}" />원</div>
                 </header>
                 <div class="goodsSummary">

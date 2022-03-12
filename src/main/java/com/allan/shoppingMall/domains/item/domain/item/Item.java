@@ -146,4 +146,16 @@ public class Item extends BaseEntity {
             }
         }
     }
+
+    public void changeName(String name){
+        this.name = name;
+    }
+
+    public void changePrice(Long price){
+        this.price = price;
+    }
+
+    public void changeColor(Color color){
+        this.color = color;
+    }
 }

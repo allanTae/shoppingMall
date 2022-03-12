@@ -1,5 +1,6 @@
 package com.allan.shoppingMall.domains.item.domain.model;
 
+import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,8 +37,9 @@ public class ClothesSizeDTO extends ItemSizeDTO {
     private Double bottomWidth;
 
     @Builder
-    public ClothesSizeDTO(String sizeLabel, Double backLength, Double chestWidth, Double shoulderWidth, Double sleeveLength, Double waistWidth, Double heapWidth, Double bottomWidth, Long quantity) {
-        super(sizeLabel, quantity);
+    public ClothesSizeDTO(String sizeLabel, Double backLength, Double chestWidth, Double shoulderWidth, Double sleeveLength, Double waistWidth,
+                          Double heapWidth, Double bottomWidth, Long stockQuantity, SizeLabel labelInfo) {
+        super(sizeLabel, stockQuantity);
         this.backLength = backLength;
         this.chestWidth = chestWidth;
         this.shoulderWidth = shoulderWidth;
@@ -45,6 +47,7 @@ public class ClothesSizeDTO extends ItemSizeDTO {
         this.waistWidth = waistWidth;
         this.heapWidth = heapWidth;
         this.bottomWidth = bottomWidth;
+        setLabelInfo(labelInfo);
     }
 
     @Override

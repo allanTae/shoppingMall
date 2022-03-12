@@ -17,8 +17,12 @@ public class AccessoryForm {
     private String name;
     private String engName;
     private Long price;
-    private int clothesColor;
+    private int accessoryColor;
     private Long categoryId;
+
+    // 수정폼에서 전달 할 의류 상품 도메인 아이디.
+    private Long accessoryId;
+    private String mode;
 
     private List<ItemFabricDTO> itemFabrics = new ArrayList<>();
     private List<ItemDetailDTO> itemDetails = new ArrayList<>();
@@ -27,9 +31,18 @@ public class AccessoryForm {
     private List<MultipartFile> detailImageFiles = new ArrayList<>();
 
     @Override
-    public String toString(){
-        return "ClothesRequest [name=" + this.name + ", engName=" + this.engName + ", price=" + this.price + ", itemFabrics="
-                + this.itemFabrics + ", itemDetails=" + this.itemDetails + ", accessorySizes=" + this.accessorySizes +
-                ", categoryId= " + this.categoryId + "]";
+    public String toString() {
+        return "AccessoryForm{" +
+                "name='" + name + '\'' +
+                ", engName='" + engName + '\'' +
+                ", price=" + price +
+                ", accessoryColor=" + accessoryColor +
+                ", categoryId=" + categoryId +
+                ", accessoryId=" + accessoryId +
+                ", mode='" + mode + '\'' +
+                ", itemFabrics=" + itemFabrics +
+                ", itemDetails=" + itemDetails +
+                ", accessorySizes=" + accessorySizes +
+                '}';
     }
 }

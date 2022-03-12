@@ -1,18 +1,16 @@
 package com.allan.shoppingMall.domains.item.service;
 
 import com.allan.shoppingMall.common.exception.ErrorCode;
+import com.allan.shoppingMall.common.exception.category.CategoryNotFoundException;
 import com.allan.shoppingMall.common.exception.item.AccessorySaveFailException;
+import com.allan.shoppingMall.common.exception.item.ClothesSaveFailException;
 import com.allan.shoppingMall.common.exception.item.ItemNotFoundException;
-import com.allan.shoppingMall.domains.category.domain.Category;
-import com.allan.shoppingMall.domains.category.domain.CategoryCode;
-import com.allan.shoppingMall.domains.category.domain.CategoryItem;
-import com.allan.shoppingMall.domains.category.domain.CategoryRepository;
+import com.allan.shoppingMall.domains.category.domain.*;
 import com.allan.shoppingMall.domains.item.domain.accessory.Accessory;
 import com.allan.shoppingMall.domains.item.domain.accessory.AccessoryRepository;
 import com.allan.shoppingMall.domains.item.domain.accessory.AccessorySize;
 import com.allan.shoppingMall.domains.item.domain.item.ItemDetail;
 import com.allan.shoppingMall.domains.item.domain.item.ItemFabric;
-import com.allan.shoppingMall.domains.item.domain.item.ItemSize;
 import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
 import com.allan.shoppingMall.domains.item.domain.item.Color;
 import com.allan.shoppingMall.domains.item.domain.item.ImageType;
@@ -37,6 +35,7 @@ public class AccessoryService {
     private final AccessoryRepository accessoryRepository;
     private final ImageFileHandler imageFileHandler;
     private final CategoryRepository categoryRepository;
+    private final CategoryItemRepository categoryItemRepository;
 
     /**
      * form 으로 전달 된 데이터로 accessory 저장하는 메소드.
@@ -103,8 +102,14 @@ public class AccessoryService {
                 .name(form.getName())
                 .engName(form.getEngName())
                 .price(form.getPrice())
-                .color(Color.valueOf(form.getClothesColor()))
+                .color(Color.valueOf(form.getAccessoryColor()))
                 .build();
+
+        if(profileImageFiles == null){
+            log.error("profileItemImages is null");
+        }else{
+            log.info("profileItemImages: " + profileItemImages.toString());
+        }
 
         accessory.changeItemFabrics(fabrics);
         accessory.changeItemDetails(details);
@@ -125,6 +130,9 @@ public class AccessoryService {
     public AccessoryDTO getAccessory(Long accessoryId){
         Accessory findAccessory = accessoryRepository.findById(accessoryId).orElseThrow(() ->
                 new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+
+        CategoryItem clothesCategoryItem = categoryItemRepository.getCategoryItem(List.of(CategoryCode.ACCESSORY), findAccessory.getItemId()).orElseThrow(() ->
+                new CategoryNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
         List<ItemFabricDTO> fabricDTOS = findAccessory.getItemFabrics()
                 .stream()
@@ -150,6 +158,8 @@ public class AccessoryService {
                             .sizeLabel(accessorySize.getSizeLabel().getKey())
                             .widthLength(accessorySize.getWidthLength())
                             .heightLength(accessorySize.getHeightLength())
+                            .labelInfo(accessorySize.getSizeLabel())
+                            .stockQuantity(accessorySize.getStockQuantity())
                             .build();
                 }).collect(Collectors.toList());
 
@@ -163,8 +173,81 @@ public class AccessoryService {
                 .accessorySizes(sizeDTOS)
                 .itemImages(findAccessory.getItemImages())
                 .color(findAccessory.getColor().getDesc())
+                .categoryId(clothesCategoryItem.getCategory().getCategoryId())
+                .categoryName(clothesCategoryItem.getCategory().getName())
                 .build();
 
         return accessoryDTO;
+    }
+
+    /**
+     * 프론트단으로 전달 받은 폼정보로, accessory 정보를 수정하는 메소드 입니다.
+     * @param form
+     * @return accessory domain id.
+     */
+    @Transactional
+    public Long updateAccessory(AccessoryForm form){
+        Accessory findAccssory = accessoryRepository.findById(form.getAccessoryId()).orElseThrow(() ->
+                new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+
+        // 기존 원단, 상세내용, 모델사이즈, 의류사이즈, 카테고리 정보 삭제.
+        findAccssory.getItemFabrics().clear();
+        findAccssory.getItemDetails().clear();
+        findAccssory.getAccessorySizes().clear();
+        findAccssory.subtractStockQuantity(findAccssory.getStockQuantity()); // 재고량 차감.
+        findAccssory.getCategoryItems().clear();
+
+        // 의류 원단 정보.
+        List<ItemFabric> fabrics = form.getItemFabrics()
+                .stream()
+                .map(clothesFabricsDTO -> {
+                    return ItemFabric.builder()
+                            .materialPart(clothesFabricsDTO.getMaterialPart())
+                            .materialDesc(clothesFabricsDTO.getMaterialDesc())
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        // 의류 디테일 정보.
+        List<ItemDetail> details = form.getItemDetails()
+                .stream()
+                .map(clothesDetailsDTO -> {
+                    return ItemDetail.builder()
+                            .detailDesc(clothesDetailsDTO.getDetailDesc())
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        // 의류 사이즈 정보.
+        List<AccessorySize> sizes = form.getAccessorySizes()
+                .stream()
+                .map(accessorySizeDTO -> {
+                    return AccessorySize.builder()
+                            .widthLength(accessorySizeDTO.getWidthLength())
+                            .heightLength(accessorySizeDTO.getHeightLength())
+                            .sizeLabel(SizeLabel.valueOf(Integer.valueOf(accessorySizeDTO.getSizeLabel())))
+                            .stockQuantity(accessorySizeDTO.getStockQuantity())
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        Category findCategory = categoryRepository.findById(form.getCategoryId()).orElseThrow(() ->
+                new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+
+        // 예외 처리 필요.
+        if(findCategory.getCategoryCode().getCode() != CategoryCode.ACCESSORY.getCode())
+            throw new ClothesSaveFailException(ErrorCode.ITEM_CATEGORY_CODE_INVALID);
+
+        findAccssory.changeName(form.getName());
+        findAccssory.changePrice(form.getPrice());
+        findAccssory.changeEngName(form.getEngName());
+        findAccssory.changeColor(Color.valueOf(form.getAccessoryColor()));
+
+        findAccssory.changeItemFabrics(fabrics);
+        findAccssory.changeItemDetails(details);
+        findAccssory.changeAccessorySize(sizes);
+        findAccssory.changeCategoryItems(List.of(new CategoryItem(findCategory)));
+
+        return findAccssory.getItemId();
     }
 }

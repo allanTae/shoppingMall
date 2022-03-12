@@ -71,4 +71,12 @@
         <put-attribute name="tile_body" value="/WEB-INF/views/jsp/shop/{1}.jsp" />
     </definition>
 
+    <!-- manage -->
+    <definition name="manage-layout" template="/WEB-INF/tiles/layouts/manage/manage_layout.jsp">
+        <put-attribute name="tile_nav" value="/WEB-INF/tiles/layouts/common/nav.jsp" />
+    </definition>
+    <definition name="manage/*" extends="manage-layout">
+        <put-attribute name="tile_body" value="/WEB-INF/views/jsp/manage/{1}.jsp" />
+    </definition>
+
 </tiles-definitions>

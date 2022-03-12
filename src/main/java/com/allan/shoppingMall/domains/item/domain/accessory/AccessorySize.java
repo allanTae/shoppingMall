@@ -20,13 +20,13 @@ import javax.persistence.Entity;
 public class AccessorySize extends ItemSize {
 
     @Column(name = "width_length")
-    private String widthLength;
+    private Double widthLength;
 
     @Column(name = "height_length")
-    private String heightLength;
+    private Double heightLength;
 
     @Builder
-    public AccessorySize(SizeLabel sizeLabel, Long stockQuantity, String widthLength, String heightLength){
+    public AccessorySize(SizeLabel sizeLabel, Long stockQuantity, Double widthLength, Double heightLength){
         super(sizeLabel, stockQuantity);
         this.widthLength = widthLength;
         this.heightLength = heightLength;

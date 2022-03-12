@@ -25,4 +25,11 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
      */
     @Query("select distinct i from Item i join i.categoryItems c where c.category.categoryId in :categoryIds")
     public Page<Item> getItemsByCategoryIds(@Param("categoryIds") List<Long> categoryIds, Pageable pageable);
+
+    /**
+     * 모든 상품 도메인을 페이징한 리스트를 반환하는 메소드.
+     * @param pageable
+     */
+    @Query("select distinct i from Item i join i.categoryItems c")
+    public Page<Item> getAllItems(Pageable pageable);
 }

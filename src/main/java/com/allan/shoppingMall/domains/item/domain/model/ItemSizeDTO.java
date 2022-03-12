@@ -1,5 +1,6 @@
 package com.allan.shoppingMall.domains.item.domain.model;
 
+import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -18,9 +19,13 @@ public class ItemSizeDTO {
     // 사이즈별 재고량.
     private Long stockQuantity;
 
-    public ItemSizeDTO(String sizeLabel, Long quantity) {
+    // 수정 폼, 사이즈 라벨 option tag 를 위한 필드.
+    // 수정 폼에서(clothesForm.jsp, accessoryForm.jsp 에서 select tag 내 option tag 에서 사용할 사이즈 정보).
+    private SizeLabel labelInfo;
+
+    public ItemSizeDTO(String sizeLabel, Long stockQuantity) {
         this.sizeLabel = sizeLabel;
-        this.stockQuantity = quantity;
+        this.stockQuantity = stockQuantity;
     }
 
     @Override
