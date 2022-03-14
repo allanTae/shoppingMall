@@ -10,6 +10,8 @@ import com.allan.shoppingMall.domains.category.domain.model.CategoryDTO;
 import com.allan.shoppingMall.domains.category.domain.model.CategoryRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -102,7 +104,9 @@ public class CategoryService {
      * shop 카테고리를 조회하는 메소드.
      * @return categoryDTO 카테고리 DTO 오브젝트.
      */
+    @Cacheable(value = "shopCategoryCaching", key = "'shopCategory'")
     public CategoryDTO getShopCategoryByBranch(){
+        log.info("getShopCategory call!!");
         Category findCategory = categoryRepository.findByCategoryCode(CategoryCode.SHOP).orElseThrow(() ->
                 new CategoryNotFoundException("shop 카테고리를 조회 할 수 없습니다.", ErrorCode.ENTITY_NOT_FOUND));
 
@@ -150,6 +154,7 @@ public class CategoryService {
      * @return category domain id.
      */
     @Transactional
+    @CacheEvict(value = {"shopCategoryCaching"}, allEntries = true)
     public Long updateCategory(Long categoryId, CategoryRequest categoryRequest){
         Category findCategory = categoryRepository.findById(categoryId).orElseThrow(() ->
                 new CategoryNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
