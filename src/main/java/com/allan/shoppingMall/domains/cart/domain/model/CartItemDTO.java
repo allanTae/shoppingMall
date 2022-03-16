@@ -23,13 +23,15 @@ public class CartItemDTO {
     private Long itemPrice; // 장바구니 상품 가격.
     private Long deliveryPrice; // 배송비.
     private List<RequiredOption> requiredOptions = new ArrayList<>(); // 장바구니 상품의 필수옵션.
+    private Long categoryId;
 
-    public CartItemDTO(Long itemId, Long itemProfileImg, String itemName, Long itemPrice, Long cartQuantity, SizeLabel size) {
+    public CartItemDTO(Long itemId, Long itemProfileImg, String itemName, Long itemPrice, Long cartQuantity, SizeLabel size, Long categoryId) {
         this.itemId = itemId;
         this.itemProfileImg = itemProfileImg;
         this.itemName = itemName;
         setPrice(itemPrice);
         requiredOptions.add(new RequiredOption(cartQuantity, size));
+        this.categoryId = categoryId;
     }
 
     private void setPrice(Long itemPrice){
@@ -44,9 +46,13 @@ public class CartItemDTO {
     @Override
     public String toString() {
         return "CartItemDTO{" +
-                "itemProfileImg=" + itemProfileImg +
+                "itemId=" + itemId +
+                ", itemProfileImg=" + itemProfileImg +
                 ", itemName='" + itemName + '\'' +
+                ", itemPrice=" + itemPrice +
+                ", deliveryPrice=" + deliveryPrice +
+                ", requiredOptions=" + requiredOptions +
+                ", categoryId=" + categoryId +
                 '}';
     }
-
 }

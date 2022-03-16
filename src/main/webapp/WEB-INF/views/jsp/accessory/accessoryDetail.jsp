@@ -424,6 +424,7 @@
             for(var i = 0; i<orderItems.length; i++){
                 cartItemList.push({
                     "itemId": ${accessoryInfo.accessoryId},
+                    "categoryId": ${accessoryInfo.categoryId},
                     "cartQuantity": orderItems[i].quantity,
                     "size": orderItems[i].size
                 });

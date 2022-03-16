@@ -23,6 +23,7 @@ public class OrderItemSummaryRequest {
     private List<RequiredOption> requiredOptions;
     private Long price;
     private Long previewImg;
+    private Long categoryId;
 
     @Override
     public String toString() {
@@ -30,12 +31,13 @@ public class OrderItemSummaryRequest {
     }
 
     @Builder
-    public OrderItemSummaryRequest(Long itemId, String itemName, Long price, Long previewImg, List<RequiredOption> requiredOptionList) {
+    public OrderItemSummaryRequest(Long itemId, String itemName, Long price, Long previewImg, List<RequiredOption> requiredOptionList, Long categoryId) {
         this.itemId = itemId;
         this.itemName = itemName;
         this.price = price;
         this.previewImg = previewImg;
         this.requiredOptions = requiredOptionList;
+        this.categoryId = categoryId;
     }
 
     @Override

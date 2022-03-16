@@ -186,7 +186,7 @@ public class RestOrderController {
             try{
                 if(iamportPayment != null) {
                     // payment 환불 요청.
-                    paymentService.refundPaymentAll(iamportPayment.getImpUid(), iamportPayment.getAmount().longValue(), paymentEx.getErrorCode(), authentication.getName());
+                    paymentService.refundPaymentForPaymentValidationFail(iamportPayment.getImpUid(), iamportPayment.getAmount().longValue(), paymentEx.getErrorCode());
                     // 임시 주문 삭제.
                     orderService.deleteTempOrder(iamportPayment.getMerchantUid(), authentication.getName());
                 }
@@ -200,5 +200,4 @@ public class RestOrderController {
                     HttpStatus.OK);
         }
     }
-
 }

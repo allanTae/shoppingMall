@@ -1,8 +1,12 @@
 package com.allan.shoppingMall.domains.cart.service;
 
 import com.allan.shoppingMall.common.exception.ErrorCode;
+import com.allan.shoppingMall.common.exception.cart.CartAddItemFailException;
+import com.allan.shoppingMall.common.exception.category.CategoryItemNotFoundException;
+import com.allan.shoppingMall.common.exception.category.CategoryNotFoundException;
 import com.allan.shoppingMall.common.exception.item.ItemNotFoundException;
 import com.allan.shoppingMall.common.exception.cart.CartNotFoundException;
+import com.allan.shoppingMall.common.exception.order.OrderFailException;
 import com.allan.shoppingMall.domains.cart.domain.Cart;
 import com.allan.shoppingMall.domains.cart.domain.CartItem;
 import com.allan.shoppingMall.domains.cart.domain.CartRepository;
@@ -10,14 +14,18 @@ import com.allan.shoppingMall.domains.cart.domain.model.CartDTO;
 import com.allan.shoppingMall.domains.cart.domain.model.CartItemDTO;
 import com.allan.shoppingMall.domains.cart.domain.model.CartRequest;
 import com.allan.shoppingMall.domains.cart.domain.model.RequiredOption;
+import com.allan.shoppingMall.domains.category.domain.*;
+import com.allan.shoppingMall.domains.item.domain.accessory.AccessoryRepository;
 import com.allan.shoppingMall.domains.item.domain.item.Item;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
 import com.allan.shoppingMall.domains.item.domain.clothes.ClothesRepository;
+import com.allan.shoppingMall.domains.item.domain.item.ItemRepository;
 import com.allan.shoppingMall.domains.member.domain.MemberRepository;
 import com.allan.shoppingMall.domains.order.domain.model.OrderItemSummaryRequest;
 import com.allan.shoppingMall.domains.order.domain.model.OrderSummaryRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.integration.IntegrationProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,9 +39,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class CartService {
-    private final MemberRepository memberRepository;
     private final CartRepository cartRepository;
-    private final ClothesRepository clothesRepository;
+    private final CategoryItemRepository categoryItemRepository;
+    private final ItemRepository itemRepository;
 
     /**
      * 회원 장바구니 생성 메소드.
@@ -45,11 +53,14 @@ public class CartService {
         Cart cart = cartRepository.findByAuthId(authId)
                 .orElseThrow(() -> new CartNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
+        log.info("cartRequest: " + cartRequest.toString());
+
         List<CartItem> cartItems = cartRequest.getCartItems().stream()
                 .map(cartItemSummary -> {
-                    Clothes clothes = clothesRepository.findById(cartItemSummary.getItemId()).orElseThrow(()
-                            -> new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
-                    return new CartItem(clothes, cartItemSummary.getCartQuantity(), cartItemSummary.getSize());
+                    Item item = itemRepository.findById(cartItemSummary.getItemId()).orElseThrow(() ->
+                            new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+
+                    return new CartItem(item, cartItemSummary.getCartQuantity(), cartItemSummary.getSize());
                 }).collect(Collectors.toList());
 
         cart.addCartItems(cartItems);
@@ -63,10 +74,10 @@ public class CartService {
     public void addTempCart(CartRequest cartRequest){
         List<CartItem> cartItems = cartRequest.getCartItems().stream()
                 .map(cartItemSummary -> {
-                    Clothes clothes = clothesRepository.findById(cartItemSummary.getItemId()).orElseThrow(()
-                            -> new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+                    Item item = itemRepository.findById(cartItemSummary.getItemId()).orElseThrow(() ->
+                            new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
-                    return new CartItem(clothes, cartItemSummary.getCartQuantity(), cartItemSummary.getSize());
+                    return new CartItem(item, cartItemSummary.getCartQuantity(), cartItemSummary.getSize());
                 }).collect(Collectors.toList());
 
         Cart cart = Cart.builder()
@@ -87,10 +98,10 @@ public class CartService {
 
         List<CartItem> cartItems = cartRequest.getCartItems().stream()
                 .map(cartItemSummary -> {
-                    Clothes clothes = clothesRepository.findById(cartItemSummary.getItemId()).orElseThrow(()
-                            -> new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+                    Item item = itemRepository.findById(cartItemSummary.getItemId()).orElseThrow(() ->
+                            new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
-                    return new CartItem(clothes, cartItemSummary.getCartQuantity(), cartItemSummary.getSize());
+                    return new CartItem(item, cartItemSummary.getCartQuantity(), cartItemSummary.getSize());
                 }).collect(Collectors.toList());
 
         cart.addCartItems(cartItems);
@@ -127,7 +138,7 @@ public class CartService {
                     -> new CartNotFoundException(ErrorCode.MEMBER_CART_NOT_FOUND));
             cartDTO = transferDTO(cart);
         }catch (CartNotFoundException e){
-            log.info(e.getMessage());
+            log.error(e.getMessage());
         }finally {
             return cartDTO;
         }
@@ -144,10 +155,11 @@ public class CartService {
         try{
             Cart cart = cartRepository.findByCkId(ckId).orElseThrow(() ->
                     new CartNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+
             cartDTO = transferDTO(cart);
             cartDTO.setCkId(ckId);
         }catch (CartNotFoundException e){
-            log.info(e.getMessage());
+            log.error(e.getMessage());
         }finally {
             return cartDTO;
         }
@@ -160,9 +172,12 @@ public class CartService {
      */
     private CartDTO transferDTO(Cart cart){
         CartDTO cartDTO = new CartDTO(cart.getCartId());
-
         for(CartItem cartItem : cart.getCartItems()) {
             Item item = cartItem.getItem(); // 장바구니 상품 정보.
+
+            CategoryItem findCategoryItem = categoryItemRepository.getCategoryItem(List.of(CategoryCode.CLOTHES, CategoryCode.ACCESSORY), item.getItemId()).orElseThrow(()
+                    -> new CategoryItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+
             // 이미 장바구니에 같은 상품이 존재하는 경우.
             if (cartDTO.getCartItems().containsKey(item.getItemId())) {
                 cartDTO.getCartItems()
@@ -174,7 +189,8 @@ public class CartService {
             // 장바구니에 같은 상품이 존재하지 않는 경우.
             else {
                 cartDTO.getCartItems().put(item.getItemId(),
-                        new CartItemDTO(item.getItemId(), item.getItemImages().get(0).getItemImageId(), item.getName(), item.getPrice(), cartItem.getCartQuantity(), cartItem.getSize()));
+                        new CartItemDTO(item.getItemId(), item.getItemImages().get(0).getItemImageId(), item.getName(),
+                                item.getPrice(), cartItem.getCartQuantity(), cartItem.getSize(), findCategoryItem.getCategory().getCategoryId()));
             }
         }
 
@@ -209,6 +225,7 @@ public class CartService {
                     .previewImg(cartItemDTO.getItemProfileImg())
                     .price(cartItemDTO.getItemPrice())
                     .requiredOptionList(requiredOptions)
+                    .categoryId(cartItemDTO.getCategoryId())
                     .build();
 
             if(orderItemSummaryRequestList.contains(orderItemSummaryRequest)){
@@ -256,6 +273,7 @@ public class CartService {
                         .previewImg(cartItemDTO.getItemProfileImg())
                         .price(cartItemDTO.getItemPrice())
                         .requiredOptionList(requiredOptions)
+                        .categoryId(cartItemDTO.getCategoryId())
                         .build();
 
                 if(orderItemSummaryRequestList.contains(orderItemSummaryRequest)){
@@ -273,24 +291,6 @@ public class CartService {
         return new OrderSummaryRequest(totalAmount, totalQuantity, orderItemSummaryRequestList);
     }
 
-    /**
-     * 장바구니를 조회하여 장바구니 상품 정보를 수정하는 메소드 입니다.
-     * @param cartRequest 장바구니 요청 정보.
-     */
-    @Transactional
-    public void modifyCart(CartRequest cartRequest, Long cartId){
-        Cart findCart = cartRepository.findById(cartId).orElseThrow(()
-                -> new CartNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
-
-        List<CartItem> cartItemList = cartRequest.getCartItems().stream()
-                .map(cartLineRequest -> {
-                    Clothes findClothes = clothesRepository.findById(cartLineRequest.getItemId()).orElseThrow(()
-                            -> new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
-                    return new CartItem(findClothes, cartLineRequest.getCartQuantity(), cartLineRequest.getSize());
-                }).collect(Collectors.toList());
-
-        findCart.modifyCartItems(cartItemList);
-    }
 
     /**
      * 회원 장바구니를 조회하여 장바구니 상품 정보를 수정하는 메소드 입니다.
@@ -304,13 +304,15 @@ public class CartService {
 
         List<CartItem> cartItemList = cartRequest.getCartItems().stream()
                 .map(cartLineRequest -> {
-                    Clothes findClothes = clothesRepository.findById(cartLineRequest.getItemId()).orElseThrow(()
+                    Item findItem = itemRepository.findById(cartLineRequest.getItemId()).orElseThrow(()
                             -> new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
-                    return new CartItem(findClothes, cartLineRequest.getCartQuantity(), cartLineRequest.getSize());
+
+                    return new CartItem(findItem, cartLineRequest.getCartQuantity(), cartLineRequest.getSize());
                 }).collect(Collectors.toList());
 
         findCart.modifyCartItems(cartItemList);
     }
+
 
     /**
      * 비회원 장바구니를 조회하여 장바구니 상품 정보를 수정하는 메소드 입니다.
@@ -324,9 +326,10 @@ public class CartService {
 
         List<CartItem> cartItemList = cartRequest.getCartItems().stream()
                 .map(cartLineRequest -> {
-                    Clothes findClothes = clothesRepository.findById(cartLineRequest.getItemId()).orElseThrow(()
+                    Item findItem = itemRepository.findById(cartLineRequest.getItemId()).orElseThrow(()
                             -> new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
-                    return new CartItem(findClothes, cartLineRequest.getCartQuantity(), cartLineRequest.getSize());
+
+                    return new CartItem(findItem, cartLineRequest.getCartQuantity(), cartLineRequest.getSize());
                 }).collect(Collectors.toList());
 
         findCart.modifyCartItems(cartItemList);

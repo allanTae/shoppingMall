@@ -1,7 +1,6 @@
 package com.allan.shoppingMall.domains.payment.service;
 
 import com.allan.shoppingMall.common.exception.ErrorCode;
-import com.allan.shoppingMall.domains.order.service.OrderService;
 import com.allan.shoppingMall.domains.payment.domain.Payment;
 import com.allan.shoppingMall.domains.payment.domain.PaymentRepository;
 import com.siot.IamportRestClient.IamportClient;
@@ -13,7 +12,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -66,7 +64,7 @@ public class PaymentServiceTest {
         Long TEST_DELETED_ORDER_ID = 1l;
 
         //when
-        paymentService.refundPaymentAll(TEST_PAYMENT.getPaymentNum(), TEST_PAYMENT.getPayAmount(), ErrorCode.PAYMENT_AMOUNT_IS_NOT_EQUAL_BY_ORDER_AMOUNT, any());
+        paymentService.refundPaymentForPaymentValidationFail(TEST_PAYMENT.getPaymentNum(), TEST_PAYMENT.getPayAmount(), ErrorCode.PAYMENT_AMOUNT_IS_NOT_EQUAL_BY_ORDER_AMOUNT);
 
         //then
         verify(client, atLeastOnce()).cancelPaymentByImpUid(any());

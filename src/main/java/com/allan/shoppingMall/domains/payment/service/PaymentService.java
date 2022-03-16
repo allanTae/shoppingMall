@@ -5,10 +5,14 @@ import com.allan.shoppingMall.common.exception.PaymentNotFoundException;
 import com.allan.shoppingMall.common.exception.order.RefundFailException;
 import com.allan.shoppingMall.domains.payment.domain.PaymentRepository;
 import com.allan.shoppingMall.domains.payment.domain.model.PaymentDTO;
+import com.google.gson.annotations.SerializedName;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.request.CancelData;
+import com.siot.IamportRestClient.response.AccessToken;
+import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
+import com.siot.IamportRestClient.response.PaymentCancelDetail;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Arrays;
 
 /**
  * 결제 도메인 서비스단 코드입니다.(IamPort api 에 의존하고 있습니다.)
@@ -63,12 +68,12 @@ public class PaymentService {
      * 결제 실패로 인하여 결제 금액을 모두 환불 요청하는 메소드입니다.
      * 결제 환불을 진행 합니다. 임시저장 상태의 주문 도메인은 삭제합니다.(단, 결제금액과 주문금액의 일치 유효성 검사 실패 경우에만 삭제합니다.)
      * @param impUid iamport api 결제 시 제공하는 고유 결제 번호입니다.
-     * @param cancelAmount 결제 할 총 금액.
+     * @param cancelAmount 환불 할 총 금액.
      * @param errorCode error 정보입니다.
      * @return Payment domain의 결제번호.
      */
     @Transactional
-    public String refundPaymentAll(String impUid, Long cancelAmount, ErrorCode errorCode, String authId){
+    public String refundPaymentForPaymentValidationFail(String impUid, Long cancelAmount, ErrorCode errorCode){
 
         // 환불 요청 정보를 생성합니다.
         CancelData cancelData = new CancelData(impUid, true);
@@ -87,13 +92,46 @@ public class PaymentService {
 
         }
 
-        // 결제 실패로 인한 환불 로직은 Payment 객체가 생성되어 있지 않기 때문에, 결제 정보를 수정하지 않습니다.
-        // 환불정보 Payment domain update.
-//        com.siot.IamportRestClient.response.Payment finalCancelResponse = cancelResponse;
-//        paymentRepository.findByPaymentNum(impUid).ifPresent(payment ->
-//                payment.changeCancelAmount(finalCancelResponse.getCancelAmount().longValue()));
-
         return cancelResponse.getMerchantUid();
+    }
+
+    /**
+     * iamport 결제 정보를 조회 후 환불 하는 메소드 입니다.
+     * @param impUid iamport api 결제 시 제공하는 고유 결제 번호입니다.
+     * @param cacelAmount 환불 할 총 금액.
+     */
+    public void refundPayment(String impUid, Long cacelAmount){
+
+        com.siot.IamportRestClient.response.Payment cancelResponse = null;
+
+        try{
+            // 결제 정보 조회.
+            Payment paymentResponse = api.paymentByImpUid(impUid).getResponse();
+
+            // 환불 요청 정보를 생성합니다.
+            CancelData cancelData = new CancelData(impUid, true);
+            cancelData.setChecksum(BigDecimal.valueOf(paymentResponse.getAmount().longValue()));
+
+            IamportResponse<Payment> payment_response = api.cancelPaymentByImpUid(cancelData);
+            cancelResponse = payment_response.getResponse();
+
+            if(cancelResponse == null){
+                throw new RefundFailException(payment_response.getMessage(), ErrorCode.IAMPORT_ERROR);
+            }else{
+                Payment finalCacelResponse1 = cancelResponse;
+                paymentRepository.findByPaymentNum(impUid).ifPresent(payment ->
+                {
+                    payment.changeCancelAmount(finalCacelResponse1.getCancelAmount().longValue());
+                });
+            }
+
+        }catch (IOException | IamportResponseException e){
+            // iamport api request 예외 전환.
+            if(e instanceof IamportResponseException || e instanceof IOException){
+                throw new RefundFailException(e.getMessage(), ErrorCode.IAMPORT_ERROR);
+            }
+        }
+
     }
 
     /**

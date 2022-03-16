@@ -103,9 +103,9 @@
 
        <div class="btnWrap mb-5">
         <c:if test="${orderInfo.isCancelOrder}">
-            <button type="button" class="btn btn-warning" id="btnOrderCancel">주문 취소</button>
+            <button type="button" class="btn btn-secondary" id="btnOrderCancel">주문 취소</button>
         </c:if>
-        <button type="button" class="btn btn-warning" id="btnPrev">이전 페이지</button>
+        <button type="button" class="btn btn-secondary" id="btnPrev">이전 페이지</button>
        </div>
 	</div>
 </article>
@@ -119,6 +119,37 @@
 
     // 주문 취소 button event.
     $(document).on("click", "#btnOrderCancel", function(){
-        alert("업데이트 준비중 입니다.");
+        orderCancelConfirm("알림", "현 주문건을 취소하시겠습니까.?");
     });
+
+</script>
+
+<!-- sweetalert -->
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<script type="text/javascript">
+	var orderCancelConfirm = function(titleText, contentText,) {
+        swal({
+          title: titleText,
+          text: contentText,
+          icon: "warning",
+          buttons: {
+            cancel: "취소",
+            orderResult: {
+                text: "네",
+                value: 1,
+            },
+          },
+        })
+        .then((value) => {
+          if(value === 1){
+            var url= "${pageContext.request.contextPath}/order/cancel/${orderInfo.orderNum}";
+            location.href = url;
+            let form =$('<form action="${pageContext.request.contextPath}/order/cancel/${orderInfo.orderNum}" method="post"></form>');
+            $("body").append(form);
+            form.submit();
+          }
+        });
+	}
+
 </script>

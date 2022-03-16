@@ -436,6 +436,7 @@
           orderFormInfo += '<input type="text" name="orderItems[0].itemName" value="${clothesInfo.clothesName}" />';
           orderFormInfo += '<input type="text" name="orderItems[0].previewImg" value="${clothesInfo.previewImages[0]}" />';
           orderFormInfo += '<input type="text" name="orderItems[0].price" value="${clothesInfo.price}" />';
+          orderFormInfo += '<input type="text" name="orderItems[0].categoryId" value="${clothesInfo.categoryId}" />';
 
           for(var i = 0; i<orderItems.length; i++){
               orderFormInfo += '<input type="text" name="orderItems[0].requiredOptions[' + i + '].itemSize" value="' + orderItems[i].size + '" />';

@@ -15,11 +15,13 @@ public class CartLineRequest {
     private Long itemId;
     private Long cartQuantity;
     private SizeLabel size;
+    private Long categoryId;
 
     @Override
     public String toString() {
         return "CartItemSummary{" +
                 "itemId=" + itemId +
+                ", categoryId=" + categoryId +
                 ", cartQuantity=" + cartQuantity +
                 ", size=" + size +
                 '}';

@@ -2,7 +2,9 @@ package com.allan.shoppingMall.common.aop;
 
 import com.allan.shoppingMall.common.config.aop.OrderCompletedPublishAop;
 import com.allan.shoppingMall.common.value.Address;
+import com.allan.shoppingMall.domains.category.domain.CategoryRepository;
 import com.allan.shoppingMall.domains.delivery.domain.Delivery;
+import com.allan.shoppingMall.domains.item.domain.accessory.AccessoryRepository;
 import com.allan.shoppingMall.domains.item.domain.clothes.*;
 import com.allan.shoppingMall.domains.item.domain.item.ItemSize;
 import com.allan.shoppingMall.domains.item.domain.item.ItemSizeRepository;
@@ -43,6 +45,9 @@ public class OrderCompletedPublishAopTest {
         ClothesRepository TEST_CLOTHES_REPOSITORY = mock(ClothesRepository.class);
         ItemSizeRepository TEST_CLOTHES_SIZE_REPOSITORY = mock(ItemSizeRepository.class);
         PaymentService TEST_PAYMENT_SERVICE = mock(PaymentService.class);
+        CategoryRepository TEST_CATEGORY_REPOSITORY = mock(CategoryRepository.class);
+        AccessoryRepository TEST_ACCESSORY_REPOSITORY = mock(AccessoryRepository.class);
+        ItemSizeRepository TEST_ITEM_REPOSITORY = mock(ItemSizeRepository.class);
 
         Clothes TEST_CLOTHES = Clothes.builder()
                 .price(1000l)
@@ -83,8 +88,8 @@ public class OrderCompletedPublishAopTest {
                 .name("testPayName")
                 .build();
 
-        AspectJProxyFactory factory = new AspectJProxyFactory(new OrderService(TEST_ORDER_REPOSITORY, TEST_CLOTHES_REPOSITORY,
-                TEST_CLOTHES_SIZE_REPOSITORY, TEST_PAYMENT_REPOSITORY, TEST_PAYMENT_SERVICE, TEST_MILEAGE_SERVICE));
+        AspectJProxyFactory factory = new AspectJProxyFactory(new OrderService(TEST_ORDER_REPOSITORY, TEST_CLOTHES_REPOSITORY, TEST_ACCESSORY_REPOSITORY, TEST_ITEM_REPOSITORY,
+                TEST_PAYMENT_REPOSITORY, TEST_PAYMENT_SERVICE, TEST_MILEAGE_SERVICE, TEST_CATEGORY_REPOSITORY));
         factory.addAspect(new OrderCompletedPublishAop(TEST_APPLICATION_CONTEXT));
         OrderService proxy = factory.getProxy();
 

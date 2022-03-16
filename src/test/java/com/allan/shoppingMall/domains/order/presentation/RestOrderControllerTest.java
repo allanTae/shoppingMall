@@ -1,12 +1,10 @@
 package com.allan.shoppingMall.domains.order.presentation;
 
-import com.allan.shoppingMall.common.config.security.SecurityConfig;
 import com.allan.shoppingMall.common.exception.ErrorCode;
 import com.allan.shoppingMall.common.exception.order.payment.PaymentFailByValidatedAmountException;
 import com.allan.shoppingMall.common.exception.order.payment.PaymentFailByValidatedOrderStatusException;
 import com.allan.shoppingMall.common.exception.order.payment.PaymentFailException;
 import com.allan.shoppingMall.common.exception.order.RefundFailException;
-import com.allan.shoppingMall.domains.cart.domain.CartRepository;
 import com.allan.shoppingMall.domains.cart.service.CartService;
 import com.allan.shoppingMall.domains.infra.AuthenticationConverter;
 import com.allan.shoppingMall.domains.member.domain.Member;
@@ -24,9 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -160,7 +155,7 @@ public class RestOrderControllerTest {
         doThrow( TEST_PAYMENT_FAIL_EXCEPTION).when(orderService).validatePaymentByIamport(any(), any());
 
         RefundFailException TEST_REFUND_FAIL_EXCEPTION = new RefundFailException(ErrorCode.ORDER_REFUND_NOT_ALLOWED);
-        doThrow(TEST_REFUND_FAIL_EXCEPTION).when(paymentService).refundPaymentAll(any(), any(), any(), any());
+        doThrow(TEST_REFUND_FAIL_EXCEPTION).when(paymentService).refundPaymentForPaymentValidationFail(any(), any(), any());
 
         PaymentRequest TEST_PAYMENT_REQUEST = new PaymentRequest();
         TEST_PAYMENT_REQUEST.setImp_uid("test_imp_uid");
@@ -173,7 +168,7 @@ public class RestOrderControllerTest {
 
         //then
         verify(orderService, atLeastOnce()).validatePaymentByIamport(any(), any());
-        verify(paymentService, atLeastOnce()).refundPaymentAll(any(), any(), any(), any());
+        verify(paymentService, atLeastOnce()).refundPaymentForPaymentValidationFail(any(), any(), any());
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("apiResult").value(OrderResult.PAYMENT_REFUND_FAIL.getResult()))
@@ -199,7 +194,7 @@ public class RestOrderControllerTest {
         doThrow( TEST_PAYMENT_FAIL_EXCEPTION).when(orderService).validatePaymentByIamport(any(), any());
 
         String TEST_REFUND_PAYMENT_NUM = "test_payment_num";
-        given(paymentService.refundPaymentAll(any(),any(), any(), any()))
+        given(paymentService.refundPaymentForPaymentValidationFail(any(),any(), any()))
                 .willReturn(TEST_REFUND_PAYMENT_NUM);
 
         PaymentRequest TEST_PAYMENT_REQUEST = new PaymentRequest();
@@ -213,7 +208,7 @@ public class RestOrderControllerTest {
 
         //then
         verify(orderService, atLeastOnce()).validatePaymentByIamport(any(), any());
-        verify(paymentService, atLeastOnce()).refundPaymentAll(any(), any(), any(), any());
+        verify(paymentService, atLeastOnce()).refundPaymentForPaymentValidationFail(any(), any(), any());
         verify(orderService, atLeastOnce()).deleteTempOrder(TEST_PAYMENT.getMerchantUid(), "user");
         resultActions
                 .andExpect(status().isOk())
@@ -241,7 +236,7 @@ public class RestOrderControllerTest {
         doThrow( TEST_PAYMENT_FAIL_EXCEPTION).when(orderService).validatePaymentByIamport(any(), any());
 
         String TEST_REFUND_PAYMENT_NUM = "test_payment_num";
-        given(paymentService.refundPaymentAll(any(),any(), any(), any()))
+        given(paymentService.refundPaymentForPaymentValidationFail(any(),any(), any()))
                 .willReturn(TEST_REFUND_PAYMENT_NUM);
 
         PaymentRequest TEST_PAYMENT_REQUEST = new PaymentRequest();
@@ -255,7 +250,7 @@ public class RestOrderControllerTest {
 
         //then
         verify(orderService, atLeastOnce()).validatePaymentByIamport(any(), any());
-        verify(paymentService, atLeastOnce()).refundPaymentAll(any(), any(), any(), any());
+        verify(paymentService, atLeastOnce()).refundPaymentForPaymentValidationFail(any(), any(), any());
         verify(orderService, atLeastOnce()).deleteTempOrder(TEST_PAYMENT.getMerchantUid(), "user");
         resultActions
                 .andExpect(status().isOk())

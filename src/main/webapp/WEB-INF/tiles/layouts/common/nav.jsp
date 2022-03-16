@@ -21,14 +21,14 @@
             }
 
             // 조회한 상품 카테고리 정보를 저장하는 오브젝트.
-            var categoryObj;
+            var shopNavCategoryObj;
 
             $(function(){
-                    setCategory();
+                    setShopNavCategory();
                 });
 
             // 카테고리 정보 set 함수.
-            function setCategory(){
+            function setShopNavCategory(){
                 var headers = {"Content-Type" : "application/json; charset=UTF-8;"
                               , "X-HTTP-Method-Override" : "GET"};
                 $.ajax({
@@ -38,7 +38,7 @@
                   , dataType : 'json'
                   , success: function(result){
                     if(result.apiResultMessage === "카테고리 조회에 성공하였습니다."){
-                        categoryObj = result.category; // 카테고리 정보 저장.
+                        shopNavCategoryObj = result.category; // 카테고리 정보 저장.
                         if(Object.keys(result.category.child).length > 0){
                             var html = '';
 

@@ -1,15 +1,23 @@
 package com.allan.shoppingMall.domains.order.service;
 
 import com.allan.shoppingMall.common.exception.ErrorCode;
+import com.allan.shoppingMall.common.exception.category.CategoryNotFoundException;
 import com.allan.shoppingMall.common.exception.item.ItemNotFoundException;
+import com.allan.shoppingMall.common.exception.order.OrderFailException;
 import com.allan.shoppingMall.common.exception.order.OrderNotFoundException;
 import com.allan.shoppingMall.common.exception.order.payment.PaymentFailByValidatedAmountException;
 import com.allan.shoppingMall.common.exception.order.payment.PaymentFailException;
 import com.allan.shoppingMall.common.value.Address;
+import com.allan.shoppingMall.domains.category.domain.Category;
+import com.allan.shoppingMall.domains.category.domain.CategoryCode;
+import com.allan.shoppingMall.domains.category.domain.CategoryRepository;
 import com.allan.shoppingMall.domains.delivery.domain.Delivery;
 import com.allan.shoppingMall.domains.delivery.domain.DeliveryStatus;
+import com.allan.shoppingMall.domains.item.domain.accessory.Accessory;
+import com.allan.shoppingMall.domains.item.domain.accessory.AccessoryRepository;
 import com.allan.shoppingMall.domains.item.domain.clothes.ClothesRepository;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
+import com.allan.shoppingMall.domains.item.domain.item.Item;
 import com.allan.shoppingMall.domains.item.domain.item.ItemSize;
 import com.allan.shoppingMall.domains.item.domain.item.ItemSizeRepository;
 import com.allan.shoppingMall.domains.member.domain.Member;
@@ -44,10 +52,12 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final ClothesRepository clothesRepository;
+    private final AccessoryRepository accessoryRepository;
     private final ItemSizeRepository itemSizeRepository;
     private final PaymentRepository paymentRepository;
     private final PaymentService paymentService;
     private final MileageService mileageService;
+    private final CategoryRepository categoryRepository;
 
     /**
      * 상품 상세페이지를 통해서 바로 주문하는 경우 사용하는 주문 메소드.
@@ -84,13 +94,28 @@ public class OrderService {
                 .stream()
                 .map(orderLineRequest -> {
                     // findItem 의 카테고리를 확인 해서 분기 처리가 필요하다.(카테고리 추가 후 로직 변경 필요.)
-                    // clothes 상품인 경우.
-                    Clothes clothes = clothesRepository.findById(orderLineRequest.getItemId()).orElseThrow(()
-                            -> new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+                    Category findCategory = categoryRepository.findById(orderLineRequest.getCategoryId()).orElseThrow(() ->
+                            new CategoryNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
-                    ItemSize itemSize = itemSizeRepository.getItemSizebySizelabel(clothes, orderLineRequest.getSize());
+                    Item item = null;
+                    ItemSize itemSize = null;
+                    if(findCategory.getCategoryCode().getCode() == CategoryCode.CLOTHES.getCode()) {
+                        // clothes 상품인 경우.
+                        item = clothesRepository.findById(orderLineRequest.getItemId()).orElseThrow(()
+                                -> new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+                        itemSize = itemSizeRepository.getItemSizebySizelabel(item, orderLineRequest.getSize());
 
-                    return new OrderItem(orderLineRequest.getOrderQuantity(), clothes, itemSize);
+                    }else if(findCategory.getCategoryCode().getCode() == CategoryCode.ACCESSORY.getCode()){
+                        // accessory 상품인 경우.
+                        item = accessoryRepository.findById(orderLineRequest.getItemId()).orElseThrow(() ->
+                                new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+                        itemSize = itemSizeRepository.getItemSizebySizelabel(item, orderLineRequest.getSize());
+
+                    }else{
+                        throw new OrderFailException("주문 가능한 상품이 아닙니다.", ErrorCode.INVALID_ORDER_REQUEST_INPUT_VALUE);
+                    }
+
+                    return new OrderItem(orderLineRequest.getOrderQuantity(), item, itemSize);
                     // 그외의 상품인 경우.
                 }).collect(Collectors.toList());
         order.changeOrderItems(orderItems);
@@ -119,12 +144,22 @@ public class OrderService {
      */
     @Transactional
     public Long cancelMyOrder(String orderNum, String authId){
-        Order findOrder = orderRepository.findByOrderNumAndAuthId(orderNum, authId).orElseThrow(()
+        Order findOrder = orderRepository.findByOrderNumAndAuthId(authId, orderNum).orElseThrow(()
                 -> new OrderNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+
+        long orderItemsTotalPrice = findOrder.getOrderItems()
+                .stream()
+                .mapToLong(orderItem -> {
+                    return (orderItem.getItem().getPrice() * orderItem.getOrderQuantity());
+                }).sum();
 
         findOrder.cancelOrder();
 
-        mileageService.deleteMileage(findOrder.getOrderNum()); // 마일리지 삭제.
+        // 마일리지 삭제.
+        mileageService.deleteMileage(findOrder.getOrderNum());
+
+        //주문 전체금액 환불처리.
+        paymentService.refundPayment(findOrder.getPaymentNum(), orderItemsTotalPrice);
 
         return findOrder.getOrderId();
     }
@@ -139,7 +174,7 @@ public class OrderService {
 
         int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);
         pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdDate"));
-        Page<Order> orderPage = orderRepository.getOrderListByAuthId(authId, List.of(OrderStatus.ORDER_ITEM_READY, OrderStatus.ORDER_COMPLETE, OrderStatus.ORDER_CANCEL, OrderStatus.ORDER_COMPLETE), pageable);
+        Page<Order> orderPage = orderRepository.getOrderListByAuthId(authId, List.of(OrderStatus.ORDER_ITEM_READY, OrderStatus.ORDER_COMPLETE, OrderStatus.ORDER_CANCEL), pageable);
 
         return orderPage;
     }

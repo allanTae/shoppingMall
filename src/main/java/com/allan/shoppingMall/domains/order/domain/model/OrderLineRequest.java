@@ -18,15 +18,17 @@ public class OrderLineRequest {
 
     private Long itemId;
     private Long orderQuantity;
+    private Long categoryId;
 
     // clothes 상품 주문 할 때 사용하는 사이즈 정보.
     private SizeLabel size;
 
     @Builder
-    public OrderLineRequest(Long itemId, Long orderQuantity, SizeLabel size) {
+    public OrderLineRequest(Long itemId, Long orderQuantity, SizeLabel size, Long categoryId) {
         this.itemId = itemId;
         this.orderQuantity = orderQuantity;
         this.size = size;
+        this.categoryId =categoryId;
     }
 
     @Override
@@ -35,6 +37,7 @@ public class OrderLineRequest {
                 "itemId=" + itemId +
                 ", orderQuantity=" + orderQuantity +
                 ", size=" + size +
+                ", categoryId=" + categoryId +
                 '}';
     }
 }

@@ -4,7 +4,9 @@ import com.allan.shoppingMall.domains.cart.domain.Cart;
 import com.allan.shoppingMall.domains.cart.domain.CartItem;
 import com.allan.shoppingMall.domains.cart.domain.CartRepository;
 import com.allan.shoppingMall.domains.cart.domain.model.*;
+import com.allan.shoppingMall.domains.category.domain.*;
 import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSize;
+import com.allan.shoppingMall.domains.item.domain.item.ItemRepository;
 import com.allan.shoppingMall.domains.item.domain.item.ItemSize;
 import com.allan.shoppingMall.domains.item.domain.item.ItemImage;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
@@ -44,6 +46,12 @@ public class CartServiceTest {
     @Mock
     ClothesRepository clothesRepository;
 
+    @Mock
+    CategoryItemRepository categoryItemRepository;
+
+    @Mock
+    ItemRepository itemRepository;
+
     @InjectMocks
     CartService cartService;
 
@@ -63,8 +71,8 @@ public class CartServiceTest {
         CartRequest TEST_CARTREQUEST = CartRequest.builder()
                 .cartCkId("testCkId")
                 .cartItems(List.of(
-                        new CartLineRequest(1l, 1l, SizeLabel.S),
-                        new CartLineRequest(2l, 2l, SizeLabel.M)
+                        new CartLineRequest(1l, 1l, SizeLabel.S, 1l),
+                        new CartLineRequest(2l, 2l, SizeLabel.M, 1l)
 
                 ))
                 .build();
@@ -77,9 +85,9 @@ public class CartServiceTest {
                 .name("testClothes2")
                 .build();
 
-        given(clothesRepository.findById(1l))
+        given(itemRepository.findById(1l))
                 .willReturn(Optional.of(TEST_CLOTHES_1));
-        given(clothesRepository.findById(2l))
+        given(itemRepository.findById(2l))
                 .willReturn(Optional.of(TEST_CLOTHES_2));
 
         //when
@@ -87,8 +95,8 @@ public class CartServiceTest {
 
         //then
         verify(cartRepository, atLeastOnce()).findByCkId(any());
-        verify(clothesRepository, atLeastOnce()).findById(1l);
-        verify(clothesRepository, atLeastOnce()).findById(2l);
+        verify(itemRepository, atLeastOnce()).findById(1l);
+        verify(itemRepository, atLeastOnce()).findById(2l);
         assertThat(TEST_CART.getCartItems().size(), is(2));
         assertThat(TEST_CART.getCartItems().get(0).getItem().getName(), is(TEST_CLOTHES_1.getName()));
         assertThat(TEST_CART.getCartItems().get(1).getItem().getName(), is(TEST_CLOTHES_2.getName()));
@@ -100,8 +108,8 @@ public class CartServiceTest {
         CartRequest TEST_CARTREQUEST = CartRequest.builder()
                 .cartCkId("testCkId")
                 .cartItems(List.of(
-                        new CartLineRequest(1l, 1l, SizeLabel.S),
-                        new CartLineRequest(2l, 2l, SizeLabel.M)
+                        new CartLineRequest(1l, 1l, SizeLabel.S, 1l),
+                        new CartLineRequest(2l, 2l, SizeLabel.M, 1l)
 
                 ))
                 .build();
@@ -114,17 +122,17 @@ public class CartServiceTest {
                 .name("testClothes2")
                 .build();
 
-        given(clothesRepository.findById(1l))
+        given(itemRepository.findById(1l))
                 .willReturn(Optional.of(TEST_CLOTHES_1));
-        given(clothesRepository.findById(2l))
+        given(itemRepository.findById(2l))
                 .willReturn(Optional.of(TEST_CLOTHES_2));
 
         //when
         cartService.addTempCart(TEST_CARTREQUEST);
 
         //then
-        verify(clothesRepository, atLeastOnce()).findById(1l);
-        verify(clothesRepository, atLeastOnce()).findById(2l);
+        verify(itemRepository, atLeastOnce()).findById(1l);
+        verify(itemRepository, atLeastOnce()).findById(2l);
         verify(cartRepository, atLeastOnce()).save(any());
     }
 
@@ -134,8 +142,8 @@ public class CartServiceTest {
         CartRequest TEST_CARTREQUEST = CartRequest.builder()
                 .cartCkId("testCkId")
                 .cartItems(List.of(
-                        new CartLineRequest(1l, 1l, SizeLabel.S),
-                        new CartLineRequest(2l, 2l, SizeLabel.M)
+                        new CartLineRequest(1l, 1l, SizeLabel.S, 1l),
+                        new CartLineRequest(2l, 2l, SizeLabel.M, 1l)
 
                 ))
                 .build();
@@ -152,9 +160,9 @@ public class CartServiceTest {
                 .name("testClothes2")
                 .build();
 
-        given(clothesRepository.findById(1l))
+        given(itemRepository.findById(1l))
                 .willReturn(Optional.of(TEST_CLOTHES_1));
-        given(clothesRepository.findById(2l))
+        given(itemRepository.findById(2l))
                 .willReturn(Optional.of(TEST_CLOTHES_2));
 
         Cart TEST_CART = Cart.builder().build();
@@ -165,8 +173,8 @@ public class CartServiceTest {
         cartService.addMemberCart(TEST_CARTREQUEST, TEST_MEMBER.getAuthId());
 
         //then
-        verify(clothesRepository, atLeastOnce()).findById(1l);
-        verify(clothesRepository, atLeastOnce()).findById(2l);
+        verify(itemRepository, atLeastOnce()).findById(1l);
+        verify(itemRepository, atLeastOnce()).findById(2l);
         verify(cartRepository, atLeastOnce()).findByAuthId(TEST_MEMBER.getAuthId());
         assertThat(TEST_CART.getCartItems().size(), is(2));
         assertThat(TEST_CART.getCartItems().get(0).getItem().getName(), is(TEST_CLOTHES_1.getName()));
@@ -205,6 +213,13 @@ public class CartServiceTest {
         given(cartRepository.findByAuthId(any()))
                 .willReturn(Optional.of(TEST_MEMBER_CART));
 
+        Category TEST_CATEGORY = Category.builder().build();
+        ReflectionTestUtils.setField(TEST_CATEGORY, "categoryId", 1l);
+
+        CategoryItem TEST_CATEGORY_ITEM = new CategoryItem(TEST_CATEGORY);
+        given(categoryItemRepository.getCategoryItem(any(), anyLong()))
+                .willReturn(Optional.of(TEST_CATEGORY_ITEM));
+
         //when
         CartDTO memberCartDTO = cartService.getMemberCart(any());
 
@@ -234,11 +249,19 @@ public class CartServiceTest {
         given(cartRepository.findByCkId(any()))
                 .willReturn(Optional.of(TEST_COOKIE_CART));
 
+        Category TEST_CATEGORY = Category.builder().build();
+        ReflectionTestUtils.setField(TEST_CATEGORY, "categoryId", 1l);
+
+        CategoryItem TEST_CATEGORY_ITEM = new CategoryItem(TEST_CATEGORY);
+        given(categoryItemRepository.getCategoryItem(any(), anyLong()))
+                .willReturn(Optional.of(TEST_CATEGORY_ITEM));
+
         //when
         CartDTO cookieCartDTO = cartService.getCookieCart(any());
 
         //then
         // 비회원 장바구니 첫번째 상품.
+        System.out.println("cartDTO: " + cookieCartDTO.toString());
         assertThat(cookieCartDTO.getCartItems().size(), is(2));
         assertThat(cookieCartDTO.getCartItems().get(TEST_ITEM_ID_3).getRequiredOptions().size(), is(3));
         assertThat(cookieCartDTO.getCartItems().get(TEST_ITEM_ID_3).getRequiredOptions().get(0).getItemQuantity(),
@@ -269,12 +292,12 @@ public class CartServiceTest {
         CartDTO TEST_CART_DTO = new CartDTO(1l);
 
         // 장바구니에 들어간 itemId가 1l 인 상품.
-        TEST_CART_DTO.getCartItems().put(TEST_ITEM_ID, new CartItemDTO(TEST_ITEM_ID, 1l, "testItemName", 1000l, 1l, SizeLabel.S));
+        TEST_CART_DTO.getCartItems().put(TEST_ITEM_ID, new CartItemDTO(TEST_ITEM_ID, 1l, "testItemName", 1000l, 1l, SizeLabel.S, 1l));
         TEST_CART_DTO.getCartItems().get(TEST_ITEM_ID).getRequiredOptions().add(new RequiredOption(2l, SizeLabel.M));
         TEST_CART_DTO.getCartItems().get(TEST_ITEM_ID).getRequiredOptions().add(new RequiredOption(3l, SizeLabel.L));
 
         // 장바구니에 들어간 itemId가 2l인 상품.
-        TEST_CART_DTO.getCartItems().put(TEST_ITEM_ID_2, new CartItemDTO(TEST_ITEM_ID_2, 2l, "testItemName2", 2000l, 4l, SizeLabel.S));
+        TEST_CART_DTO.getCartItems().put(TEST_ITEM_ID_2, new CartItemDTO(TEST_ITEM_ID_2, 2l, "testItemName2", 2000l, 4l, SizeLabel.S, 1l));
         TEST_CART_DTO.getCartItems().get(TEST_ITEM_ID_2).getRequiredOptions().add(new RequiredOption(5l, SizeLabel.M));
         TEST_CART_DTO.getCartItems().get(TEST_ITEM_ID_2).getRequiredOptions().add(new RequiredOption(6l, SizeLabel.L));
         //when
@@ -306,12 +329,12 @@ public class CartServiceTest {
         CartDTO TEST_CART_DTO = new CartDTO(1l);
 
         // 장바구니에 들어간 itemId가 1l 인 상품.
-        TEST_CART_DTO.getCartItems().put(TEST_ITEM_ID, new CartItemDTO(TEST_ITEM_ID, 1l, "testItemName", 1000l, 1l, SizeLabel.S));
+        TEST_CART_DTO.getCartItems().put(TEST_ITEM_ID, new CartItemDTO(TEST_ITEM_ID, 1l, "testItemName", 1000l, 1l, SizeLabel.S, 1l));
         TEST_CART_DTO.getCartItems().get(TEST_ITEM_ID).getRequiredOptions().add(new RequiredOption(2l, SizeLabel.M));
         TEST_CART_DTO.getCartItems().get(TEST_ITEM_ID).getRequiredOptions().add(new RequiredOption(3l, SizeLabel.L));
 
         // 장바구니에 들어간 itemId가 2l인 상품.
-        TEST_CART_DTO.getCartItems().put(TEST_ITEM_ID_2, new CartItemDTO(TEST_ITEM_ID_2, 2l, "testItemName2", 2000l, 4l, SizeLabel.S));
+        TEST_CART_DTO.getCartItems().put(TEST_ITEM_ID_2, new CartItemDTO(TEST_ITEM_ID_2, 2l, "testItemName2", 2000l, 4l, SizeLabel.S, 1l));
         TEST_CART_DTO.getCartItems().get(TEST_ITEM_ID_2).getRequiredOptions().add(new RequiredOption(5l, SizeLabel.M));
         //when
         OrderSummaryRequest orderSummaryRequest = cartService.transferOrderSummary(TEST_CART_DTO);
@@ -500,29 +523,55 @@ public class CartServiceTest {
     }
 
     @Test
-    public void 장바구니_수정_테스트() throws Exception {
+    public void 회원_장바구니_수정_테스트() throws Exception {
         //given
         Cart TEST_CART = mock(Cart.class);
         doNothing().when(TEST_CART).modifyCartItems(any());
-        given(cartRepository.findById(any()))
+        given(cartRepository.findByAuthId(any()))
                 .willReturn(Optional.of(TEST_CART));
 
         Clothes TEST_CLOTHES = Clothes.builder().build();
-        given(clothesRepository.findById(any()))
+        given(itemRepository.findById(any()))
                 .willReturn(Optional.of(TEST_CLOTHES));
 
         CartRequest TEST_CART_REQUEST = new CartRequest();
         TEST_CART_REQUEST.setCartItems(List.of(
-                new CartLineRequest(1l, 10l, SizeLabel.S)
+                new CartLineRequest(1l, 10l, SizeLabel.S, 1l)
         ));
 
         //when
-        cartService.modifyCart(TEST_CART_REQUEST, any());
+        cartService.modifyMemberCart(TEST_CART_REQUEST, any());
 
         //then
-        verify(cartRepository,atLeastOnce()).findById(any());
-        verify(clothesRepository, atLeastOnce()).findById(any());
+        verify(cartRepository,atLeastOnce()).findByAuthId(any());
+        verify(itemRepository, atLeastOnce()).findById(any());
         verify(TEST_CART, atLeastOnce()).modifyCartItems(any());
+    }
+
+    @Test
+    public void 비회원_장바구니_수정_테스트() throws Exception {
+        //given
+        Cart TEST_TEMP_CART = mock(Cart.class);
+        doNothing().when(TEST_TEMP_CART).modifyCartItems(any());
+        given(cartRepository.findByCkId(any()))
+                .willReturn(Optional.of(TEST_TEMP_CART));
+
+        Clothes TEST_CLOTHES = Clothes.builder().build();
+        given(itemRepository.findById(any()))
+                .willReturn(Optional.of(TEST_CLOTHES));
+
+        CartRequest TEST_CART_REQUEST = new CartRequest();
+        TEST_CART_REQUEST.setCartItems(List.of(
+                new CartLineRequest(1l, 10l, SizeLabel.S, 1l)
+        ));
+
+        //when
+        cartService.modifyTempCart(TEST_CART_REQUEST, any());
+
+        //then
+        verify(cartRepository,atLeastOnce()).findByCkId(any());
+        verify(itemRepository, atLeastOnce()).findById(any());
+        verify(TEST_TEMP_CART, atLeastOnce()).modifyCartItems(any());
     }
 
 }

@@ -35,7 +35,7 @@ public class OrderDetailDTO {
     private String address;
     private String deliveryMemo;
 
-    private boolean isCancelOrder; // 주문 취소 가능 여부.
+    private Boolean isCancelOrder; // 주문 취소 가능 여부.
 
     // 결제 정보.
     private PaymentDTO paymentInfo;
@@ -63,13 +63,9 @@ public class OrderDetailDTO {
 
     private void setOrderStatus(String orderStatus){
         this.orderStatus = orderStatus;
-        if(orderStatus.equals(OrderStatus.ORDER_ITEM_READY.getDesc()))
+        if(orderStatus.equals(OrderStatus.ORDER_ITEM_READY.getDesc()) || orderStatus.equals(OrderStatus.ORDER_COMPLETE.getDesc()))
             this.isCancelOrder = true;
         else
             this.isCancelOrder = false;
-    }
-
-    public boolean getIsCancelOrder(){
-        return this.isCancelOrder;
     }
 }

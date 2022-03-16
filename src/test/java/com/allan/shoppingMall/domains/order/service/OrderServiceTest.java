@@ -3,6 +3,9 @@ package com.allan.shoppingMall.domains.order.service;
 import com.allan.shoppingMall.common.exception.order.payment.PaymentFailByValidatedOrderStatusException;
 import com.allan.shoppingMall.common.exception.order.payment.PaymentFailException;
 import com.allan.shoppingMall.common.value.Address;
+import com.allan.shoppingMall.domains.category.domain.Category;
+import com.allan.shoppingMall.domains.category.domain.CategoryCode;
+import com.allan.shoppingMall.domains.category.domain.CategoryRepository;
 import com.allan.shoppingMall.domains.delivery.domain.Delivery;
 import com.allan.shoppingMall.domains.delivery.domain.DeliveryStatus;
 import com.allan.shoppingMall.domains.item.domain.item.Color;
@@ -64,6 +67,9 @@ public class OrderServiceTest {
     @Mock
     MileageService mileageService;
 
+    @Mock
+    CategoryRepository categoryRepository;
+
     @InjectMocks
     OrderService orderService;
 
@@ -113,6 +119,18 @@ public class OrderServiceTest {
         TEST_ORDER_REQUEST.setRecipientPhone("1111111111");
         TEST_ORDER_REQUEST.setUsedMileage(1000l);
 
+        Category TEST_CATEGROY = Category.builder().build();
+        given(categoryRepository.findById(any()))
+                .willReturn(Optional.of(TEST_CATEGROY));
+
+        Category TEST_CATEGORY = Category.builder()
+                .categoryCode(CategoryCode.CLOTHES)
+                .build();
+        ReflectionTestUtils.setField(TEST_CATEGORY, "categoryId", 1l);
+
+        given(categoryRepository.findById(any()))
+                .willReturn(Optional.of(TEST_CATEGORY));
+
         //when
         orderService.order(TEST_ORDER_REQUEST, TEST_MEMBER);
 
@@ -128,20 +146,45 @@ public class OrderServiceTest {
     @Test
     public void 주문취소_테스트() throws Exception {
         //given
-        Order TEST_ORDER = mock(Order.class);
+        Clothes TEST_CLOTHES = Clothes.builder()
+                .price(1000l)
+                .build();
+        ClothesSize TEST_CLOTHES_SIZE_S = ClothesSize.builder()
+                .stockQuantity(10l)
+                .sizeLabel(SizeLabel.S)
+                .build();
+
+        ClothesSize TEST_CLOTHES_SIZE_M = ClothesSize.builder()
+                .stockQuantity(20l)
+                .sizeLabel(SizeLabel.M)
+                .build();
+
+        TEST_CLOTHES.changeItemSizes(List.of(TEST_CLOTHES_SIZE_S, TEST_CLOTHES_SIZE_M));
+
+        Order TEST_ORDER = Order.builder()
+                .delivery(Delivery.builder()
+                        .address(Address.builder()
+                                .postCode("65000")
+                                .build())
+                        .deliveryStatus(DeliveryStatus.DELIVERY_READY)
+                        .build())
+
+                .build();
+        ReflectionTestUtils.setField(TEST_ORDER, "orderStatus", OrderStatus.ORDER_ITEM_READY);
+        ReflectionTestUtils.setField(TEST_ORDER, "paymentNum", "testPaymentNum");
+
+        TEST_ORDER.changeOrderItems(List.of(new OrderItem(5l, TEST_CLOTHES, TEST_CLOTHES_SIZE_S), new OrderItem(10l, TEST_CLOTHES, TEST_CLOTHES_SIZE_M)));
 
         given(orderRepository.findByOrderNumAndAuthId(any(), any()))
                 .willReturn(Optional.of(TEST_ORDER));
-
-        doNothing().when(TEST_ORDER).cancelOrder();
 
         //when
         orderService.cancelMyOrder(any(), any());
 
         //then
         verify(orderRepository, atLeastOnce()).findByOrderNumAndAuthId(any(), any());
-        verify(TEST_ORDER, atLeastOnce()).cancelOrder();
         verify(mileageService,atLeastOnce()).deleteMileage(any());
+        verify(paymentService, atLeastOnce()).refundPayment("testPaymentNum", 15000l); // 취소되는 결제 금액 확인.
     }
 
     @Test

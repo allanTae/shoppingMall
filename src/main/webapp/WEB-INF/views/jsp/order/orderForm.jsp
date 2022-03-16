@@ -334,7 +334,8 @@
                 orderItemList.push({
                     "itemId": ${orderItem.itemId},
                     "orderQuantity": ${requiredOption.itemQuantity},
-                    "size": "${requiredOption.itemSize}"
+                    "size": "${requiredOption.itemSize}",
+                    "categoryId": ${orderItem.categoryId}
                 });
             </c:forEach>
         </c:forEach>
