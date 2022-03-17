@@ -46,8 +46,8 @@ public class ClothesSizeRepositoryTest {
         testEntityManager.flush();
 
         //when
-        ItemSize clothesSizebySize1 = clothesSizeRepository.getItemSizebySizelabel(TEST_CLORTHES_LIST.get(0), SizeLabel.M);
-        ItemSize clothesSizebySize2 = clothesSizeRepository.getItemSizebySizelabel(TEST_CLORTHES_LIST.get(1), SizeLabel.L);
+        ItemSize clothesSizebySize1 = clothesSizeRepository.getItemSizebySizelabel(TEST_CLORTHES_LIST.get(0), SizeLabel.M).get();
+        ItemSize clothesSizebySize2 = clothesSizeRepository.getItemSizebySizelabel(TEST_CLORTHES_LIST.get(1), SizeLabel.L).get();
 
         //then
         assertThat(clothesSizebySize1.getSizeLabel(), is(SizeLabel.M));

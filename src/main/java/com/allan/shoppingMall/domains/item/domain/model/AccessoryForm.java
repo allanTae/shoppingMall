@@ -1,6 +1,8 @@
 package com.allan.shoppingMall.domains.item.domain.model;
 
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,6 +15,7 @@ import java.util.List;
  */
 @Getter
 @Setter
+@NoArgsConstructor
 public class AccessoryForm {
     private String name;
     private String engName;
@@ -29,6 +32,22 @@ public class AccessoryForm {
     private List<AccessorySizeDTO> accessorySizes = new ArrayList<>();
     private List<MultipartFile> profileImageFiles = new ArrayList<>();
     private List<MultipartFile> detailImageFiles = new ArrayList<>();
+
+    @Builder
+    public AccessoryForm(String name, String engName, Long price, int accessoryColor, Long categoryId, Long accessoryId, String mode, List<ItemFabricDTO> itemFabrics, List<ItemDetailDTO> itemDetails, List<AccessorySizeDTO> accessorySizes, List<MultipartFile> profileImageFiles, List<MultipartFile> detailImageFiles) {
+        this.name = name;
+        this.engName = engName;
+        this.price = price;
+        this.accessoryColor = accessoryColor;
+        this.categoryId = categoryId;
+        this.accessoryId = accessoryId;
+        this.mode = mode;
+        this.itemFabrics = itemFabrics;
+        this.itemDetails = itemDetails;
+        this.accessorySizes = accessorySizes;
+        this.profileImageFiles = profileImageFiles;
+        this.detailImageFiles = detailImageFiles;
+    }
 
     @Override
     public String toString() {

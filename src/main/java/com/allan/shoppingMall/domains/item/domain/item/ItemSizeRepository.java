@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 public interface ItemSizeRepository extends JpaRepository<ItemSize, Long> {
 
     /**
@@ -13,5 +15,5 @@ public interface ItemSizeRepository extends JpaRepository<ItemSize, Long> {
      * @param sizeLabel
      */
     @Query("select size from ItemSize size where size.item = :item and size.sizeLabel like :sizeLabel")
-    public ItemSize getItemSizebySizelabel(@Param("item") Item item, @Param("sizeLabel") SizeLabel sizeLabel);
+    public Optional<ItemSize> getItemSizebySizelabel(@Param("item") Item item, @Param("sizeLabel") SizeLabel sizeLabel);
 }

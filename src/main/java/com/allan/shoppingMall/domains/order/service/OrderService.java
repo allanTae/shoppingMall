@@ -3,6 +3,7 @@ package com.allan.shoppingMall.domains.order.service;
 import com.allan.shoppingMall.common.exception.ErrorCode;
 import com.allan.shoppingMall.common.exception.category.CategoryNotFoundException;
 import com.allan.shoppingMall.common.exception.item.ItemNotFoundException;
+import com.allan.shoppingMall.common.exception.item.ItemSizeNotFoundException;
 import com.allan.shoppingMall.common.exception.order.OrderFailException;
 import com.allan.shoppingMall.common.exception.order.OrderNotFoundException;
 import com.allan.shoppingMall.common.exception.order.payment.PaymentFailByValidatedAmountException;
@@ -103,13 +104,15 @@ public class OrderService {
                         // clothes 상품인 경우.
                         item = clothesRepository.findById(orderLineRequest.getItemId()).orElseThrow(()
                                 -> new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
-                        itemSize = itemSizeRepository.getItemSizebySizelabel(item, orderLineRequest.getSize());
+                        itemSize = itemSizeRepository.getItemSizebySizelabel(item, orderLineRequest.getSize()).orElseThrow(()
+                                -> new ItemSizeNotFoundException("주문 가능한 상품 사이즈가 아닙니다.", ErrorCode.ENTITY_NOT_FOUND));
 
                     }else if(findCategory.getCategoryCode().getCode() == CategoryCode.ACCESSORY.getCode()){
                         // accessory 상품인 경우.
                         item = accessoryRepository.findById(orderLineRequest.getItemId()).orElseThrow(() ->
                                 new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
-                        itemSize = itemSizeRepository.getItemSizebySizelabel(item, orderLineRequest.getSize());
+                        itemSize = itemSizeRepository.getItemSizebySizelabel(item, orderLineRequest.getSize()).orElseThrow(()
+                                -> new ItemSizeNotFoundException("주문 가능한 상품 사이즈가 아닙니다.", ErrorCode.ENTITY_NOT_FOUND));
 
                     }else{
                         throw new OrderFailException("주문 가능한 상품이 아닙니다.", ErrorCode.INVALID_ORDER_REQUEST_INPUT_VALUE);

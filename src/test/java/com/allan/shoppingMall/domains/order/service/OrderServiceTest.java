@@ -89,7 +89,7 @@ public class OrderServiceTest {
                 .build();
 
         given(itemSizeRepository.getItemSizebySizelabel(any(), any()))
-                .willReturn(TEST_CLOTHES_SIZE_1);
+                .willReturn(Optional.of(TEST_CLOTHES_SIZE_1));
 
         Clothes TEST_CLOTHES = Clothes.builder()
                 .price(15000l)
