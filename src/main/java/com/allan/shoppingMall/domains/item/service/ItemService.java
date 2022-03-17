@@ -2,10 +2,13 @@ package com.allan.shoppingMall.domains.item.service;
 
 import com.allan.shoppingMall.common.exception.ErrorCode;
 import com.allan.shoppingMall.common.exception.category.CategoryItemNotFoundException;
+import com.allan.shoppingMall.common.exception.item.ItemNotFoundException;
 import com.allan.shoppingMall.domains.category.domain.*;
 import com.allan.shoppingMall.domains.category.service.CategoryService;
+import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
 import com.allan.shoppingMall.domains.item.domain.item.Item;
 import com.allan.shoppingMall.domains.item.domain.item.ItemRepository;
+import com.allan.shoppingMall.domains.item.domain.item.ItemSummaryDTOForCart;
 import com.allan.shoppingMall.domains.item.domain.model.ItemSummaryDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -80,4 +83,26 @@ public class ItemService {
         return itemSummaryDTOList;
     }
 
+    /**
+     * 상품 요약정보를 조회하는 메소드.
+     * @param itemId 의류상품 도메인 id.
+     * @return ClothesSummaryDTO
+     */
+    public ItemSummaryDTOForCart getItemSummaryDTO(Long itemId){
+        Item item = itemRepository.findById(itemId).orElseThrow(() ->
+                new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+
+        List<SizeLabel> sizes = item.getItemSizes().stream()
+                .map(itemSize -> {
+                    return itemSize.getSizeLabel();
+                }).collect(Collectors.toList());
+
+        return ItemSummaryDTOForCart.builder()
+                .itemId(item.getItemId())
+                .name(item.getName())
+                .price(item.getPrice())
+                .sizes(sizes)
+                .profileImgId(item.getItemImages().get(0).getItemImageId())
+                .build();
+    }
 }

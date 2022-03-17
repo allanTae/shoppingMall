@@ -233,7 +233,7 @@
         var headers = {"Content-Type" : "application/json; charset=UTF-8;"
                   , "X-HTTP-Method-Override" : "GET"};
         $.ajax({
-          url: "${pageContext.request.contextPath}/clothes/" + itemId
+          url: "${pageContext.request.contextPath}/item/" + itemId
           , headers : headers
           , type : 'GET'
           , dataType : 'json'
@@ -242,21 +242,21 @@
              htmls += '<div class="modalCartItemWrap">';
              htmls += '  <div class="modalCartItemInfo row">';
              htmls += '      <div class="col-md-2">';
-             htmls += '          <img class="p-1" src="${pageContext.request.contextPath}/image/' + result.clothesInfo.profileImgId + '" width="80px" height="80px"/>';
+             htmls += '          <img class="p-1" src="${pageContext.request.contextPath}/image/' + result.itemInfo.profileImgId + '" width="80px" height="80px"/>';
              htmls += '      </div>';
              htmls += '      <div class="col-md-8 text-start">';
-             htmls += '          <p id="modal_cartItem_name">' + result.clothesInfo.clothesName + '</p>';
-             htmls += '          <p><span id="modal_cartItem_price">' + result.clothesInfo.clothesPrice + '</span>원</p>';
+             htmls += '          <p id="modal_cartItem_name">' + result.itemInfo.name + '</p>';
+             htmls += '          <p><span id="modal_cartItem_price">' + result.itemInfo.price + '</span>원</p>';
              htmls += '      </div>';
              htmls += '  </div>';
              htmls += '  <div>';
              htmls += '      <p class="text-start mb-0">SIZE *</p>';
              htmls += '      <select class="form-select m-0" id="itemSizeSelect" aria-label="Default select example" >';
              htmls += '        <option selected>사이즈를 선택 해 주세요.(필수)</option>';
-             for(var i=0; i<result.clothesInfo.sizes.length; i++){
-             htmls += '        <option value="' + i+1 + '">' + result.clothesInfo.sizes[i] + '</option>';
+             for(var i=0; i<result.itemInfo.sizes.length; i++){
+             htmls += '        <option value="' + i+1 + '">' + result.itemInfo.sizes[i] + '</option>';
              }
-             htmls += '        <c:forEach var="size" items="${result.clothesInfo.sizes}" varStatus="index" >';
+             htmls += '        <c:forEach var="size" items="${result.itemInfo.sizes}" varStatus="index" >';
              htmls += '          <option value="${index.count}">${size.sizeLabel}</option>';
              htmls += '        </c:forEach>';
              htmls += '      </select>';
@@ -271,7 +271,7 @@
              $("#modalItemWrap").append(htmls);
 
              // 상품 총 가격 계산을 위한 상품 가격 설정.
-             defaultAmount = result.clothesInfo.clothesPrice;
+             defaultAmount = result.itemInfo.price;
 
              $('#cartItem' + itemId + ' .itemSize').each(function(index, element){
                 var cartItemSize = $(this).text(); // 아이템 사이즈.
@@ -283,7 +283,7 @@
                 quantityMapBySize.set(cartItemSize, cartItemQuantity);
 
                 // selected form 추가.
-                addSelectedItem(cartItemSize, cartItemQuantity, (result.clothesInfo.clothesPrice*cartItemQuantity));
+                addSelectedItem(cartItemSize, cartItemQuantity, (result.itemInfo.price*cartItemQuantity));
 
                 // totalAmount form 추가.
                 addTotalAmount(cartItemQuantity);

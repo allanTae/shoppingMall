@@ -234,28 +234,6 @@ public class ClothesService {
         return clothesSummaryDTOS;
     }
 
-    /**
-     * 의류 상품 요약정보를 조회하는 메소드.
-     * @param clothesId 의류상품 도메인 id.
-     * @return ClothesSummaryDTO
-     */
-    public ClothesSummeryDTO getClothesSummaryDTO(Long clothesId){
-        Clothes findClothes = clothesRepository.findById(clothesId).orElseThrow(() ->
-                new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
-
-        List<SizeLabel> clothesSizes = findClothes.getItemSizes().stream()
-                .map(itemSize -> {
-                    return itemSize.getSizeLabel();
-                }).collect(Collectors.toList());
-
-        return ClothesSummeryDTO.builder()
-                .clothesId(findClothes.getItemId())
-                .clothesName(findClothes.getName())
-                .clothesPrice(findClothes.getPrice())
-                .sizes(clothesSizes)
-                .profileImgId(findClothes.getItemImages().get(0).getItemImageId())
-                .build();
-    }
 
     /**
      * 프론트단으로 전달 받은 폼정보로, clothes 정보를 수정하는 메소드 입니다.

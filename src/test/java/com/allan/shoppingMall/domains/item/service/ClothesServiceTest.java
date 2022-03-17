@@ -202,57 +202,6 @@ public class ClothesServiceTest {
     }
 
     @Test
-    public void 의류_상품_요약정보_조회_테스트() throws Exception {
-        //given
-        Clothes TEST_CLOTHES = Clothes.builder()
-                .price(1000l)
-                .name("testClothesName")
-                .build();
-
-        ReflectionTestUtils.setField(TEST_CLOTHES, "itemId", 1l);
-
-        TEST_CLOTHES.changeItemSizes(List.of(
-                ClothesSize.builder()
-                        .sizeLabel(SizeLabel.S)
-                        .stockQuantity(10l)
-                        .build(),
-                ClothesSize.builder()
-                        .sizeLabel(SizeLabel.M)
-                        .stockQuantity(20l)
-                        .build(),
-                ClothesSize.builder()
-                        .sizeLabel(SizeLabel.L)
-                        .stockQuantity(30l)
-                        .build()
-                ));
-
-        ItemImage TEST_ITEM_IMAGE_1 = createItemImage(1l);
-        ItemImage TEST_ITEM_IMAGE_2 = createItemImage(2l);
-        ItemImage TEST_ITEM_IMAGE_3 = createItemImage(3l);
-
-        TEST_CLOTHES.changeItemImages(List.of(
-                TEST_ITEM_IMAGE_1, TEST_ITEM_IMAGE_2, TEST_ITEM_IMAGE_3
-        ));
-
-        given(clothesRepository.findById(any()))
-                .willReturn(Optional.of(TEST_CLOTHES));
-
-        //when
-        ClothesSummeryDTO clothesSummaryDTO = clothesService.getClothesSummaryDTO(any());
-
-        //then
-        verify(clothesRepository, atLeastOnce()).findById(any());
-        assertThat(clothesSummaryDTO.getClothesId(), is(TEST_CLOTHES.getItemId()));
-        assertThat(clothesSummaryDTO.getClothesName(), is(TEST_CLOTHES.getName()));
-        assertThat(clothesSummaryDTO.getProfileImgId(), is(TEST_ITEM_IMAGE_1.getItemImageId()));
-        assertThat(clothesSummaryDTO.getClothesPrice(), is(TEST_CLOTHES.getPrice()));
-        assertThat(clothesSummaryDTO.getSizes().size(), is(3));
-        assertThat(clothesSummaryDTO.getSizes().get(0), is(TEST_CLOTHES.getItemSizes().get(0).getSizeLabel()));
-        assertThat(clothesSummaryDTO.getSizes().get(1), is(TEST_CLOTHES.getItemSizes().get(1).getSizeLabel()));
-        assertThat(clothesSummaryDTO.getSizes().get(2), is(TEST_CLOTHES.getItemSizes().get(2).getSizeLabel()));
-    }
-
-    @Test
     public void 의류상품_수정테스트() throws Exception {
         Clothes TEST_CLOTHES = Clothes.builder()
                 .name("testName")

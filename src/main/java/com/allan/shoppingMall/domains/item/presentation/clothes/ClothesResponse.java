@@ -43,7 +43,6 @@ public class ClothesResponse {
     public ClothesResponse(ClothesResult cartResult, ClothesSummeryDTO clothesSummeryDTO){
         this.apiResultMessage = cartResult.getMessage();
         this.apiResult = cartResult.getResult();
-        this.clothesErrorResponse = clothesErrorResponse;
         this.clothesInfo = clothesSummeryDTO;
     }
 }
