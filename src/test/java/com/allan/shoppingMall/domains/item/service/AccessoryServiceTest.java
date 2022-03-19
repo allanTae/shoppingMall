@@ -137,7 +137,7 @@ public class AccessoryServiceTest {
 
         assertThat(TEST_ACCESSORY.getItemFabrics().size(), is(1));
         assertThat(TEST_ACCESSORY.getItemDetails().size(), is(1));
-        assertThat(TEST_ACCESSORY.getAccessorySizes().size(), is(1));
+        assertThat(TEST_ACCESSORY.getItemSizes().size(), is(1));
         assertThat(TEST_ACCESSORY.getItemImages().size(), is(1));
         assertThat(TEST_ACCESSORY.getCategoryItems().size(), is(1));
 
@@ -159,13 +159,17 @@ public class AccessoryServiceTest {
         assertThat(TEST_ACCESSORY.getItemDetails().size(), is(2));
         assertThat(TEST_ACCESSORY.getItemDetails().get(0).getDetailDesc(), is("clothesDetailDesc1"));
         assertThat(TEST_ACCESSORY.getItemDetails().get(1).getDetailDesc(), is("clothesDetailDesc2"));
-        assertThat(TEST_ACCESSORY.getAccessorySizes().size(), is(2));
-        assertThat(TEST_ACCESSORY.getAccessorySizes().get(0).getStockQuantity(), is(20l));
-        assertThat(TEST_ACCESSORY.getAccessorySizes().get(0).getWidthLength(), is(20.0));
-        assertThat(TEST_ACCESSORY.getAccessorySizes().get(0).getHeightLength(), is(30.0));
-        assertThat(TEST_ACCESSORY.getAccessorySizes().get(1).getStockQuantity(), is(10l));
-        assertThat(TEST_ACCESSORY.getAccessorySizes().get(1).getWidthLength(), is(10.0));
-        assertThat(TEST_ACCESSORY.getAccessorySizes().get(1).getHeightLength(), is(20.0));
+        assertThat(TEST_ACCESSORY.getItemSizes().size(), is(2));
+        assertThat( ((AccessorySize)TEST_ACCESSORY.getItemSizes().get(0)).getStockQuantity(), is(10l));
+        assertThat( ((AccessorySize)TEST_ACCESSORY.getItemSizes().get(0)).getWidthLength(), is(10.0));
+        assertThat( ((AccessorySize)TEST_ACCESSORY.getItemSizes().get(0)).getHeightLength(), is(20.0));
+        assertThat( ((AccessorySize)TEST_ACCESSORY.getItemSizes().get(0)).getSizeLabel().getDesc(), is(SizeLabel.S.getDesc()));
+
+
+        assertThat( ((AccessorySize)TEST_ACCESSORY.getItemSizes().get(1)).getStockQuantity(), is(20l));
+        assertThat( ((AccessorySize)TEST_ACCESSORY.getItemSizes().get(1)).getWidthLength(), is(20.0));
+        assertThat( ((AccessorySize) TEST_ACCESSORY.getItemSizes().get(1)).getHeightLength(), is(30.0));
+        assertThat( ((AccessorySize) TEST_ACCESSORY.getItemSizes().get(1)).getSizeLabel().getDesc(), is(SizeLabel.FREE.getDesc()));
 
         assertThat(TEST_ACCESSORY.getItemImages().size(), is(1));
         assertThat(TEST_ACCESSORY.getCategoryItems().size(), is(1));

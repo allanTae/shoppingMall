@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,6 +18,7 @@ import javax.persistence.Entity;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Slf4j
 public class ClothesSize extends ItemSize {
 
     // 총장 사이즈.
@@ -59,4 +61,25 @@ public class ClothesSize extends ItemSize {
         this.bottomWidth = bottomWidth;
     }
 
+    /**
+     * 그외 사이즈 정보를 수정하는 메소드.
+     * @param sizeLabel
+     * @param backLength
+     * @param chestWidth
+     * @param shoulderWidth
+     * @param sleeveLength
+     * @param waistWidth
+     * @param heapWidth
+     * @param bottomWidth
+     */
+    public void updateClothesSizeInfo(SizeLabel sizeLabel, Double backLength, Double chestWidth, Double shoulderWidth, Double sleeveLength, Double waistWidth, Double heapWidth, Double bottomWidth){
+        this.updateSizeLabel(sizeLabel);
+        this.backLength = backLength;
+        this.chestWidth = chestWidth;
+        this.shoulderWidth = shoulderWidth;
+        this.sleeveLength = sleeveLength;
+        this.waistWidth = waistWidth;
+        this.heapWidth = heapWidth;
+        this.bottomWidth = bottomWidth;
+    }
 }

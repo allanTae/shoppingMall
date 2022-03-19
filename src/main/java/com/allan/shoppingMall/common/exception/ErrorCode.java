@@ -45,7 +45,7 @@ public enum ErrorCode {
     // Item
     ITEM_STOCK_QUANTITY_EXCEEDED(400, "I001", "상품의 재고량이 부족합니다."),
     ITEM_CATEGORY_CODE_INVALID(400, "I002", "상품에 대한 카테고리가 유효하지 않습니다."),
-
+    ITEM_SIZE_QUANTITY_NOT_ENOUGH(400, "I003", "상품의 재고량은 0 보다 작게 수정 할 수 없습니다."),
     // Database
     INTEGRITY_VIOLATION(400, "D001", "Data's Itegrity is violation"),
 

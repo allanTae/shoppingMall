@@ -5,6 +5,7 @@ import com.allan.shoppingMall.common.exception.category.CategoryNotFoundExceptio
 import com.allan.shoppingMall.common.exception.item.AccessorySaveFailException;
 import com.allan.shoppingMall.common.exception.item.ClothesSaveFailException;
 import com.allan.shoppingMall.common.exception.item.ItemNotFoundException;
+import com.allan.shoppingMall.common.exception.item.ItemSizeNotFoundException;
 import com.allan.shoppingMall.domains.category.domain.*;
 import com.allan.shoppingMall.domains.item.domain.accessory.Accessory;
 import com.allan.shoppingMall.domains.item.domain.accessory.AccessoryRepository;
@@ -151,9 +152,15 @@ public class AccessoryService {
                             .build();
                 }).collect(Collectors.toList());
 
-        List<AccessorySizeDTO> sizeDTOS = findAccessory.getAccessorySizes()
+        List<AccessorySizeDTO> sizeDTOS = findAccessory.getItemSizes()
                 .stream()
-                .map(accessorySize -> {
+                .map(itemSize -> {
+                    AccessorySize accessorySize = null;
+                    if(itemSize instanceof AccessorySize)
+                        accessorySize = (AccessorySize) itemSize;
+                    else
+                        throw new ItemSizeNotFoundException("의류 상품 사이즈 정보를 찾을 수가 없습니다.", ErrorCode.INTERNAL_SERVER_ERROR);
+
                     return AccessorySizeDTO.builder()
                             .sizeLabel(accessorySize.getSizeLabel().getKey())
                             .widthLength(accessorySize.getWidthLength())
@@ -193,8 +200,6 @@ public class AccessoryService {
         // 기존 원단, 상세내용, 모델사이즈, 의류사이즈, 카테고리 정보 삭제.
         findAccssory.getItemFabrics().clear();
         findAccssory.getItemDetails().clear();
-        findAccssory.getAccessorySizes().clear();
-        findAccssory.subtractStockQuantity(findAccssory.getStockQuantity()); // 재고량 차감.
         findAccssory.getCategoryItems().clear();
 
         // 의류 원단 정보.
@@ -222,6 +227,8 @@ public class AccessoryService {
         List<AccessorySize> sizes = form.getAccessorySizes()
                 .stream()
                 .map(accessorySizeDTO -> {
+                    log.info("sizeLabel: " + accessorySizeDTO.getSizeLabel());
+
                     return AccessorySize.builder()
                             .widthLength(accessorySizeDTO.getWidthLength())
                             .heightLength(accessorySizeDTO.getHeightLength())
@@ -245,8 +252,10 @@ public class AccessoryService {
 
         findAccssory.changeItemFabrics(fabrics);
         findAccssory.changeItemDetails(details);
-        findAccssory.changeAccessorySize(sizes);
         findAccssory.changeCategoryItems(List.of(new CategoryItem(findCategory)));
+
+        // 사이즈 도메인 수정.
+        findAccssory.updateAccessorySize(sizes);
 
         return findAccssory.getItemId();
     }

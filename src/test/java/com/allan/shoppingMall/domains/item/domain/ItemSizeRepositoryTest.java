@@ -26,13 +26,13 @@ import static org.hamcrest.Matchers.is;
         )
 )
 @WithMockUser
-public class ClothesSizeRepositoryTest {
+public class ItemSizeRepositoryTest {
 
     @Autowired
     TestEntityManager testEntityManager;
 
     @Autowired
-    ItemSizeRepository clothesSizeRepository;
+    ItemSizeRepository itemSizeRepository;
 
     @Test
     public void 의상아이디_사이즈로_사이즈정보_조회_테스트() throws Exception {
@@ -46,8 +46,8 @@ public class ClothesSizeRepositoryTest {
         testEntityManager.flush();
 
         //when
-        ItemSize clothesSizebySize1 = clothesSizeRepository.getItemSizebySizelabel(TEST_CLORTHES_LIST.get(0), SizeLabel.M).get();
-        ItemSize clothesSizebySize2 = clothesSizeRepository.getItemSizebySizelabel(TEST_CLORTHES_LIST.get(1), SizeLabel.L).get();
+        ItemSize clothesSizebySize1 = itemSizeRepository.getItemSizebySizelabel(TEST_CLORTHES_LIST.get(0), SizeLabel.M).get();
+        ItemSize clothesSizebySize2 = itemSizeRepository.getItemSizebySizelabel(TEST_CLORTHES_LIST.get(1), SizeLabel.L).get();
 
         //then
         assertThat(clothesSizebySize1.getSizeLabel(), is(SizeLabel.M));

@@ -3,9 +3,7 @@ package com.allan.shoppingMall.domains.item.domain.item;
 import com.allan.shoppingMall.common.domain.BaseEntity;
 import com.allan.shoppingMall.common.exception.ErrorCode;
 import com.allan.shoppingMall.common.exception.order.OrderFailException;
-import com.allan.shoppingMall.domains.category.domain.Category;
 import com.allan.shoppingMall.domains.category.domain.CategoryItem;
-import com.allan.shoppingMall.domains.order.domain.OrderItem;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -77,8 +75,6 @@ public class Item extends BaseEntity {
      */
     public void subtractStockQuantity(Long stockQuantity){
         if(this.stockQuantity < stockQuantity) {
-            log.error("stockQuantity: " + this.stockQuantity);
-            log.error("orderQuantity: " + stockQuantity);
             throw new OrderFailException(ErrorCode.ITEM_STOCK_QUANTITY_EXCEEDED.getMessage(), ErrorCode.ITEM_STOCK_QUANTITY_EXCEEDED);
         }
         this.stockQuantity -= stockQuantity;
@@ -158,4 +154,5 @@ public class Item extends BaseEntity {
     public void changeColor(Color color){
         this.color = color;
     }
+
 }

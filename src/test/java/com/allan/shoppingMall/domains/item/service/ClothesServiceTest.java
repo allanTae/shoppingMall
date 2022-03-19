@@ -188,8 +188,10 @@ public class ClothesServiceTest {
                 new ItemDetailDTO("clothesDetailDesc")
         ));
         clothesRequest.setClothesSizes(List.of(
-                new ClothesSizeDTO("1", 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 10l, SizeLabel.S),
-                new ClothesSizeDTO("1", 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 20l, SizeLabel.S)
+                new ClothesSizeDTO("1", 25.0, 30.0, 25.0, 50.0, 60.0, 70.0, 80.0, 10l, SizeLabel.S),
+                new ClothesSizeDTO("3", 35.0, 30.0, 35.0, 50.0, 60.0, 70.0, 80.0, 20l, SizeLabel.L),
+                new ClothesSizeDTO("2", 35.0, 30.0, 35.0, 50.0, 60.0, 70.0, 80.0, 0l, SizeLabel.M),
+                new ClothesSizeDTO("4", 45.0, 30.0, 45.0, 50.0, 60.0, 70.0, 80.0, 20l, SizeLabel.FREE)
         ));
         clothesRequest.setModelSizes(List.of(
                 new ModelSizeDTO(10.0, 20.0, 30.0, 40.0, 50.0)
@@ -217,14 +219,27 @@ public class ClothesServiceTest {
 
         TEST_CLOTHES.changeItemFabrics(List.of(ItemFabric.builder().materialPart("testMaterial").build()));
         TEST_CLOTHES.changeItemDetails(List.of(ItemDetail.builder().detailDesc("testDetail").build()));
-        TEST_CLOTHES.changeClothesSize(List.of(ClothesSize.builder().shoulderWidth(10.5).sizeLabel(SizeLabel.S).stockQuantity(3l).build()));
+
+        ClothesSize TEST_CLOTHES_SIZE_S = ClothesSize.builder().shoulderWidth(10.5).sizeLabel(SizeLabel.S).stockQuantity(3l).build();
+        ClothesSize TEST_CLOTHES_SIZE_M = ClothesSize.builder().shoulderWidth(10.5).sizeLabel(SizeLabel.M).stockQuantity(4l).build();
+        ClothesSize TEST_CLOTHES_SIZE_L = ClothesSize.builder().shoulderWidth(10.5).sizeLabel(SizeLabel.L).stockQuantity(5l).build();
+
+        TEST_CLOTHES.changeClothesSize(List.of(TEST_CLOTHES_SIZE_S,TEST_CLOTHES_SIZE_M,TEST_CLOTHES_SIZE_L));
         TEST_CLOTHES.changeModelSizes(List.of(ModelSize.builder().modelWeight(10.5).build()));
         TEST_CLOTHES.changeItemImages(List.of(ItemImage.builder().imageType(ImageType.PREVIEW).build()));
         TEST_CLOTHES.changeCategoryItems(List.of(new CategoryItem(TEST_CATEGORY)));
 
         assertThat(TEST_CLOTHES.getItemFabrics().size(), is(1));
         assertThat(TEST_CLOTHES.getItemDetails().size(), is(1));
-        assertThat(TEST_CLOTHES.getClothesSizes().size(), is(1));
+
+        assertThat(TEST_CLOTHES.getItemSizes().size(), is(3));
+        assertThat( ((ClothesSize) TEST_CLOTHES.getItemSizes().get(0)).getSizeLabel(), is(SizeLabel.S));
+        assertThat( ((ClothesSize) TEST_CLOTHES.getItemSizes().get(0)).getShoulderWidth(), is(10.5));
+        assertThat( ((ClothesSize) TEST_CLOTHES.getItemSizes().get(1)).getSizeLabel(), is(SizeLabel.M));
+        assertThat( ((ClothesSize) TEST_CLOTHES.getItemSizes().get(1)).getShoulderWidth(), is(10.5));
+        assertThat( ((ClothesSize) TEST_CLOTHES.getItemSizes().get(2)).getSizeLabel(), is(SizeLabel.L));
+        assertThat( ((ClothesSize) TEST_CLOTHES.getItemSizes().get(2)).getShoulderWidth(), is(10.5));
+
         assertThat(TEST_CLOTHES.getModelSizes().size(), is(1));
         assertThat(TEST_CLOTHES.getItemImages().size(), is(1));
         assertThat(TEST_CLOTHES.getCategoryItems().size(), is(1));
@@ -245,10 +260,17 @@ public class ClothesServiceTest {
         verify(categoryRepository, atLeastOnce()).findById(any());
         assertThat(TEST_CLOTHES.getItemFabrics().size(), is(1));
         assertThat(TEST_CLOTHES.getItemDetails().size(), is(1));
-        assertThat(TEST_CLOTHES.getClothesSizes().size(), is(2));
         assertThat(TEST_CLOTHES.getModelSizes().size(), is(1));
         assertThat(TEST_CLOTHES.getItemImages().size(), is(1));
         assertThat(TEST_CLOTHES.getCategoryItems().size(), is(1));
+
+        assertThat(TEST_CLOTHES.getItemSizes().size(), is(3));
+        assertThat( ((ClothesSize) TEST_CLOTHES.getItemSizes().get(0)).getSizeLabel(), is(SizeLabel.S));
+        assertThat( ((ClothesSize) TEST_CLOTHES.getItemSizes().get(0)).getShoulderWidth(), is(25.0));
+        assertThat( ((ClothesSize) TEST_CLOTHES.getItemSizes().get(1)).getSizeLabel(), is(SizeLabel.L));
+        assertThat( ((ClothesSize) TEST_CLOTHES.getItemSizes().get(1)).getShoulderWidth(), is(35.0));
+        assertThat( ((ClothesSize) TEST_CLOTHES.getItemSizes().get(2)).getSizeLabel(), is(SizeLabel.FREE));
+        assertThat( ((ClothesSize) TEST_CLOTHES.getItemSizes().get(2)).getShoulderWidth(), is(45.0));
     }
 
     private ItemImage createItemImage(Long imageId){

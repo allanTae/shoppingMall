@@ -1,21 +1,18 @@
 package com.allan.shoppingMall.domains.item.service;
 
 import com.allan.shoppingMall.common.exception.ErrorCode;
-import com.allan.shoppingMall.common.exception.MemberNotFoundException;
 import com.allan.shoppingMall.common.exception.item.ItemNotFoundException;
-import com.allan.shoppingMall.domains.cart.domain.Cart;
 import com.allan.shoppingMall.domains.cart.domain.CartItemRepository;
 import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
 import com.allan.shoppingMall.domains.item.domain.item.Item;
 import com.allan.shoppingMall.domains.item.domain.item.ItemModifiedEvent;
 import com.allan.shoppingMall.domains.item.domain.item.ItemRepository;
-import com.allan.shoppingMall.domains.member.domain.Member;
-import com.allan.shoppingMall.domains.member.domain.MemberJoinedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,6 +29,7 @@ public class ItemModifiedEventHandler {
 
     @Async
     @EventListener
+    @Transactional
     public void handleEvent(ItemModifiedEvent event){
         log.info("ItemModifiedEventHandler handler call!");
         log.info("thread: " + Thread.currentThread());

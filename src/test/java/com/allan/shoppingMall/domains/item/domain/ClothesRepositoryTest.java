@@ -114,7 +114,7 @@ public class ClothesRepositoryTest {
         assertThat(findClothes.getPrice(), is(TEST_CLOTHES.getPrice()));
         assertThat(findClothes.getItemFabrics().size(), is(2));
         assertThat(findClothes.getItemDetails().size(), is(4));
-        assertThat(findClothes.getClothesSizes().size(), is(2));
+        assertThat(findClothes.getItemSizes().size(), is(2));
         assertThat(findClothes.getModelSizes().size(), is(1));
         assertThat(findClothes.getItemImages().size(), is(4));
         assertThat(findClothes.getItemDetails().get(2).getDetailDesc(), is(TEST_CLOTHES.getItemDetails().get(2).getDetailDesc()));

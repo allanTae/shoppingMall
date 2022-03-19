@@ -1,9 +1,11 @@
 package com.allan.shoppingMall.domains.item.service;
 
+import com.allan.shoppingMall.common.exception.BusinessException;
 import com.allan.shoppingMall.common.exception.ErrorCode;
 import com.allan.shoppingMall.common.exception.category.CategoryNotFoundException;
 import com.allan.shoppingMall.common.exception.item.ClothesSaveFailException;
 import com.allan.shoppingMall.common.exception.item.ItemNotFoundException;
+import com.allan.shoppingMall.common.exception.item.ItemSizeNotFoundException;
 import com.allan.shoppingMall.domains.category.domain.*;
 import com.allan.shoppingMall.domains.item.domain.clothes.*;
 import com.allan.shoppingMall.domains.item.domain.item.*;
@@ -163,19 +165,25 @@ public class ClothesService {
                             .build();
                 }).collect(Collectors.toList());
 
-        List<ClothesSizeDTO> sizeDTOS = findClothes.getClothesSizes()
+        List<ClothesSizeDTO> sizeDTOS = findClothes.getItemSizes()
                 .stream()
                 .map(itemSize -> {
+                    ClothesSize clothesSize = null;
+                    if(itemSize instanceof ClothesSize)
+                        clothesSize = (ClothesSize) itemSize;
+                    else
+                        throw new ItemSizeNotFoundException("의류 상품 사이즈 정보를 찾을 수가 없습니다.", ErrorCode.INTERNAL_SERVER_ERROR);
+
                     return ClothesSizeDTO.builder()
-                            .backLength(itemSize.getBackLength())
+                            .backLength(clothesSize.getBackLength())
                             .sizeLabel(itemSize.getSizeLabel().getKey())
-                            .bottomWidth(itemSize.getBottomWidth())
-                            .chestWidth(itemSize.getChestWidth())
-                            .shoulderWidth(itemSize.getShoulderWidth())
-                            .heapWidth(itemSize.getHeapWidth())
-                            .sleeveLength(itemSize.getSleeveLength())
-                            .waistWidth(itemSize.getWaistWidth())
-                            .labelInfo(itemSize.getSizeLabel())
+                            .bottomWidth(clothesSize.getBottomWidth())
+                            .chestWidth(clothesSize.getChestWidth())
+                            .shoulderWidth(clothesSize.getShoulderWidth())
+                            .heapWidth(clothesSize.getHeapWidth())
+                            .sleeveLength(clothesSize.getSleeveLength())
+                            .waistWidth(clothesSize.getWaistWidth())
+                            .labelInfo(clothesSize.getSizeLabel())
                             .stockQuantity(itemSize.getStockQuantity())
                             .build();
                 }).collect(Collectors.toList());
@@ -249,8 +257,6 @@ public class ClothesService {
         findClothes.getItemFabrics().clear();
         findClothes.getItemDetails().clear();
         findClothes.getModelSizes().clear();
-        findClothes.getClothesSizes().clear();
-        findClothes.subtractStockQuantity(findClothes.getStockQuantity()); // 재고량 차감.
         findClothes.getCategoryItems().clear();
 
         // 의류 원단 정보.
@@ -320,9 +326,11 @@ public class ClothesService {
 
         findClothes.changeItemFabrics(fabrics);
         findClothes.changeItemDetails(details);
-        findClothes.changeClothesSize(sizes);
         findClothes.changeModelSizes(modelSizes);
         findClothes.changeCategoryItems(List.of(new CategoryItem(findCategory)));
+
+        // 사이즈 도메인 수정.
+        findClothes.updateClothesSize(sizes);
 
         return findClothes.getItemId();
     }

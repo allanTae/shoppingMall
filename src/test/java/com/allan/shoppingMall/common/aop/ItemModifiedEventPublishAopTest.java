@@ -10,6 +10,7 @@ import com.allan.shoppingMall.domains.item.domain.accessory.AccessoryRepository;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
 import com.allan.shoppingMall.domains.item.domain.clothes.ClothesRepository;
 import com.allan.shoppingMall.domains.item.domain.item.ItemModifiedEvent;
+import com.allan.shoppingMall.domains.item.domain.item.ItemSizeRepository;
 import com.allan.shoppingMall.domains.item.domain.model.AccessoryForm;
 import com.allan.shoppingMall.domains.item.domain.model.ClothesForm;
 import com.allan.shoppingMall.domains.item.infra.ImageFileHandler;
@@ -41,6 +42,7 @@ public class ItemModifiedEventPublishAopTest {
         CategoryRepository TEST_CATEGORY_REPOSITORY = mock(CategoryRepository.class);
         CategoryItemRepository TEST_CATEGORY_ITEM_REPOSITORY = mock(CategoryItemRepository.class);
         ApplicationContext TEST_APPLICATION_CONTEXT = mock(ApplicationContext.class);
+        ItemSizeRepository TEST_ITEM_SIZE_REPOSITORY = mock(ItemSizeRepository.class);
 
         Clothes TEST_CLOTHES = Clothes.builder().build();
         given(TEST_CLOTHES_REPOSITORY.findById(any()))

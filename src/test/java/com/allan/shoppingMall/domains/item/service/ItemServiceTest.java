@@ -1,10 +1,8 @@
 package com.allan.shoppingMall.domains.item.service;
 
-import com.allan.shoppingMall.domains.category.domain.CategoryRepository;
 import com.allan.shoppingMall.domains.category.service.CategoryService;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
 import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSize;
-import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSummeryDTO;
 import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
 import com.allan.shoppingMall.domains.item.domain.item.Item;
 import com.allan.shoppingMall.domains.item.domain.item.ItemImage;

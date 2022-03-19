@@ -140,21 +140,34 @@
         return true;
     }
 
-    // 회원가입 이벤트.
+    // 상품 등록 이벤트.
     $(document).on('click', '#btnEnroll', function(e){
         if(validateForm()){
             let category = '<input type="text" name="categoryId" value="' + selectedCategoryId + '" style="display:none;"/>';
-            <c:if test = "${param.mode == 'edit'}">
-                let clothesId = '<input type="text" name="accessoryId" value="' + ${accessoryInfo.accessoryId} + '" style="display:none;"/>';
-                let mode = '<input type="hidden" name="mode" value="${param.mode}"/>';
-                $("#accessoryIdWrap").html(clothesId);
-                $("#accessoryIdWrap").append(mode);
-            </c:if>
             $("#selectedCategoryWrap").html(category);
             $("#form").submit();
         }
 
     });
+
+    // 상품 수정 이벤트.
+    $(document).on('click', '#btnEdit', function(e){
+        if(validateForm()){
+            deleteDisabledAttrs();
+            let category = '<input type="text" name="categoryId" value="' + selectedCategoryId + '" style="display:none;"/>';
+            let clothesId = '<input type="text" name="accessoryId" value="' + ${accessoryInfo.accessoryId} + '" style="display:none;"/>';
+            let mode = '<input type="hidden" name="mode" value="${param.mode}"/>';
+            $("#accessoryIdWrap").html(clothesId);
+            $("#accessoryIdWrap").append(mode);
+            $("#selectedCategoryWrap").html(category);
+            $("#form").submit();
+        }
+    });
+
+    // disabled 속성 부여 되어 있는 select 태그의 disabled 속성을 제거하는 함수.
+    function deleteDisabledAttrs(){
+        $(".edit-sizeTable-sizeLabel").attr("disabled", false); //삭제
+    }
 
     // 원단 테이블 추가 버튼.
     $(document).on('click', "#btnFabricAdd", function(e){
@@ -446,7 +459,7 @@
                                             <tr class="sizeTableContent">
                                               <th scope="row "><c:out value="${status.index + 1}" /></th>
                                               <td class="col-md-2">
-                                                <select class="form-select" name="accessorySizes[<c:out value="${status.index}" />].sizeLabel">
+                                                <select class="form-select edit-sizeTable-sizeLabel" name="accessorySizes[<c:out value="${status.index}" />].sizeLabel" disabled >
                                                     <option value=${accessorySize.labelInfo.id}>${accessorySize.labelInfo.key}</option>
                                                 </select>
                                               </td>
@@ -492,7 +505,14 @@
 		<!-- end form card -->
 
 		<div style="margin-top:10px">
-			<button type="button" class="btn btn-sm btn-primary" id="btnEnroll">상품등록</button>
+		    <c:choose>
+                <c:when test="${param.mode != 'edit'}">
+                    <button type="button" class="btn btn-sm btn-primary" id="btnEnroll">상품등록</button>
+                </c:when>
+                <c:when test="${param.mode == 'edit'}">
+                    <button type="button" class="btn btn-sm btn-primary" id="btnEdit">상품수정</button>
+                </c:when>
+            </c:choose>
 			<button type="button" class="btn btn-sm btn-primary" id="btnCancle">취소</button>
 		</div>
 	</div>

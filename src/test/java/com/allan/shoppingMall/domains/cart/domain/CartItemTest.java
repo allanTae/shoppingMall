@@ -3,7 +3,6 @@ package com.allan.shoppingMall.domains.cart.domain;
 import com.allan.shoppingMall.common.config.jpa.auditing.JpaAuditingConfig;
 import com.allan.shoppingMall.domains.item.domain.clothes.Clothes;
 import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSize;
-import com.allan.shoppingMall.domains.item.domain.item.ItemSize;
 import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

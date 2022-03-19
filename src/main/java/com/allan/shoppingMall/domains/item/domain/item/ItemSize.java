@@ -3,8 +3,10 @@ package com.allan.shoppingMall.domains.item.domain.item;
 import com.allan.shoppingMall.common.domain.BaseEntity;
 import com.allan.shoppingMall.common.exception.ErrorCode;
 import com.allan.shoppingMall.common.exception.order.OrderFailException;
+import com.allan.shoppingMall.domains.item.domain.clothes.ClothesSize;
 import com.allan.shoppingMall.domains.item.domain.clothes.SizeLabel;
 import com.allan.shoppingMall.domains.item.domain.item.Item;
+import com.allan.shoppingMall.domains.order.domain.OrderItem;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,6 +15,7 @@ import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 /**
  * 상품 사이즈 도메인.
@@ -58,7 +61,7 @@ public class ItemSize extends BaseEntity {
     }
 
     /**
-     * 재고량 추가를 위한 메소드.
+     * itemSize 재고량 추가를 위한 메소드.
      */
     public void addStockQuantity(Long quantity){
         this.stockQuantity += quantity;
@@ -74,5 +77,32 @@ public class ItemSize extends BaseEntity {
             throw new OrderFailException(ErrorCode.ITEM_STOCK_QUANTITY_EXCEEDED.getMessage(), ErrorCode.ITEM_STOCK_QUANTITY_EXCEEDED);
         }
         this.stockQuantity -= quantity;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o == null){
+            log.error("ItemSize equals()'s parameter is null");
+            return false;
+        }
+        if(this == o)
+            return true;
+        if(!(o instanceof ItemSize))
+            return false;
+        ItemSize itemSize = (ItemSize) o;
+        return this.sizeLabel.getId() == itemSize.getSizeLabel().getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getSizeLabel().getId());
+    }
+
+    /**
+     * 사이즈 라벨을 변경하는 메소드.
+     * @param sizeLabel
+     */
+    public void updateSizeLabel(SizeLabel sizeLabel){
+        this.sizeLabel = sizeLabel;
     }
 }

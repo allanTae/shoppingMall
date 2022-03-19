@@ -31,4 +31,16 @@ public class AccessorySize extends ItemSize {
         this.widthLength = widthLength;
         this.heightLength = heightLength;
     }
+
+    /**
+     * 그외 사이즈 정보를 수정하는 메소드.
+     * @param sizeLabel
+     * @param widthLength
+     * @param heightLength
+     */
+    public void updateAccessorySizeInfo(SizeLabel sizeLabel, Double widthLength, Double heightLength){
+        this.updateSizeLabel(sizeLabel);
+        this.widthLength = widthLength;
+        this.heightLength = heightLength;
+    }
 }

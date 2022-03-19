@@ -1,9 +1,10 @@
 package com.allan.shoppingMall.domains.item.domain.clothes;
 
-import com.allan.shoppingMall.domains.category.domain.Category;
+import com.allan.shoppingMall.common.exception.BusinessException;
+import com.allan.shoppingMall.common.exception.ErrorCode;
+import com.allan.shoppingMall.common.exception.item.ItemSizeModifyFailException;
 import com.allan.shoppingMall.domains.item.domain.item.Color;
 import com.allan.shoppingMall.domains.item.domain.item.Item;
-import com.allan.shoppingMall.domains.item.domain.item.ItemSize;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,9 +35,6 @@ public class Clothes extends Item {
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ModelSize> modelSizes = new ArrayList<>();
-
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ClothesSize> clothesSizes = new ArrayList<>();
 
     // 의류에 기타 정보를 담을 필드.
     @Column
@@ -70,7 +68,7 @@ public class Clothes extends Item {
         long totalQuantity = 0l;
         for(ClothesSize clothesSize : clothesSizes){
             totalQuantity += clothesSize.getStockQuantity();
-            this.clothesSizes.add(clothesSize);
+            this.getItemSizes().add(clothesSize);
             clothesSize.changeItem(this);
         }
         addStockQuantity(totalQuantity); // 재고량을 증가하기 위한 메소드.
@@ -80,4 +78,68 @@ public class Clothes extends Item {
     public void changeEngName(String engName){
         this.engName = engName;
     }
+
+    /**
+     * ClothesSize list 정보로 사이즈 도메인을 수정하는 메소드입니다.
+     *
+     * @param clothesSizes
+     */
+    public void updateClothesSize(List<ClothesSize> clothesSizes){
+        for(ClothesSize clothesSize : clothesSizes){
+            // 존재하면,
+            if(this.getItemSizes().contains(clothesSize)){
+                int index = this.getItemSizes().indexOf(clothesSize);
+
+                Long clothesSizeQuantity = clothesSize.getStockQuantity(); // 변경 해야 하는 clothesSize quantity.
+                ClothesSize findClothesSize = null;
+
+                if(this.getItemSizes().get(index) instanceof  ClothesSize)
+                    findClothesSize = (ClothesSize) this.getItemSizes().get(index);
+                else
+                    throw new ItemSizeModifyFailException("변경 할 수 없는 ClothesSize 입니다.", ErrorCode.INTERNAL_SERVER_ERROR);
+
+                // 사이즈 도메인 재고량 변경.
+                    // 변경 수량이 0 이하면 예외가 발생.
+                    if (clothesSizeQuantity < 0) {
+                        throw new ItemSizeModifyFailException(ErrorCode.ITEM_SIZE_QUANTITY_NOT_ENOUGH);
+                    }
+                    // 변경 수량이 0 인경우, 삭제.
+                    if (clothesSizeQuantity == 0) {
+                        this.getItemSizes().remove(findClothesSize);
+                    }else{
+                        // 변경 수량이 기존 수량보다 많은경우, 재고량 증가.
+                        if(clothesSizeQuantity - findClothesSize.getStockQuantity() > 0){
+                            Long addStockQuantity = clothesSizeQuantity -findClothesSize.getStockQuantity();
+
+                            // 상품 사이즈 재고량 변경.
+                            findClothesSize.addStockQuantity(addStockQuantity);
+                            // 상품 총 재고량 변경.
+                            this.addStockQuantity(addStockQuantity);
+
+                        // 변경 수량이 기존 수량보다 적은경우, 재고량 감소.
+                        }else if(clothesSizeQuantity - findClothesSize.getStockQuantity() < 0){
+                            Long subStockQunaity = findClothesSize.getStockQuantity() - clothesSizeQuantity;
+
+                            // 상품 사이즈 재고량 변경.
+                            findClothesSize.subStockQuantity(subStockQunaity);
+                            // 상품 총 재고량 변경.
+                            this.subtractStockQuantity(subStockQunaity);
+                        }
+
+                        // 사이즈 도메인 재고량 외 정보 수정.
+                        findClothesSize.updateClothesSizeInfo(clothesSize.getSizeLabel(), clothesSize.getBackLength(), clothesSize.getChestWidth(),
+                                clothesSize.getShoulderWidth(), clothesSize.getSleeveLength(), clothesSize.getWaistWidth(), clothesSize.getHeapWidth(), clothesSize.getBottomWidth());
+
+                    }
+
+            // 없으면,
+            }else{
+                this.getItemSizes().add(clothesSize);
+                clothesSize.changeItem(this);
+                // 상품 총 재고량 추가.
+                addStockQuantity(clothesSize.getStockQuantity());
+            }
+        }
+    }
+
 }
