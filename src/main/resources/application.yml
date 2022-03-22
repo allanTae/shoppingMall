@@ -8,11 +8,11 @@ server:
       force: true
   tomcat:
     uri-encoding: UTF-8
-  error:
-    include-exception: true
-    include-stacktrace: never
-    whitelabel.enabled: true
-    path: /error/serverError
+#  error:
+#    include-exception: true
+#    include-stacktrace: never
+#    whitelabel.enabled: true
+#    path: /error/serverError
 
 # 운영시 false 처리 할 것.
 decorator.datasource.p6spy.enable-logging: true
@@ -30,6 +30,12 @@ logging:
     org.hibernate.type.descriptor.sql: trace
 
 spring:
+
+  # 404 not found 처리를 위한, 옵션.
+  web:
+    resources:
+      add-mappings: false
+
   profiles:
     include:
       - iamport
@@ -46,8 +52,6 @@ spring:
     view:
       prefix: /WEB-INF/views/jsp/
       suffix: .jsp
-
-
 
   # jpa 설정.
   jpa:

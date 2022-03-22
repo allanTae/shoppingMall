@@ -29,7 +29,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/clothes/**", "/cart/**", "/category", "/category/**", "/item/**", "/shop/**")
                     .permitAll()
                 .anyRequest()
-                    .authenticated()
+                    .permitAll()
             .and()
                 .formLogin()
                     .loginPage("/auth/loginForm")

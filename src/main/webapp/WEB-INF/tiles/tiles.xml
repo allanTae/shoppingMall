@@ -79,4 +79,12 @@
         <put-attribute name="tile_body" value="/WEB-INF/views/jsp/manage/{1}.jsp" />
     </definition>
 
+    <!-- error -->
+    <definition name="error-layout" template="/WEB-INF/tiles/layouts/no_nav_base_layout.jsp">
+        <put-attribute name="tile_nav" value="/WEB-INF/tiles/layouts/common/nav.jsp" />
+    </definition>
+    <definition name="error/*" extends="error-layout">
+        <put-attribute name="tile_body" value="/WEB-INF/views/jsp/error/{1}.jsp" />
+    </definition>
+
 </tiles-definitions>
