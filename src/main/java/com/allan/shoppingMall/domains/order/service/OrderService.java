@@ -67,7 +67,7 @@ public class OrderService {
      * @param member 회원 도메인.
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class, Error.class})
     public String order(OrderRequest request, Member member){
         // 카테고리에 따른 분기 처리가 필요. 카테고리 추가시 코드 수정이 필요하다.
 
@@ -145,7 +145,7 @@ public class OrderService {
      * @param authId 현재 로그인 한 회원 아이디.
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class, Error.class})
     public Long cancelMyOrder(String orderNum, String authId){
         Order findOrder = orderRepository.findByOrderNumAndAuthId(authId, orderNum).orElseThrow(()
                 -> new OrderNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
@@ -291,7 +291,7 @@ public class OrderService {
      * @param authId 회원 아이디.
      * @return CompletedOrderInfo 주문 결제 정보 오브젝트.
      */
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class, Error.class})
     public CompletdOrderInfo validatePaymentByIamport(PaymentIamportDTO paymentDTO, String authId) {
         Order findOrder = orderRepository.findByOrderNumAndAuthId(authId, paymentDTO.getMerchantUid()).orElseThrow(()
                 -> new PaymentFailException(ErrorCode.ORDER_NOT_FOUND));
@@ -312,8 +312,6 @@ public class OrderService {
 
         // 주문 금액과 결제 총금액 확인
         if(paymentDTO.getPaymentAmount() != orderTotalAmount){
-            log.info("주문금액: " + orderTotalAmount);
-            log.info("결제금액: " + paymentDTO.getPaymentAmount());
             throw new PaymentFailByValidatedAmountException(ErrorCode.PAYMENT_AMOUNT_IS_NOT_EQUAL_BY_ORDER_AMOUNT);
         }else{
             return new CompletdOrderInfo(completeOrder(paymentDTO, authId), authId);
@@ -327,7 +325,7 @@ public class OrderService {
      * @param authId 로그인한 회원 아이디.
      * @return orderId 결제 완료 한 주문 도메인 id.
      */
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class, Error.class})
     private Long completeOrder(PaymentIamportDTO paymentDTO, String authId) {
         log.info("orderService completeOrder!!!");
         Order findOrder = orderRepository.findByOrderNumAndAuthId(authId, paymentDTO.getMerchantUid()).orElseThrow(()
@@ -361,7 +359,7 @@ public class OrderService {
      * @param orderNum 주문 도메인의 주문번호.
      * @param authId 로그인한 회원의 아이디.
      */
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class, Error.class})
     public void deleteTempOrder(String orderNum, String authId){
         orderRepository.findByOrderNumAndAuthId(orderNum, authId).ifPresent(order -> {
             if(order.getOrderStatus() == OrderStatus.ORDER_TEMP){
@@ -382,7 +380,7 @@ public class OrderService {
      * deleteAllTempOrder()는 프론트단에서 결제처리가 실패 한 경우, '임시저장' 상태의 주문윽 삭제하는데 사용된다.
      * @param authId 로그인한 회원의 아이디.
      */
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class, Error.class})
     public void deleteAllTempOrder(String authId){
         List<Order> findTempOrders = orderRepository.getOrderIdsByAuthId(authId, OrderStatus.ORDER_TEMP);
         if(!findTempOrders.isEmpty()){

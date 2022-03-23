@@ -43,7 +43,7 @@ public class AccessoryService {
      * @param form
      * @return accessoryId
      */
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class, Error.class})
     public Long saveAccessory(AccessoryForm form){
         // 의류 원단 정보.
         List<ItemFabric> fabrics = form.getItemFabrics()
@@ -192,7 +192,7 @@ public class AccessoryService {
      * @param form
      * @return accessory domain id.
      */
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class, Error.class})
     public Long updateAccessory(AccessoryForm form){
         Accessory findAccssory = accessoryRepository.findById(form.getAccessoryId()).orElseThrow(() ->
                 new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));

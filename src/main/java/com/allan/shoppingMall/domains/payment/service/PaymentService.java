@@ -72,7 +72,7 @@ public class PaymentService {
      * @param errorCode error 정보입니다.
      * @return Payment domain의 결제번호.
      */
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class, Error.class})
     public String refundPaymentForPaymentValidationFail(String impUid, Long cancelAmount, ErrorCode errorCode){
 
         // 환불 요청 정보를 생성합니다.
@@ -100,6 +100,7 @@ public class PaymentService {
      * @param impUid iamport api 결제 시 제공하는 고유 결제 번호입니다.
      * @param cacelAmount 환불 할 총 금액.
      */
+    @Transactional(rollbackFor = {Exception.class, Error.class})
     public void refundPayment(String impUid, Long cacelAmount){
 
         com.siot.IamportRestClient.response.Payment cancelResponse = null;

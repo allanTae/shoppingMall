@@ -29,7 +29,7 @@ public class ItemModifiedEventHandler {
 
     @Async
     @EventListener
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class, Error.class})
     public void handleEvent(ItemModifiedEvent event){
         log.info("ItemModifiedEventHandler handler call!");
         log.info("thread: " + Thread.currentThread());

@@ -47,7 +47,7 @@ public class CartService {
      * 회원 장바구니 생성 메소드.
      * @param cartRequest 프론트단에서 전달받은 장바구니 정보 DTO.
      */
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class, Error.class})
     public void addMemberCart(CartRequest cartRequest, String authId){
         // 장바구니를 회원 가입시, 자동 생성하게 되면, orElse() 로직을 제거해도 된다.
         Cart cart = cartRepository.findByAuthId(authId)
@@ -70,7 +70,7 @@ public class CartService {
      * 비회원 장바구니 생성 메소드.
      * @param cartRequest 프론트단에서 전달받은 장바구니 정보 DTO.
      */
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class, Error.class})
     public void addTempCart(CartRequest cartRequest){
         List<CartItem> cartItems = cartRequest.getCartItems().stream()
                 .map(cartItemSummary -> {
@@ -92,7 +92,7 @@ public class CartService {
      * 비회원 장바구니 상품 추가 메소드(이미 비회원 장바구니가 존재하는 경우에 비회원 장바구니에 장바구니 상품을 추가하기 위한 메소드).
      * @param cartRequest 사용자가 전달 한 장바구니 정보.
      */
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class, Error.class})
     public void updatempCart(CartRequest cartRequest){
         Cart cart = cartRepository.findByCkId(cartRequest.getCartCkId()).orElseThrow(() -> new CartNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
@@ -112,7 +112,7 @@ public class CartService {
      * @param ckId 장바구니 쿠키 식별 아이디.
      * @param authId 로그인한 회원 아이디.
      */
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class, Error.class})
     public void updateMemberCartByTempCart(String ckId, String authId){
         try {
             Cart ckCart = cartRepository.findByCkId(ckId).orElseThrow(() -> new CartNotFoundException(ErrorCode.ENTITY_NOT_FOUND)); // 비회원 장바구니.
@@ -297,7 +297,7 @@ public class CartService {
      * @param cartRequest 장바구니 요청 정보.
      * @param authId 로그인한 회원의 아이디.
      */
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class, Error.class})
     public void modifyMemberCart(CartRequest cartRequest, String authId){
         Cart findCart = cartRepository.findByAuthId(authId).orElseThrow(()
                 -> new CartNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
@@ -319,7 +319,7 @@ public class CartService {
      * @param cartRequest 장바구니 요청 정보.
      * @param ckId 장바구니 쿠키 아이디.
      */
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class, Error.class})
     public void modifyTempCart(CartRequest cartRequest, String ckId){
         Cart findCart = cartRepository.findByCkId(ckId).orElseThrow(()
                 -> new CartNotFoundException(ErrorCode.ENTITY_NOT_FOUND));

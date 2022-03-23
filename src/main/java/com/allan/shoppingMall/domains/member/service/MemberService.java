@@ -21,7 +21,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final MileageService mileageService;
 
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class, Error.class})
     public Long join(MemberForm form){
 
         Member member = Member.builder()

@@ -29,7 +29,7 @@ public class MileageService {
      * @param mileageContent 마일리지 내용.
      * @return 마일리지 도메인의 id.
      */
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class, Error.class})
     public Long accumulateMileage(String orderNum, String authId, Long accumulatePoint, MileageContent mileageContent){
         Mileage accumulateMileage = Mileage.builder()
                 .orderNum(orderNum)
@@ -51,7 +51,7 @@ public class MileageService {
      * @param mileageContent 마일리지 내용.
      * @return 마일리지 도메인의 id.
      */
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class, Error.class})
     public Long deductMileage(String orderNum, String authId, Long deductPoint, MileageContent mileageContent){
         List<Mileage> mileageList = mileageRepository.findAllByAuthId(authId);
 
@@ -83,7 +83,7 @@ public class MileageService {
      * 주문번호에 해당하는 모든 마일리지를 조회하여, 삭제하는 메소드.
      * @param orderNum 주문 도메인의 주문번호.
      */
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class, Error.class})
     public void deleteMileage(String orderNum){
         List<Long> milegeIds = mileageRepository.findAllByOrderNum(orderNum)
                 .stream()

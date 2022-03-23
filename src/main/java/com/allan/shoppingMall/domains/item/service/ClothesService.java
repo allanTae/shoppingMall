@@ -39,7 +39,7 @@ public class ClothesService {
      * @param form
      * @return clothesId
      */
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class, Error.class})
     public Long saveClothes(ClothesForm form){
         // 의류 원단 정보.
         List<ItemFabric> fabrics = form.getItemFabrics()
@@ -248,7 +248,7 @@ public class ClothesService {
      * @param form
      * @return clothes domain id.
      */
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class, Error.class})
     public Long updateClothes(ClothesForm form){
         Clothes findClothes = clothesRepository.findById(form.getClothesId()).orElseThrow(() ->
                 new ItemNotFoundException(ErrorCode.ENTITY_NOT_FOUND));

@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 /**
@@ -26,6 +27,7 @@ public class MemberJoinedEventHandler {
 
     @Async
     @EventListener
+    @Transactional(rollbackFor = {Exception.class, Error.class})
     public void handleEvent(MemberJoinedEvent event){
         log.info("MemberJoinEnvent handler call!");
         log.info("thread: " + Thread.currentThread());

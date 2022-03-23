@@ -32,7 +32,7 @@ public class CategoryService {
      * 카테고리를 저장하는 메소드.
      * @param categoryRequest 프론트단에서 전달하는 카테고리 정보 오브젝트.
      */
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class, Error.class})
     public Long saveCategory(CategoryRequest categoryRequest){
 
         Category category = null;
@@ -153,7 +153,7 @@ public class CategoryService {
      * @param categoryRequest 프론트단에서 전달 할 카테고리 변경 정보.
      * @return category domain id.
      */
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class, Error.class})
     @CacheEvict(value = {"shopCategoryCaching"}, allEntries = true)
     public Long updateCategory(Long categoryId, CategoryRequest categoryRequest){
         Category findCategory = categoryRepository.findById(categoryId).orElseThrow(() ->
@@ -167,7 +167,7 @@ public class CategoryService {
      * @param categoryId
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class, Error.class})
     public Long deleteCategory(Long categoryId){
         Category findCategory = categoryRepository.findById(categoryId).orElseThrow(() ->
                 new CategoryNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
